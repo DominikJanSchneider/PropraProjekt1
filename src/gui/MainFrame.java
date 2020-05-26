@@ -77,6 +77,7 @@ public class MainFrame extends JFrame {
 	
 	private static Connection conn = null;
 	public static DefaultTableModel dtm;
+	
 
 	
 	/**
