@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.security.interfaces.RSAKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,16 +25,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+import net.proteanit.sql.DbUtils;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements KeyListener{
 	
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
@@ -209,6 +216,9 @@ public class MainFrame extends JFrame {
 		tfSearch.setText("Bitte Namen eingeben");
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);
+		tfSearch.addKeyListener(this);
+		
+		
 		
 		lblInstitut = new JLabel("Institut für Werkstoffstechnik (Ifwt)");
 		lblInstitut.setFont(new Font("Dialog", Font.BOLD, 13));
@@ -472,5 +482,39 @@ public class MainFrame extends JFrame {
 		}
 
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		String search = tfSearch.getText();
+		try {
+			Connection conn = DBConnection.connect(); 
+			String query = "SELECT * from Personen WHERE Name LIKE '" + search+ "%'";
+			PreparedStatement pst = conn.prepareStatement(query);
+			ResultSet rs = pst.executeQuery();
+			table.setModel(DbUtils.resultSetToTableModel(rs));
+			
+			rs.close();
+			pst.close();
+			
+			
+			
+		}catch(Exception ex) {
+			ex.getMessage();
+		}
+	}
+	
 	
 }
