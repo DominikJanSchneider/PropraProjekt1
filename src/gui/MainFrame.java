@@ -5,14 +5,14 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.security.interfaces.RSAKey;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,20 +25,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-
-import net.proteanit.sql.DbUtils;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
 
-public class MainFrame extends JFrame implements KeyListener{
+
+public class MainFrame extends JFrame implements KeyListener, MouseListener{
 	
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
@@ -352,6 +349,8 @@ public class MainFrame extends JFrame implements KeyListener{
 		
 		taGefahrstoffe = new JTextArea();
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
+		
+		table.addMouseListener(this);
 	}
 	
 	public void loadFilter(String[][] filteredTable) {
@@ -499,12 +498,34 @@ public class MainFrame extends JFrame implements KeyListener{
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		String search = tfSearch.getText();
+		dtm.setRowCount(0);
+		table.setModel(dtm);
 		try {
 			Connection conn = DBConnection.connect(); 
 			String query = "SELECT * from Personen WHERE Name LIKE '" + search+ "%'";
 			PreparedStatement pst = conn.prepareStatement(query);
 			ResultSet rs = pst.executeQuery();
-			table.setModel(DbUtils.resultSetToTableModel(rs));
+			
+			while(rs.next()) {
+				
+				String id = rs.getString("ID");
+				String name = rs.getString("Name");
+				String vorname = rs.getString("Vorname");
+				String datum = rs.getString("Datum");
+				String ifwt = rs.getString("Ifwt");
+				String manf = rs.getString("MNaF");
+				String intern = rs.getString("Intern");
+				String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
+				String beginn = rs.getString("Beginn");
+				String ende = rs.getString("Ende");
+				String extern = rs.getString("Extern");
+				String email = rs.getString("E-Mail Adresse");
+
+				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+						email });
+			}
+			table.setModel(dtm);
+			
 			
 			rs.close();
 			pst.close();
@@ -514,6 +535,60 @@ public class MainFrame extends JFrame implements KeyListener{
 		}catch(Exception ex) {
 			ex.getMessage();
 		}
+	}
+	
+	
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		try {
+		Vector v = ((DefaultTableModel) table.getModel()).getDataVector().elementAt(table.getSelectedRow());
+		Connection conn = DBConnection.connect(); 
+		String query = "SELECT * FROM Personen WHERE ID =" +v.get(0).toString();
+		PreparedStatement pst = conn.prepareStatement(query);
+		ResultSet rs = pst.executeQuery();
+		
+		while(rs.next()) {
+		String date = rs.getString("Datum");
+		String allgU = rs.getString("Allgemeine Unterweisung");
+		String labor = rs.getString("Laboreinrichtungen");
+		String gefahrstoffe = rs.getString("Gefahrstoffe");
+		
+		taAllgemeineUnterweisung.setText(date +" " + allgU);
+		taLaboreinrichtungen.setText(labor);
+		taGefahrstoffe.setText(gefahrstoffe);
+		}
+		
+		}catch(Exception e1) {
+			e1.getMessage();
+		}
+		
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
