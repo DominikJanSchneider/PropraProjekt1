@@ -6,6 +6,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -35,10 +42,6 @@ import javax.swing.table.DefaultTableModel;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
 	
@@ -140,7 +143,7 @@ public class MainFrame extends JFrame {
 		fileMenu.setForeground(foregroundColor);
 		menuBar.add(fileMenu);
 		
-		// Menu item (Datei Speichern)
+		// Menu item (Datenbank Speichern)
 		miSave = new JMenuItem("Datenbank Speichern");
 		miSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -149,10 +152,7 @@ public class MainFrame extends JFrame {
 				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
 				int status = fc.showSaveDialog(null);
 				if (status == JFileChooser.APPROVE_OPTION) {
-					// Need to code what happens when the db should be saved
 					String selDir = fc.getSelectedFile().getAbsolutePath();
-					//String fileName = fc.getSelectedFile().getName();
-					//System.out.println(selDir + "\n" + fileName);
 					try {
 						Connection con = DriverManager.getConnection("jdbc:sqlite:" + selDir); // Creating empty data base
 						conn = DBConnection.connect(); //Connecting to existing data base 
@@ -215,7 +215,7 @@ public class MainFrame extends JFrame {
 		miSave.setForeground(foregroundColor);
 		fileMenu.add(miSave);
 		
-		// Menu item (Datei Importieren)
+		// Menu item (Datenbank Importieren)
 		miImport = new JMenuItem("Datenbank Importieren");
 		miImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -226,8 +226,6 @@ public class MainFrame extends JFrame {
 				if (status == JFileChooser.APPROVE_OPTION) {
 					String selFile = fc.getSelectedFile().getAbsolutePath();
 					DBConnection.setURL("jdbc:sqlite:"+selFile);
-					// Need to code what happens when the file/db is selected
-					//System.out.println("Ausgewählte DB: " + selFile.toString());
 					conn = DBConnection.connect(); // Connecting to existing data base
 					try {
 						ResultSet rsTableNames = conn.getMetaData().getTables(null, null, null, null); //Getting all tables from data base
@@ -249,7 +247,8 @@ public class MainFrame extends JFrame {
 							String ifwt = rs.getString("Ifwt");
 							String manf = rs.getString("MNaF");
 							String intern = rs.getString("Intern");
-							String beschverh = rs.getString("Beschaeftigungsverhaeltnis");								String beginn = rs.getString("Beginn");
+							String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
+							String beginn = rs.getString("Beginn");
 							String ende = rs.getString("Ende");
 							String extern = rs.getString("Extern");
 							String email = rs.getString("E-Mail Adresse");
@@ -273,19 +272,60 @@ public class MainFrame extends JFrame {
 		miImport.setForeground(foregroundColor);
 		fileMenu.add(miImport);
 		
-		// Menu item (Datei Exportieren)
-		miExport = new JMenuItem("Datenbank Exportieren");
+		// Menu item (Datenbank Exportieren)
+		miExport = new JMenuItem("Datenbank als CSV exportieren");
 		miExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
+				fc.setFileFilter(new FileNameExtensionFilter("*.csv", "csv"));
 				int status = fc.showSaveDialog(null);
 				if (status == JFileChooser.APPROVE_OPTION) {
-					// Need to code what happens when the db should be exported
 					String selDir = fc.getSelectedFile().getAbsolutePath();
-					String fileName = fc.getSelectedFile().getName();
-					System.out.println(selDir + "\n" + fileName);
+					conn = DBConnection.connect();
+					try {
+						String query = "SELECT * FROM Personen";
+						PreparedStatement getTable = conn.prepareStatement(query);
+						ResultSet rs = getTable.executeQuery();
+						BufferedWriter fileWriter = new BufferedWriter(new FileWriter(selDir)); //Creating CSV file
+						
+						while (rs.next()) {
+							String id = rs.getString("ID");
+							String name = rs.getString("Name");
+							String vorname = rs.getString("Vorname");
+							String datum = rs.getString("Datum");
+							String ifwt = rs.getString("Ifwt");
+							String manf = rs.getString("MNaF");
+							String intern = rs.getString("Intern");
+							String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
+							String beginn = rs.getString("Beginn");
+							String ende = rs.getString("Ende");
+							String extern = rs.getString("Extern");
+							String email = rs.getString("E-Mail Adresse");
+							String unterw = rs.getString("Allgemeine Unterweisung");
+							String labeinr = rs.getString("Laboreinrichtungen");
+							String gefahrst = rs.getString("Gefahrstoffe");
+							
+							String[] columnNames = new String[rs.getMetaData().getColumnCount()];
+							for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+								columnNames[i] = rs.getMetaData().getColumnName(i+1);
+							}
+							String head = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
+														columnNames[0], columnNames[1], columnNames[2], columnNames[3], columnNames[4], columnNames[5], columnNames[6],
+														columnNames[7], columnNames[8], columnNames[9], columnNames[10], columnNames[11], columnNames[12], columnNames[13]);
+							String line = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
+														id, name, vorname, datum, ifwt, manf, intern, beschverh, 
+														ende, extern, email, unterw, labeinr, gefahrst);
+							fileWriter.write(head);
+							fileWriter.write(line);
+						}
+						getTable.close();
+						fileWriter.close();
+					} catch(SQLException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -312,6 +352,7 @@ public class MainFrame extends JFrame {
 	        public void menuSelected(MenuEvent e) {
 	        	login = Login.getInstance();
 	        	loginToFront();
+	        	login.setVisible(true);
 	        }
 
 	        @Override
@@ -705,7 +746,7 @@ public class MainFrame extends JFrame {
 			public void run() {
 				login.toFront();
 				login.repaint();
-				login.setLocation(600, 400);
+				login.setLocation((getWidth()/2)-(login.getWidth()/2), (getHeight()/2)-login.getHeight()/2);
 			}
 		});
 	}
