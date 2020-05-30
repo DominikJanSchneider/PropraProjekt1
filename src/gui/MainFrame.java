@@ -560,6 +560,7 @@ public class MainFrame extends JFrame {
 		taAllgemeineUnterweisung = new JTextArea();
 		taAllgemeineUnterweisung.setLineWrap(true);
 		taAllgemeineUnterweisung.setWrapStyleWord(true);
+		taAllgemeineUnterweisung.setEditable(false);
 		//taAllgemeineUnterweisung.setBackground(redColor);
 		spAllgemeineUnterweisungen.setViewportView(taAllgemeineUnterweisung);
 		
@@ -575,6 +576,9 @@ public class MainFrame extends JFrame {
 		infoPanel.add(spLaboreinrichtungen, "width 25%, cell 1 1,grow");
 		
 		taLaboreinrichtungen = new JTextArea();
+		taLaboreinrichtungen.setLineWrap(true);
+		taLaboreinrichtungen.setWrapStyleWord(true);
+		taLaboreinrichtungen.setEditable(false);
 		spLaboreinrichtungen.setViewportView(taLaboreinrichtungen);
 		
 		// Building the (Gefahrstoffe) information text area with title
@@ -589,6 +593,9 @@ public class MainFrame extends JFrame {
 		infoPanel.add(spGefahrstoffe, "width 25%, cell 2 1,grow");
 		
 		taGefahrstoffe = new JTextArea();
+		taGefahrstoffe.setLineWrap(true);
+		taGefahrstoffe.setWrapStyleWord(true);
+		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
 	}
 	
