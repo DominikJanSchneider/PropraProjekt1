@@ -41,6 +41,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import database.DBConnection;
+import database.DBExporter;
+import database.DBImporter;
+import database.DBtoCSVExporter;
 import net.miginfocom.swing.MigLayout;
 
 public class MainFrame extends JFrame {
@@ -96,7 +99,7 @@ public class MainFrame extends JFrame {
 	private static Login login;
 	
 	private static Connection conn = null;
-	public static DefaultTableModel dtm;
+	private static DefaultTableModel dtm;
 
 	
 	/**
@@ -147,7 +150,7 @@ public class MainFrame extends JFrame {
 		miSave = new JMenuItem("Datenbank Speichern");
 		miSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser fc = new JFileChooser();
+				/*JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
 				int status = fc.showSaveDialog(null);
@@ -208,7 +211,8 @@ public class MainFrame extends JFrame {
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-				}
+				}*/
+				DBExporter.exportDB();
 			}
 		});
 		miSave.setBackground(backgroundColor);
@@ -219,7 +223,7 @@ public class MainFrame extends JFrame {
 		miImport = new JMenuItem("Datenbank Importieren");
 		miImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser fc = new JFileChooser();
+				/*JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
 				int status = fc.showOpenDialog(null);
@@ -265,7 +269,8 @@ public class MainFrame extends JFrame {
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-				}
+				}*/
+				DBImporter.importDB();
 			}
 		});
 		miImport.setBackground(backgroundColor);
@@ -276,7 +281,7 @@ public class MainFrame extends JFrame {
 		miExport = new JMenuItem("Datenbank als CSV exportieren");
 		miExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser fc = new JFileChooser();
+				/*JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setFileFilter(new FileNameExtensionFilter("*.csv", "csv"));
 				int status = fc.showSaveDialog(null);
@@ -326,7 +331,8 @@ public class MainFrame extends JFrame {
 					} catch(IOException e) {
 						e.printStackTrace();
 					}
-				}
+				}*/
+				DBtoCSVExporter.export();
 			}
 		});
 		miExport.setBackground(backgroundColor);
@@ -390,7 +396,11 @@ public class MainFrame extends JFrame {
 		// Label for the config panel title
 		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut für Werkstofftechnik und Gerätezentrum MNaF");
 		lblConfigPanel.setFont(new Font("Dialog", Font.BOLD, 18));
-		lblConfigPanel.setForeground(foregroundColor);
+		lblConfigPanel.setForeground(foregroundColor);// Building the menu (Datenbank Laden)
+		//menu = new JMenu("Datenbank Laden");
+		//menu.setBackground(backgroundColor);
+		//menu.setForeground(foregroundColor);
+		//menuBar.add(menu);
 		configPanel.add(lblConfigPanel, "cell 0 0");
 		
 		// Panel that holds the elements form configPanel
