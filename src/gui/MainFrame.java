@@ -27,6 +27,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
@@ -109,8 +110,6 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
-		
-
 		// Building the menu bar
 		menuBar = new JMenuBar();
 		menuBar.setBackground(frameColor);
@@ -369,17 +368,35 @@ public class MainFrame extends JFrame {
 	// method to fill JTable with Data from Database
 	public static void getData() {
 
-		dtm = new DefaultTableModel(new String[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
+		dtm = new DefaultTableModel(new Object[][] {}, new Object[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
 				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+			
+
+	            public Class getColumnClass(int column)
+	            {
+	                // Lookup first non-null data on column
+	                for (int row = 0; row < getRowCount(); row++) 
+	                {
+	                    Object o = getValueAt(row, column);
+
+	                    if (o != null)
+	                        return o.getClass();
+	                }
+
+	                return Object.class;
+	            }
+	        
 		};
 		table.setModel(dtm);
 		table2.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
-		
+		table.setRowSorter(new TableRowSorter<DefaultTableModel> (dtm));
+		//table.setAutoCreateRowSorter(true);
+		//table2.setAutoCreateRowSorter(true);
 			//von Fiti: die Tabelle ist schonmal mit der Datenbank verbunden.
 			//wir müssen halt noch schauen ob sie direkt geladen werden soll, oder auf Befehl des Users
 		try {
@@ -393,7 +410,7 @@ public class MainFrame extends JFrame {
 			
 
 			while (resultSet.next()) {
-				String id = resultSet.getString("ID");
+				int id = resultSet.getInt("ID");
 				String name = resultSet.getString("Name");
 				String vorname = resultSet.getString("Vorname");
 				String datum = resultSet.getString("Datum");
@@ -406,7 +423,7 @@ public class MainFrame extends JFrame {
 				String extern = resultSet.getString("Extern");
 				String email = resultSet.getString("E-Mail Adresse");
 
-				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+				dtm.addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
 						email });
 			}
 			dtm.fireTableDataChanged();

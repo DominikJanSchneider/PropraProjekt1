@@ -262,6 +262,7 @@ public class DataEditor extends JFrame{
 		buttonPanel.add(btnSave, "width 25%, gapleft 50, cell 4 2");
 		
 		
+		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
 		MainFrame.table2.addMouseListener(new MouseAdapter() {
 			@Override
