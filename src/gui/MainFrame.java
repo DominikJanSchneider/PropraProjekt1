@@ -391,6 +391,7 @@ public class MainFrame extends JFrame {
 	            }
 	        
 		};
+		//beide Varianten möglich
 		table.setModel(dtm);
 		table2.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
