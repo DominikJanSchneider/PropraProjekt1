@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +33,8 @@ import javax.swing.table.DefaultTableModel;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
+import printer.FormDocPrinter;
+import printer.PrintData;
 
 public class MainFrame extends JFrame {
 	
@@ -74,6 +79,7 @@ public class MainFrame extends JFrame {
 	private JScrollPane spGefahrstoffe;
 	private JTextArea taGefahrstoffe;
 	private static DefaultTableCellRenderer cellRenderer;
+	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
 	public static DefaultTableModel dtm;
@@ -177,6 +183,16 @@ public class MainFrame extends JFrame {
 		
 		// Building the menu (Drucken)
 		menu = new JMenu("Drucken");
+		menu.addMenuListener(new MenuListener() 
+		{
+			public void menuSelected(MenuEvent e) 
+			{
+				printPressed();
+				menu.setSelected(false);
+			}
+			public void menuDeselected(MenuEvent e) {}
+			public void menuCanceled(MenuEvent e){}
+		});
 		menu.setBackground(backgroundColor);
 		menu.setForeground(foregroundColor);
 		menuBar.add(menu);
@@ -341,6 +357,9 @@ public class MainFrame extends JFrame {
 		
 		taGefahrstoffe = new JTextArea();
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
+		
+		//Creating a formulaPrinter
+		fPrinter = new FormDocPrinter();
 	}
 	
 	public void loadFilter(String[][] filteredTable) {
@@ -365,6 +384,53 @@ public class MainFrame extends JFrame {
 		return dtm;
 	}
 	
+	private void printPressed()
+	{
+		//getting of table and textArea data
+		int row = table.getSelectedRow();
+		if(row == -1)
+		{
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
+			return;
+		}
+		String familyName = (String)table.getValueAt(row, 1);
+		String firstName = (String)table.getValueAt(row, 2);
+		String date = (String)table.getValueAt(row, 3);
+		String ifwt = (String)table.getValueAt(row, 4);
+		String mnaf = (String)table.getValueAt(row, 5);
+		String intern = (String)table.getValueAt(row, 6);
+		String extern = (String)table.getValueAt(row, 10);
+		String genInstr = taAllgemeineUnterweisung.getText();
+		String labSetup = taLaboreinrichtungen.getText();
+		String dangerSubst = taGefahrstoffe.getText();
+		
+		//setup of printData
+		PrintData printData = new PrintData();
+		printData.setFamilyName(familyName);
+		printData.setFirstName(firstName);
+		printData.setDate(date);
+		printData.setIfwt(ifwt);
+		printData.setMNaF(mnaf);
+		printData.setIntern(intern);
+		printData.setExtern(extern);
+		printData.setGeneralInstructions(genInstr);
+		printData.setLabSetup(labSetup);
+		printData.setDangerousSubstances(dangerSubst);
+		
+		//start printing process
+		try
+		{
+			fPrinter.print(printData);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		catch(PrinterException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	// method to fill JTable with Data from Database
 	public static void getData() {
