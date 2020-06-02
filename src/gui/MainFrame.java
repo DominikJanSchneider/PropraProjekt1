@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
+import userLogin.UserLogin;
 
 
 public class MainFrame extends JFrame implements KeyListener, MouseListener{
@@ -91,8 +92,10 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainFrame frame = new MainFrame();
-					frame.setVisible(true);
+					//MainFrame Objekt wird in der UserLogin Klasse erzeugt(beim richtigen Eingeben des Passworts)
+					UserLogin ulogin = UserLogin.getInstance();
+					//MainFrame frame = new MainFrame();
+					//frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
