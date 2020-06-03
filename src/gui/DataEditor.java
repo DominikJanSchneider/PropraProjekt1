@@ -145,7 +145,7 @@ public class DataEditor extends JFrame{
 		tablePanel.add(spTable, "cell 0 0,grow");
 		
 		// cloned table for edit window
-		spTable.setViewportView(MainFrame.table2);
+		spTable.setViewportView(MainFrame.getEditorTable());
 	
 		
 		// Panel for the update button
@@ -312,11 +312,11 @@ public class DataEditor extends JFrame{
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
-		MainFrame.table2.addMouseListener(new MouseAdapter() {
+		MainFrame.getEditorTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = MainFrame.table2.getSelectedRow();
-				ID = Integer.parseInt((String) MainFrame.table2.getValueAt(i, 0));
+				int i = MainFrame.getEditorTable().getSelectedRow();
+				//ID = Integer.parseInt((String) MainFrame.getEditorTable().getValueAt(i, 0)); // Isn't needed anymore because of the modified dtm
 
 				fillFields();
 			}
@@ -682,22 +682,22 @@ public class DataEditor extends JFrame{
 	
 	
 	// method to fill textfields with column-entrys of selected row
-	public static void fillFields() {							// genutzt in MouseListener von JTable table2
-		int a = MainFrame.table2.getSelectedRow();
-		String fillName = (String) MainFrame.table2.getValueAt(a, 1);
-		String fillPname = (String) MainFrame.table2.getValueAt(a, 2);
-		String fillDate = (String) MainFrame.table2.getValueAt(a, 3);
-		String fillIfwt = (String) MainFrame.table2.getValueAt(a, 4);
-		String fillMNaF = (String) MainFrame.table2.getValueAt(a, 5);
-		String fillIntern = (String) MainFrame.table2.getValueAt(a, 6);
-		String fillEmpl = (String) MainFrame.table2.getValueAt(a, 7);
-		String fillStart = (String) MainFrame.table2.getValueAt(a, 8);
-		String fillEnd = (String) MainFrame.table2.getValueAt(a, 9);
-		String fillExternal = (String) MainFrame.table2.getValueAt(a, 10);
-		String fillMail = (String) MainFrame.table2.getValueAt(a, 11);
-		String fillInstr = (String) MainFrame.table2.getModel().getValueAt(a, 12);
-		String fillLab = (String) MainFrame.table2.getModel().getValueAt(a, 13);
-		String fillHazard = (String) MainFrame.table2.getModel().getValueAt(a, 14);
+	public static void fillFields() {							// genutzt in MouseListener von JTable getEditorTable()
+		int a = MainFrame.getEditorTable().getSelectedRow();
+		String fillName = (String) MainFrame.getEditorTable().getValueAt(a, 1);
+		String fillPname = (String) MainFrame.getEditorTable().getValueAt(a, 2);
+		String fillDate = (String) MainFrame.getEditorTable().getValueAt(a, 3);
+		String fillIfwt = (String) MainFrame.getEditorTable().getValueAt(a, 4);
+		String fillMNaF = (String) MainFrame.getEditorTable().getValueAt(a, 5);
+		String fillIntern = (String) MainFrame.getEditorTable().getValueAt(a, 6);
+		String fillEmpl = (String) MainFrame.getEditorTable().getValueAt(a, 7);
+		String fillStart = (String) MainFrame.getEditorTable().getValueAt(a, 8);
+		String fillEnd = (String) MainFrame.getEditorTable().getValueAt(a, 9);
+		String fillExternal = (String) MainFrame.getEditorTable().getValueAt(a, 10);
+		String fillMail = (String) MainFrame.getEditorTable().getValueAt(a, 11);
+		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 12);
+		String fillLab = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 13);
+		String fillHazard = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 14);
 		
 		textField.setText(fillName);
 		textField_2.setText(fillPname);

@@ -54,7 +54,6 @@ public class MainFrame extends JFrame {
 	private JPanel contentPane;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
-	private JMenu sortMenu;
 	private JMenu printMenu;
 	private JMenu editMenu;
 	private JMenuItem miSave;
@@ -80,7 +79,7 @@ public class MainFrame extends JFrame {
 	private JButton btnExtern;
 	private static JScrollPane spTable;
 	private static JTable table = new JTable();
-	public static JTable table2 = new JTable();
+	private static JTable editorTable = new JTable();
 	private JPanel infoPanel;
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
@@ -466,6 +465,10 @@ public class MainFrame extends JFrame {
 		}
 	}
 	
+	public static JTable getEditorTable() {
+		return editorTable;
+	}
+	
 	public static DefaultTableModel getDefaultTableModel() {
 		return dtm;
 	}
@@ -533,10 +536,10 @@ public class MainFrame extends JFrame {
 			}
 		};
 		table.setModel(dtm);
-		table2.setModel(table.getModel());
+		editorTable.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
 		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // enabling sorting of the table
-		table2.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
+		editorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
 		
 		try {
 			conn = DBConnection.connect();
@@ -609,33 +612,33 @@ public class MainFrame extends JFrame {
 			table.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
 			
-			table2.getColumnModel().getColumn(0).setPreferredWidth(5);
-			table2.getColumnModel().getColumn(1).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(2).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(3).setPreferredWidth(35);
-			table2.getColumnModel().getColumn(4).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(5).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(6).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(7).setPreferredWidth(145);
-			table2.getColumnModel().getColumn(8).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(9).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(10).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(11).setPreferredWidth(200);
+			editorTable.getColumnModel().getColumn(0).setPreferredWidth(5);
+			editorTable.getColumnModel().getColumn(1).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(2).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(3).setPreferredWidth(35);
+			editorTable.getColumnModel().getColumn(4).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(5).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(6).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(7).setPreferredWidth(145);
+			editorTable.getColumnModel().getColumn(8).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(9).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(10).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(11).setPreferredWidth(200);
 
-			table2.setRowHeight(20);
+			editorTable.setRowHeight(20);
 
-			table2.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
-			table2.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
+			editorTable.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
 			
 
-			table2.getColumnModel().removeColumn(table2.getColumnModel().getColumn(12));		// make column invisible but still accessible
-			table2.getColumnModel().removeColumn(table2.getColumnModel().getColumn(12));		// make column invisible but still accessible
-			table2.getColumnModel().removeColumn(table2.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
 
 			
 			pst.close();
