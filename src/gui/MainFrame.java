@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -25,12 +26,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -54,8 +54,8 @@ public class MainFrame extends JFrame {
 	private JPanel contentPane;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
-	private JMenu printMenu;
-	private JMenu editMenu;
+	private JButton btnPrint;
+	private JButton btnEditData;
 	private JMenuItem miSave;
 	private JMenuItem miImport;
 	private JMenuItem miExport;
@@ -176,54 +176,39 @@ public class MainFrame extends JFrame {
 		miExport.setForeground(foregroundColor);
 		fileMenu.add(miExport);
 		
-		// Building the menu (Datenbank Laden)
-		//menu = new JMenu("Datenbank Laden");
-		//menu.setBackground(backgroundColor);
-		//menu.setForeground(foregroundColor);
-		//menuBar.add(menu);
+		JLabel space = new JLabel(" ");
+		menuBar.add(space);
 		
-		// Building the menu (Sortieren)
-		//sortMenu = new JMenu("Sortieren");
-		//sortMenu.setBackground(backgroundColor);
-		//sortMenu.setForeground(foregroundColor);
-		//menuBar.add(sortMenu);
-		
-		// Building the menu (Daten Bearbeiten)
-		editMenu = new JMenu("Daten Bearbeiten");
-		editMenu.addMenuListener(new MenuListener() {
+		// Building the Button (Daten Bearbeiten)
+		btnEditData = new JButton("Daten Bearbeiten");
+		btnEditData.addActionListener(new ActionListener() {
 	        @Override
-	        public void menuSelected(MenuEvent e) {
+	        public void actionPerformed(ActionEvent e) {
 	        	login = Login.getInstance();
 	        	loginToFront();
 	        	login.setVisible(true);
-	        	//editMenu.setSelected(false);
 	        }
-
-	        @Override
-	        public void menuDeselected(MenuEvent e) {}
-	        @Override
-	        public void menuCanceled(MenuEvent e) {}
 		});
-		editMenu.setBackground(backgroundColor);
-		editMenu.setForeground(foregroundColor);
-		menuBar.add(editMenu);
+		btnEditData.setBorder(null);
+		btnEditData.setBackground(frameColor);
+		btnEditData.setForeground(foregroundColor);
+		menuBar.add(btnEditData);
 		
-		// Building the menu (Drucken)
-		printMenu = new JMenu("Drucken");
-		printMenu.addMenuListener(new MenuListener() {
+		space = new JLabel("  ");
+		menuBar.add(space);
+		
+		// Building the Button (Drucken)
+		btnPrint = new JButton("Drucken");
+		btnPrint.addActionListener(new ActionListener() {
 			@Override
-			public void menuSelected(MenuEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				printPressed();
-				//printMenu.setSelected(false);
 			}
-			@Override
-			public void menuDeselected(MenuEvent e) {}
-			@Override
-			public void menuCanceled(MenuEvent e) {}
 		});
-		printMenu.setBackground(backgroundColor);
-		printMenu.setForeground(foregroundColor);
-		menuBar.add(printMenu);
+		btnPrint.setBorder(null);
+		btnPrint.setBackground(frameColor);
+		btnPrint.setForeground(foregroundColor);
+		menuBar.add(btnPrint);
 		
 		// Adding the bar to the frame
 		setJMenuBar(menuBar);
