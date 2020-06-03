@@ -30,19 +30,8 @@ public class DBConnection {
     	   return null;
        }
 	}
-	/*
-	public static Connection connect(String filePath) {
-		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection("jdbc:sqlite:" + filePath);
-			return con;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}*/
 	
-	public static String[][] getName() {
+	public static Object[][] getName() {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -50,11 +39,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -80,7 +69,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all rows of the table where Ifwt is not null
-	public static String[][] getIfwt()  {
+	public static Object[][] getIfwt()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -88,11 +77,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE NOT Ifwt IS NULL");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -119,7 +108,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all rows of the table where Ifwt equals LMN
-	public static String[][] getLMN()  {
+	public static Object[][] getLMN()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -127,11 +116,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE Ifwt='LMN'");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -158,7 +147,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all rows of the table where Ifwt equals LMW
-	public static String[][] getLMW()  {
+	public static Object[][] getLMW()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -166,11 +155,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE Ifwt='LMW'");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -197,7 +186,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all rows of the table where Ifwt equals LOT
-	public static String[][] getLOT()  {
+	public static Object[][] getLOT()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -205,11 +194,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE Ifwt='LOT'");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -236,7 +225,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all rows of the table where Ifwt equals LWF
-	public static String[][] getLWF()  {
+	public static Object[][] getLWF()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -244,11 +233,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE Ifwt='LWF'");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -275,7 +264,7 @@ public class DBConnection {
 	}
 	
 	// Method that returns all MNaF that are not null !MUSS ICH NOCH UEBERARBEITEN! Dominik
-	public static String[][] getMNaF()  {
+	public static Object[][] getMNaF()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -283,11 +272,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE NOT MNaF IS NULL");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -314,7 +303,7 @@ public class DBConnection {
 	}
 	
 	//Method that returns all rows of the table where intern equals 'ja'
-	public static String[][] getIntern()  {
+	public static Object[][] getIntern()  {
 		try {
 			con = DriverManager.getConnection(url);
 			Statement stmt = con.createStatement();
@@ -322,11 +311,11 @@ public class DBConnection {
 			int rowCount = rs.getInt(1);
 			rs = stmt.executeQuery("SELECT * FROM Personen WHERE Intern='Ja'");
 			int columnCount = rs.getMetaData().getColumnCount();
-			String[][] filteredTable = new String[rowCount][columnCount];
+			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
 			
 			while (rs.next()) {
-				filteredTable[i][0] = rs.getString("ID");
+				filteredTable[i][0] = rs.getInt("ID");
 				filteredTable[i][1] = rs.getString("Name");
 				filteredTable[i][2] = rs.getString("Vorname");
 				filteredTable[i][3] = rs.getString("Datum");
@@ -353,7 +342,7 @@ public class DBConnection {
 	}
 	
 	//Method that returns all rows of the table where extern equals 'ja'
-		public static String[][] getExtern()  {
+		public static Object[][] getExtern()  {
 			try {
 				con = DriverManager.getConnection(url);
 				Statement stmt = con.createStatement();
@@ -361,11 +350,11 @@ public class DBConnection {
 				int rowCount = rs.getInt(1);
 				rs = stmt.executeQuery("SELECT * FROM Personen WHERE Extern='Ja'");
 				int columnCount = rs.getMetaData().getColumnCount();
-				String[][] filteredTable = new String[rowCount][columnCount];
+				Object[][] filteredTable = new Object[rowCount][columnCount];
 				int i = 0;
 				
 				while (rs.next()) {
-					filteredTable[i][0] = rs.getString("ID");
+					filteredTable[i][0] = rs.getInt("ID");
 					filteredTable[i][1] = rs.getString("Name");
 					filteredTable[i][2] = rs.getString("Vorname");
 					filteredTable[i][3] = rs.getString("Datum");

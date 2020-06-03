@@ -35,7 +35,7 @@ public class DBImporter {
 				//dtm.setRowCount(0);
 				MainFrame.getDefaultTableModel().setRowCount(0);
 				while (rs.next()) {
-					String id = rs.getString("ID");
+					int id = rs.getInt("ID");
 					String name = rs.getString("Name");
 					String vorname = rs.getString("Vorname");
 					String datum = rs.getString("Datum");
@@ -51,7 +51,7 @@ public class DBImporter {
 					String labeinr = rs.getString("Laboreinrichtungen");
 					String gefahrst = rs.getString("Gefahrstoffe");
 
-					MainFrame.getDefaultTableModel().addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+					MainFrame.getDefaultTableModel().addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
 								email,unterw,labeinr,gefahrst });
 				}
 				MainFrame.getDefaultTableModel().fireTableDataChanged();

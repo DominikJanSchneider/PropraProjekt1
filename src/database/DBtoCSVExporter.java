@@ -27,7 +27,7 @@ public class DBtoCSVExporter {
 				BufferedWriter fileWriter = new BufferedWriter(new FileWriter(selDir)); //Creating CSV file
 				
 				while (rs.next()) {
-					String id = rs.getString("ID");
+					int id = rs.getInt("ID");
 					String name = rs.getString("Name");
 					String vorname = rs.getString("Vorname");
 					String datum = rs.getString("Datum");
@@ -50,7 +50,7 @@ public class DBtoCSVExporter {
 					String head = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
 												columnNames[0], columnNames[1], columnNames[2], columnNames[3], columnNames[4], columnNames[5], columnNames[6],
 												columnNames[7], columnNames[8], columnNames[9], columnNames[10], columnNames[11], columnNames[12], columnNames[13]);
-					String line = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
+					String line = String.format("%d; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
 												id, name, vorname, datum, ifwt, manf, intern, beschverh, 
 												ende, extern, email, unterw, labeinr, gefahrst);
 					fileWriter.write(head);

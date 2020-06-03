@@ -148,68 +148,6 @@ public class MainFrame extends JFrame {
 		miSave = new JMenuItem("Datenbank Speichern");
 		miSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				/*JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
-				int status = fc.showSaveDialog(null);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					String selDir = fc.getSelectedFile().getAbsolutePath();
-					try {
-						Connection con = DriverManager.getConnection("jdbc:sqlite:" + selDir); // Creating empty data base
-						conn = DBConnection.connect(); //Connecting to existing data base 
-						String query = "SELECT * FROM Personen";
-						PreparedStatement pst = conn.prepareStatement(query);
-						ResultSet rs = pst.executeQuery();
-						String tableName = rs.getMetaData().getTableName(1); // Saves the Table Name
-						String[] attributes = new String[rs.getMetaData().getColumnCount()]; //Saves the Attributes from the Table that will be copied
-						String[] attributeTypes = new String[rs.getMetaData().getColumnCount()]; // Saves the Attribute Types
-						for (int col = 0; col < rs.getMetaData().getColumnCount(); col ++) {
-							attributes[col] = rs.getMetaData().getColumnName(col+1);
-							attributeTypes[col] = rs.getMetaData().getColumnTypeName(col+1);
-							
-						}
-						
-						//Creating a copy of the default database table Personen
-						String sqlCreateTable = "CREATE TABLE IF NOT EXISTS "+ tableName +
-								 "("+attributes[0]+" "+attributeTypes[0]+" PRIMARY KEY NOT NULL UNIQUE,"
-								    +attributes[1]+" "+attributeTypes[1]+","
-								    +attributes[2]+" "+attributeTypes[2]+","
-								    +attributes[3]+" "+attributeTypes[3]+","
-								    +attributes[4]+" "+attributeTypes[4]+","
-								    +attributes[5]+" "+attributeTypes[5]+","
-								    +attributes[6]+" "+attributeTypes[6]+","
-								    +attributes[7]+" "+attributeTypes[7]+","
-								    +attributes[8]+" "+attributeTypes[8]+","
-								    +attributes[9]+" "+attributeTypes[9]+","
-								    +attributes[10]+" "+attributeTypes[10]+","
-								    +"'"+attributes[11]+"'"+" "+attributeTypes[11]+","
-								    +"'"+attributes[12]+"'"+" "+attributeTypes[12]+","
-								    +attributes[13]+" "+attributeTypes[13]+","
-									+attributes[14]+" "+attributeTypes[14]
-								    +");";
-						Statement createTable = con.createStatement();
-						createTable.execute(sqlCreateTable);
-						
-						//Filling the copied table with data from the default data base table
-						Statement fillTable = con.createStatement();
-						while (rs.next()) {
-							fillTable.execute("INSERT INTO "+tableName+" ("+attributes[0]+","+attributes[1]+","+attributes[2]+","+attributes[3]+","+attributes[4]+","+attributes[5]+","
-																		  +attributes[6]+","+attributes[7]+","+attributes[8]+","+attributes[9]+","+attributes[10]+",'"+attributes[11]+"','"
-																		  +attributes[12]+"',"+attributes[13]+","+attributes[14]+") "+
-											 "VALUES ("+rs.getString("ID")+",'"+rs.getString("Name")+"','"+rs.getString("Vorname")+"','"+rs.getString("Datum")+"','"+rs.getString("Ifwt")+"','"+rs.getString("MNaF")+"','"
-											 		   +rs.getString("Intern")+"','"+rs.getString("Beschaeftigungsverhaeltnis")+"','"+rs.getString("Beginn")+"','"+rs.getString("Ende")+"','"+rs.getString("Extern")+"','"
-											 		   +rs.getString("E-Mail Adresse")+"','"+rs.getString("Allgemeine Unterweisung")+"','"+rs.getString("Laboreinrichtungen")+"','"+rs.getString("Gefahrstoffe")+"');");							
-						}
-						createTable.close();
-						fillTable.close();
-						pst.close();
-						con.close();
-						conn.close();
-						
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}*/
 				DBExporter.exportDB();
 			}
 		});
@@ -221,53 +159,6 @@ public class MainFrame extends JFrame {
 		miImport = new JMenuItem("Datenbank Importieren");
 		miImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				/*JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				fc.setFileFilter(new FileNameExtensionFilter("*.db", "db"));
-				int status = fc.showOpenDialog(null);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					String selFile = fc.getSelectedFile().getAbsolutePath();
-					DBConnection.setURL("jdbc:sqlite:"+selFile);
-					conn = DBConnection.connect(); // Connecting to existing data base
-					try {
-						ResultSet rsTableNames = conn.getMetaData().getTables(null, null, null, null); //Getting all tables from data base
-						ArrayList<String> tables = new ArrayList<String>(); //Creating ArrayList for table names
-						while(rsTableNames.next()) {
-							tables.add(rsTableNames.getString("TABLE_NAME")); //Saving table names from data base in ArrayList
-						}
-						//System.out.println(tables.get(0));
-						String query = "SELECT * FROM "+tables.get(0)+";";
-						PreparedStatement getTable = conn.prepareStatement(query);
-						ResultSet rs = getTable.executeQuery();
-						
-						dtm.setRowCount(0);
-						while (rs.next()) {
-							String id = rs.getString("ID");
-							String name = rs.getString("Name");
-							String vorname = rs.getString("Vorname");
-							String datum = rs.getString("Datum");
-							String ifwt = rs.getString("Ifwt");
-							String manf = rs.getString("MNaF");
-							String intern = rs.getString("Intern");
-							String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
-							String beginn = rs.getString("Beginn");
-							String ende = rs.getString("Ende");
-							String extern = rs.getString("Extern");
-							String email = rs.getString("E-Mail Adresse");
-							String unterw = rs.getString("Allgemeine Unterweisung");
-							String labeinr = rs.getString("Laboreinrichtungen");
-							String gefahrst = rs.getString("Gefahrstoffe");
-
-							dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
-										email,unterw,labeinr,gefahrst });
-						}
-						dtm.fireTableDataChanged();
-						conn.close();
-						getTable.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}*/
 				DBImporter.importDB();
 			}
 		});
@@ -279,57 +170,6 @@ public class MainFrame extends JFrame {
 		miExport = new JMenuItem("Datenbank als CSV exportieren");
 		miExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				/*JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setFileFilter(new FileNameExtensionFilter("*.csv", "csv"));
-				int status = fc.showSaveDialog(null);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					String selDir = fc.getSelectedFile().getAbsolutePath();
-					conn = DBConnection.connect();
-					try {
-						String query = "SELECT * FROM Personen";
-						PreparedStatement getTable = conn.prepareStatement(query);
-						ResultSet rs = getTable.executeQuery();
-						BufferedWriter fileWriter = new BufferedWriter(new FileWriter(selDir)); //Creating CSV file
-						
-						while (rs.next()) {
-							String id = rs.getString("ID");
-							String name = rs.getString("Name");
-							String vorname = rs.getString("Vorname");
-							String datum = rs.getString("Datum");
-							String ifwt = rs.getString("Ifwt");
-							String manf = rs.getString("MNaF");
-							String intern = rs.getString("Intern");
-							String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
-							String beginn = rs.getString("Beginn");
-							String ende = rs.getString("Ende");
-							String extern = rs.getString("Extern");
-							String email = rs.getString("E-Mail Adresse");
-							String unterw = rs.getString("Allgemeine Unterweisung");
-							String labeinr = rs.getString("Laboreinrichtungen");
-							String gefahrst = rs.getString("Gefahrstoffe");
-							
-							String[] columnNames = new String[rs.getMetaData().getColumnCount()];
-							for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-								columnNames[i] = rs.getMetaData().getColumnName(i+1);
-							}
-							String head = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
-														columnNames[0], columnNames[1], columnNames[2], columnNames[3], columnNames[4], columnNames[5], columnNames[6],
-														columnNames[7], columnNames[8], columnNames[9], columnNames[10], columnNames[11], columnNames[12], columnNames[13]);
-							String line = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
-														id, name, vorname, datum, ifwt, manf, intern, beschverh, 
-														ende, extern, email, unterw, labeinr, gefahrst);
-							fileWriter.write(head);
-							fileWriter.write(line);
-						}
-						getTable.close();
-						fileWriter.close();
-					} catch(SQLException e) {
-						e.printStackTrace();
-					} catch(IOException e) {
-						e.printStackTrace();
-					}
-				}*/
 				DBtoCSVExporter.export();
 			}
 		});
@@ -344,10 +184,10 @@ public class MainFrame extends JFrame {
 		//menuBar.add(menu);
 		
 		// Building the menu (Sortieren)
-		sortMenu = new JMenu("Sortieren");
-		sortMenu.setBackground(backgroundColor);
-		sortMenu.setForeground(foregroundColor);
-		menuBar.add(sortMenu);
+		//sortMenu = new JMenu("Sortieren");
+		//sortMenu.setBackground(backgroundColor);
+		//sortMenu.setForeground(foregroundColor);
+		//menuBar.add(sortMenu);
 		
 		// Building the menu (Daten Bearbeiten)
 		editMenu = new JMenu("Daten Bearbeiten");
@@ -361,16 +201,9 @@ public class MainFrame extends JFrame {
 	        }
 
 	        @Override
-	        public void menuDeselected(MenuEvent e) {
-	            //System.out.println("menuDeselected");
-
-	        }
-
+	        public void menuDeselected(MenuEvent e) {}
 	        @Override
-	        public void menuCanceled(MenuEvent e) {
-	            //System.out.println("menuCanceled");
-
-	        }
+	        public void menuCanceled(MenuEvent e) {}
 		});
 		editMenu.setBackground(backgroundColor);
 		editMenu.setForeground(foregroundColor);
@@ -612,10 +445,10 @@ public class MainFrame extends JFrame {
 		fPrinter = new FormDocPrinter();
 	}
 	
-	public void loadFilter(String[][] filteredTable) {
+	public void loadFilter(Object[][] filteredTable) {
 		dtm.setRowCount(0);
 		for (int i = 0; i < filteredTable.length; i++) {
-			dtm.addRow(new String[] {filteredTable[i][0],
+			dtm.addRow(new Object[] {filteredTable[i][0],
 									 filteredTable[i][1],
 									 filteredTable[i][2],
 									 filteredTable[i][3],
@@ -681,7 +514,7 @@ public class MainFrame extends JFrame {
 	// method to fill JTable with Data from Database
 	public static void getData() {
 
-		dtm = new DefaultTableModel(new String[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
+		dtm = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
 				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse", "Allgemeine Unterweisung", "Laboreinrichtungen", "Gefahrstoffe" }) {
 			private static final long serialVersionUID = 1L;
 
@@ -689,27 +522,31 @@ public class MainFrame extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
 		};
 		table.setModel(dtm);
 		table2.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
-		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // Sorting of the table #NEEDS TO BE REPAIRED#
-		//table.setAutoCreateRowSorter(true);
+		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // enabling sorting of the table
+		table2.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
 		
-			//von Fiti: die Tabelle ist schonmal mit der Datenbank verbunden.
-			//wir müssen halt noch schauen ob sie direkt geladen werden soll, oder auf Befehl des Users
 		try {
 			conn = DBConnection.connect();
 
 			String query = "SELECT * FROM Personen";
 			PreparedStatement pst = conn.prepareStatement(query);
 			ResultSet resultSet = pst.executeQuery();
-			
-			
-			
 
 			while (resultSet.next()) {
-				String id = resultSet.getString("ID");
+				int id = resultSet.getInt("ID");
 				String name = resultSet.getString("Name");
 				String vorname = resultSet.getString("Vorname");
 				String datum = resultSet.getString("Datum");
@@ -725,7 +562,7 @@ public class MainFrame extends JFrame {
 				String labeinr = resultSet.getString("Laboreinrichtungen");
 				String gefahrst = resultSet.getString("Gefahrstoffe");
 
-				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+				dtm.addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
 						email,unterw,labeinr,gefahrst });
 			}
 			dtm.fireTableDataChanged();
@@ -810,7 +647,6 @@ public class MainFrame extends JFrame {
 
 	}
 	
-	
 	//method to put login Window in front and grants focus to it
 	public void loginToFront() {
 		java.awt.EventQueue.invokeLater(new Runnable() {
@@ -823,17 +659,12 @@ public class MainFrame extends JFrame {
 		});
 	}
 	
-	
-	
-	//Getter and Setter
+	//method that returns the tfSearch JTextField
 	public static JTextField getSearchTF() {
 		return tfSearch;
 	}
 	
 }
-
-
-
 
 
 //class to paint cells in jtable depending on instruction expiry date
