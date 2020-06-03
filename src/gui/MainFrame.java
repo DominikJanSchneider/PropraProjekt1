@@ -33,6 +33,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
 import database.DBExporter;
@@ -692,7 +693,7 @@ public class MainFrame extends JFrame {
 		table.setModel(dtm);
 		table2.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
-		//table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // Sorting of the table
+		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // Sorting of the table #NEEDS TO BE REPAIRED#
 		//table.setAutoCreateRowSorter(true);
 		
 			//von Fiti: die Tabelle ist schonmal mit der Datenbank verbunden.
