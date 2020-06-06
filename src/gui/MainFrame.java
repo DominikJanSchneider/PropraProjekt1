@@ -1,12 +1,16 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,37 +26,45 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
+import database.DBExporter;
+import database.DBImporter;
+import database.DBtoCSVExporter;
 import net.miginfocom.swing.MigLayout;
 import printer.FormDocPrinter;
 import printer.PrintData;
 
 public class MainFrame extends JFrame {
 	
+	private static final long serialVersionUID = 1L;
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
+	//private Color redColor = new Color(255, 0, 0);
 	private Color foregroundColor = new Color(255, 255, 255);
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
-	private JMenu menu;
-	private JMenu menu_1;
-	private JMenuItem menuItem;
+	private JMenu fileMenu;
+	private JButton btnPrint;
+	private JButton btnEditData;
+	private JMenuItem miSave;
+	private JMenuItem miImport;
+	private JMenuItem miExport;
 	private JPanel configPanel;
 	private static JPanel tablePanel;
 	private JLabel lblConfigPanel;
 	private JPanel configElementsPanel;
 	private JButton btnStartSearch;
-	private JTextField tfSearch;
+	private static JTextField tfSearch;
 	private JLabel lblInstitut;
 	private JButton btnIfwt;
 	private JButton btnLmn;
@@ -67,7 +79,7 @@ public class MainFrame extends JFrame {
 	private JButton btnExtern;
 	private static JScrollPane spTable;
 	private static JTable table = new JTable();
-	public static JTable table2 = new JTable();
+	private static JTable editorTable = new JTable();
 	private JPanel infoPanel;
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
@@ -79,10 +91,12 @@ public class MainFrame extends JFrame {
 	private JScrollPane spGefahrstoffe;
 	private JTextArea taGefahrstoffe;
 	private static DefaultTableCellRenderer cellRenderer;
+	private static DefaultTableCellRenderer cellRendererColor;
+	private static Login login;
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
-	public static DefaultTableModel dtm;
+	private static DefaultTableModel dtm;
 
 	
 	/**
@@ -100,6 +114,8 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
+	
+	
 
 	/**
 	 * Create the frame.
@@ -123,79 +139,76 @@ public class MainFrame extends JFrame {
 		menuBar.setForeground(foregroundColor);
 		
 		// Building the menu (Datei)
-		menu = new JMenu("Datei");
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
+		fileMenu = new JMenu("Datei");
+		fileMenu.setForeground(foregroundColor);
+		menuBar.add(fileMenu);
 		
-		// Menu item (Datei Speichern)
-		menuItem = new JMenuItem("Datei Speichern");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
-		
-		// Menu item (Datei Importieren)
-		menuItem = new JMenuItem("Datei Importieren");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
-		
-		// Menu item (Datei Exportieren)
-		menuItem = new JMenuItem("Datei Exportieren");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
-		
-		// Building the menu (Datenbank Laden)
-		menu = new JMenu("Datenbank Laden");
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
-		
-		// Building the menu (Sortieren)
-		menu = new JMenu("Sortieren");
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
-		
-		// Building the menu (Daten Bearbeiten)
-		menu_1 = new JMenu("Daten Bearbeiten");
-		menu_1.addMenuListener(new MenuListener() {
-	        @Override
-	        public void menuSelected(MenuEvent e) {
-	        	Login login = Login.getInstance();
-	        }
-
-	        @Override
-	        public void menuDeselected(MenuEvent e) {
-	            //System.out.println("menuDeselected");
-
-	        }
-
-	        @Override
-	        public void menuCanceled(MenuEvent e) {
-	            //System.out.println("menuCanceled");
-
-	        }
-		});
-		menu_1.setBackground(backgroundColor);
-		menu_1.setForeground(foregroundColor);
-		menuBar.add(menu_1);
-		
-		// Building the menu (Drucken)
-		menu = new JMenu("Drucken");
-		menu.addMenuListener(new MenuListener() 
-		{
-			public void menuSelected(MenuEvent e) 
-			{
-				printPressed();
-				menu.setSelected(false);
+		// Menu item (Datenbank Speichern)
+		miSave = new JMenuItem("Datenbank Speichern");
+		miSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBExporter.exportDB();
 			}
-			public void menuDeselected(MenuEvent e) {}
-			public void menuCanceled(MenuEvent e){}
 		});
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
+		miSave.setBackground(backgroundColor);
+		miSave.setForeground(foregroundColor);
+		fileMenu.add(miSave);
+		
+		// Menu item (Datenbank Importieren)
+		miImport = new JMenuItem("Datenbank Importieren");
+		miImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBImporter.importDB();
+			}
+		});
+		miImport.setBackground(backgroundColor);
+		miImport.setForeground(foregroundColor);
+		fileMenu.add(miImport);
+		
+		// Menu item (Datenbank Exportieren)
+		miExport = new JMenuItem("Datenbank als CSV exportieren");
+		miExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBtoCSVExporter.export();
+			}
+		});
+		miExport.setBackground(backgroundColor);
+		miExport.setForeground(foregroundColor);
+		fileMenu.add(miExport);
+		
+		JLabel space = new JLabel(" ");
+		menuBar.add(space);
+		
+		// Building the Button (Daten Bearbeiten)
+		btnEditData = new JButton("Daten Bearbeiten");
+		btnEditData.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	        	login = Login.getInstance();
+	        	loginToFront();
+	        	login.setVisible(true);
+	        }
+		});
+		btnEditData.setBorder(null);
+		btnEditData.setBackground(frameColor);
+		btnEditData.setForeground(foregroundColor);
+		menuBar.add(btnEditData);
+		
+		space = new JLabel("  ");
+		menuBar.add(space);
+		
+		// Building the Button (Drucken)
+		btnPrint = new JButton("Drucken");
+		btnPrint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				printPressed();
+			}
+		});
+		btnPrint.setBorder(null);
+		btnPrint.setBackground(frameColor);
+		btnPrint.setForeground(foregroundColor);
+		menuBar.add(btnPrint);
 		
 		// Adding the bar to the frame
 		setJMenuBar(menuBar);
@@ -210,7 +223,11 @@ public class MainFrame extends JFrame {
 		// Label for the config panel title
 		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut für Werkstofftechnik und Gerätezentrum MNaF");
 		lblConfigPanel.setFont(new Font("Dialog", Font.BOLD, 18));
-		lblConfigPanel.setForeground(foregroundColor);
+		lblConfigPanel.setForeground(foregroundColor);// Building the menu (Datenbank Laden)
+		//menu = new JMenu("Datenbank Laden");
+		//menu.setBackground(backgroundColor);
+		//menu.setForeground(foregroundColor);
+		//menuBar.add(menu);
 		configPanel.add(lblConfigPanel, "cell 0 0");
 		
 		// Panel that holds the elements form configPanel
@@ -221,6 +238,12 @@ public class MainFrame extends JFrame {
 		configElementsPanel.setLayout(new MigLayout("", "[grow]25[grow]25[grow]25[grow]25[grow]", "[grow]8[grow]"));
 		
 		tfSearch = new JTextField();
+		tfSearch.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent evt) {
+				tfSearch.selectAll();
+			}
+		});
 		tfSearch.setText("Bitte Namen eingeben");
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);
@@ -246,6 +269,11 @@ public class MainFrame extends JFrame {
 		configElementsPanel.add(lblExtern, "cell 4 0");
 		
 		btnStartSearch = new JButton("Suche Starten");
+		btnStartSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getName());
+			}
+		});
 		configElementsPanel.add(btnStartSearch, "cell 0 1,aligny top");
 		
 		btnIfwt = new JButton("Ifwt");
@@ -289,12 +317,27 @@ public class MainFrame extends JFrame {
 		configElementsPanel.add(btnLwf, "cell 1 1,aligny top");
 		
 		btnMnaf = new JButton("MNaF");
+		btnMnaf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getMNaF());
+			}
+		});
 		configElementsPanel.add(btnMnaf, "cell 2 1,aligny top");
 		
 		btnIntern = new JButton("Intern");
+		btnIntern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getIntern());
+			}
+		});
 		configElementsPanel.add(btnIntern, "cell 3 1,aligny top");
 		
 		btnExtern = new JButton("Extern");
+		btnExtern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getExtern());
+			}
+		});
 		configElementsPanel.add(btnExtern, "cell 4 1,aligny top");
 		
 		// Building the panel for the table
@@ -303,9 +346,6 @@ public class MainFrame extends JFrame {
 		tablePanel.setForeground(foregroundColor);
 		contentPane.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
-		
-		// Creating a default table model with disabled cell editing
-
 
 		spTable = new JScrollPane();
 		tablePanel.add(spTable, "cell 0 0,grow");
@@ -313,7 +353,18 @@ public class MainFrame extends JFrame {
 		
 		getData();
 		
-		
+		// Fill JTextAreas (Allgemeine Unterweisung, Laboreinrichtungen, Gefahrstoffe)  with data from selected row
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int i = table.getSelectedRow();
+				String fillInstr = (String) table.getModel().getValueAt(i, 12);
+				String fillLab =  (String) table.getModel().getValueAt(i, 13);
+				String fillHazard =  (String) table.getModel().getValueAt(i, 14);
+				taAllgemeineUnterweisung.setText(fillInstr);
+				taLaboreinrichtungen.setText(fillLab);
+				taGefahrstoffe.setText(fillHazard);
+			}
+		});
 		
 		// Building the panel for the informations that will be displayed
 		infoPanel = new JPanel();
@@ -328,10 +379,16 @@ public class MainFrame extends JFrame {
 		lblAllgemeineUnterweisung.setForeground(foregroundColor);
 		infoPanel.add(lblAllgemeineUnterweisung, "cell 0 0");
 		
-		spAllgemeineUnterweisungen = new JScrollPane();
-		infoPanel.add(spAllgemeineUnterweisungen, "cell 0 1,grow");
+		spAllgemeineUnterweisungen = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spAllgemeineUnterweisungen, "width 25%, cell 0 1,grow");
 		
 		taAllgemeineUnterweisung = new JTextArea();
+		taAllgemeineUnterweisung.setLineWrap(true);
+		taAllgemeineUnterweisung.setWrapStyleWord(true);
+		taAllgemeineUnterweisung.setEditable(false);
+		//taAllgemeineUnterweisung.setBackground(redColor);
 		spAllgemeineUnterweisungen.setViewportView(taAllgemeineUnterweisung);
 		
 		// Building the (Laboreinrichtungen) informationen text area with title
@@ -340,10 +397,15 @@ public class MainFrame extends JFrame {
 		lblLaboreinrichtungen.setForeground(foregroundColor);
 		infoPanel.add(lblLaboreinrichtungen, "cell 1 0");
 		
-		spLaboreinrichtungen = new JScrollPane();
-		infoPanel.add(spLaboreinrichtungen, "cell 1 1,grow");
+		spLaboreinrichtungen = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spLaboreinrichtungen, "width 25%, cell 1 1,grow");
 		
 		taLaboreinrichtungen = new JTextArea();
+		taLaboreinrichtungen.setLineWrap(true);
+		taLaboreinrichtungen.setWrapStyleWord(true);
+		taLaboreinrichtungen.setEditable(false);
 		spLaboreinrichtungen.setViewportView(taLaboreinrichtungen);
 		
 		// Building the (Gefahrstoffe) information text area with title
@@ -352,20 +414,25 @@ public class MainFrame extends JFrame {
 		lblGefahrstoffe.setForeground(foregroundColor);
 		infoPanel.add(lblGefahrstoffe, "cell 2 0");
 		
-		spGefahrstoffe = new JScrollPane();
-		infoPanel.add(spGefahrstoffe, "cell 2 1,grow");
+		spGefahrstoffe = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spGefahrstoffe, "width 25%, cell 2 1,grow");
 		
 		taGefahrstoffe = new JTextArea();
+		taGefahrstoffe.setLineWrap(true);
+		taGefahrstoffe.setWrapStyleWord(true);
+		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
 		
 		//Creating a formulaPrinter
 		fPrinter = new FormDocPrinter();
 	}
 	
-	public void loadFilter(String[][] filteredTable) {
+	public void loadFilter(Object[][] filteredTable) {
 		dtm.setRowCount(0);
 		for (int i = 0; i < filteredTable.length; i++) {
-			dtm.addRow(new String[] {filteredTable[i][0],
+			dtm.addRow(new Object[] {filteredTable[i][0],
 									 filteredTable[i][1],
 									 filteredTable[i][2],
 									 filteredTable[i][3],
@@ -376,20 +443,25 @@ public class MainFrame extends JFrame {
 									 filteredTable[i][8],
 									 filteredTable[i][9],
 									 filteredTable[i][10],
-									 filteredTable[i][11]});
+									 filteredTable[i][11],
+									 filteredTable[i][12],
+									 filteredTable[i][13],
+									 filteredTable[i][14]});
 		}
+	}
+	
+	public static JTable getEditorTable() {
+		return editorTable;
 	}
 	
 	public static DefaultTableModel getDefaultTableModel() {
 		return dtm;
 	}
 	
-	private void printPressed()
-	{
-		//getting of table and textArea data
+	private void printPressed() {
+		//getting table and textArea data
 		int row = table.getSelectedRow();
-		if(row == -1)
-		{
+		if (row == -1) {
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
 			return;
 		}
@@ -418,16 +490,11 @@ public class MainFrame extends JFrame {
 		printData.setDangerousSubstances(dangerSubst);
 		
 		//start printing process
-		try
-		{
+		try {
 			fPrinter.print(printData);
-		}
-		catch(IOException e)
-		{
+		} catch(IOException e) {
 			e.printStackTrace();
-		}
-		catch(PrinterException e)
-		{
+		} catch(PrinterException e) {
 			e.printStackTrace();
 		}
 	}
@@ -435,31 +502,39 @@ public class MainFrame extends JFrame {
 	// method to fill JTable with Data from Database
 	public static void getData() {
 
-		dtm = new DefaultTableModel(new String[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
-				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse" }) {
+		dtm = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
+				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse", "Allgemeine Unterweisung", "Laboreinrichtungen", "Gefahrstoffe" }) {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
 		};
 		table.setModel(dtm);
-		table2.setModel(table.getModel());
+		editorTable.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
+		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // enabling sorting of the table
+		editorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
 		
-			//von Fiti: die Tabelle ist schonmal mit der Datenbank verbunden.
-			//wir müssen halt noch schauen ob sie direkt geladen werden soll, oder auf Befehl des Users
 		try {
 			conn = DBConnection.connect();
 
 			String query = "SELECT * FROM Personen";
 			PreparedStatement pst = conn.prepareStatement(query);
 			ResultSet resultSet = pst.executeQuery();
-			
-			
-			
 
 			while (resultSet.next()) {
-				String id = resultSet.getString("ID");
+				int id = resultSet.getInt("ID");
 				String name = resultSet.getString("Name");
 				String vorname = resultSet.getString("Vorname");
 				String datum = resultSet.getString("Datum");
@@ -471,9 +546,12 @@ public class MainFrame extends JFrame {
 				String ende = resultSet.getString("Ende");
 				String extern = resultSet.getString("Extern");
 				String email = resultSet.getString("E-Mail Adresse");
+				String unterw = resultSet.getString("Allgemeine Unterweisung");
+				String labeinr = resultSet.getString("Laboreinrichtungen");
+				String gefahrst = resultSet.getString("Gefahrstoffe");
 
-				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
-						email });
+				dtm.addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+						email,unterw,labeinr,gefahrst });
 			}
 			dtm.fireTableDataChanged();
 			
@@ -490,12 +568,28 @@ public class MainFrame extends JFrame {
 			table.getColumnModel().getColumn(9).setPreferredWidth(30);
 			table.getColumnModel().getColumn(10).setPreferredWidth(28);
 			table.getColumnModel().getColumn(11).setPreferredWidth(200);
+			//table.getColumnModel().getColumn(12).setMinWidth(0);
+			//table.getColumnModel().getColumn(12).setMaxWidth(0);
+			//table.getColumnModel().getColumn(13).setMinWidth(0);
+			//table.getColumnModel().getColumn(13).setMaxWidth(0);
+			//table.getColumnModel().getColumn(14).setMinWidth(0);
+			//table.getColumnModel().getColumn(14).setMaxWidth(0);
+			//TableColumnModel tcm = table.getColumnModel();
+			//tcm.removeColumn(tcm.getColumn(12));
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
 
 			table.setRowHeight(20);
+			
+			cellRendererColor = new ColorTable();
+			
+			//table.setDefaultRenderer(Object.class,  cellRendererColor);
 
 			cellRenderer = new DefaultTableCellRenderer();
 			cellRenderer.setHorizontalAlignment(JLabel.CENTER);
-			table.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
+			cellRendererColor.setHorizontalAlignment(JLabel.CENTER);
+			table.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
 			table.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
@@ -503,30 +597,33 @@ public class MainFrame extends JFrame {
 			table.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
 			
-			table2.getColumnModel().getColumn(0).setPreferredWidth(5);
-			table2.getColumnModel().getColumn(1).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(2).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(3).setPreferredWidth(35);
-			table2.getColumnModel().getColumn(4).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(5).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(6).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(7).setPreferredWidth(145);
-			table2.getColumnModel().getColumn(8).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(9).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(10).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(11).setPreferredWidth(200);
+			editorTable.getColumnModel().getColumn(0).setPreferredWidth(5);
+			editorTable.getColumnModel().getColumn(1).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(2).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(3).setPreferredWidth(35);
+			editorTable.getColumnModel().getColumn(4).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(5).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(6).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(7).setPreferredWidth(145);
+			editorTable.getColumnModel().getColumn(8).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(9).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(10).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(11).setPreferredWidth(200);
 
-			table2.setRowHeight(20);
+			editorTable.setRowHeight(20);
 
-			cellRenderer = new DefaultTableCellRenderer();
-			cellRenderer.setHorizontalAlignment(JLabel.CENTER);
-			table2.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
+			editorTable.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
+			
+
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
 
 			
 			pst.close();
@@ -538,4 +635,57 @@ public class MainFrame extends JFrame {
 
 	}
 	
+	//method to put login Window in front and grants focus to it
+	public void loginToFront() {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				login.toFront();
+				login.repaint();
+				login.setLocation((getWidth()/2)-(login.getWidth()/2), (getHeight()/2)-login.getHeight()/2);
+			}
+		});
+	}
+	
+	//method that returns the tfSearch JTextField
+	public static JTextField getSearchTF() {
+		return tfSearch;
+	}
+	
+}
+
+
+//class to paint cells in jtable depending on instruction expiry date
+class ColorTable extends DefaultTableCellRenderer {
+
+	private static final long serialVersionUID = 1L;
+	String date = null;
+	int daysDiff = 0;
+
+ public Component getTableCellRendererComponent(JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+     super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+     	
+ 		date = (String) table.getModel().getValueAt(row, 3);
+ 		if (!date.isEmpty()) {
+ 			//System.out.println(row);
+ 			//System.out.println(date);
+ 			daysDiff = CalcDateDiff.date(date);		// check difference between given date and actual date in CalcDateDiff-Class
+ 			//System.out.println(daysDiff);
+ 			if (daysDiff > 168 && daysDiff < 182) {		// paint yellow if instruction is outdated in less than 2 weeks
+ 				setBackground(Color.yellow);
+ 			}
+ 			else if (daysDiff > 182) {			// paint red if instruction is outdated
+ 				setBackground(Color.red);
+ 			}
+ 			else {
+ 				setBackground(Color.green);		// paint green if instruction is up-to-date
+ 			}
+ 		}
+ 		else {
+ 			setBackground(Color.white);			// paint white if no expiry date is given
+ 		}
+         
+     return this;
+ }
 }

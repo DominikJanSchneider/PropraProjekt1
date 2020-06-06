@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import admin.AccessData;
 import net.miginfocom.swing.MigLayout;
@@ -21,14 +20,16 @@ import java.awt.event.ActionEvent;
 
 public class Login extends JDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	private static Login login = new Login();
 	
 	private JPanel contentPanel = new JPanel();
 	private JPanel buttonPanel;
 	private JLabel lblPasswort;
 	private JLabel lblBenutzername;
-	private JTextField tfBenutzername;
-	private JPasswordField pfPasswort;
+	private static JTextField tfBenutzername;
+	private static JPasswordField pfPasswort;
 	private JButton btnLogin;
 	
 	private Color frameColor = new Color(32, 32, 32);
@@ -36,6 +37,8 @@ public class Login extends JDialog {
 	private Color foregroundColor = new Color(255, 255, 255);
 	
 	public static Login getInstance() {
+		tfBenutzername.setText("");
+		pfPasswort.setText("");
 		return login;
 	}
 
@@ -78,9 +81,11 @@ public class Login extends JDialog {
 		
 		btnLogin = new JButton("Anmelden");
 		btnLogin.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent evt) {
 				if (AccessData.chekUsrname(tfBenutzername.getText()) && AccessData.checkPassword(pfPasswort.getText())) {
 					DataEditor dataEditor =DataEditor.getInstance();
+					dataEditor.setVisible(true);
 					login.dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Benutzername oder Passwort falsch!");
