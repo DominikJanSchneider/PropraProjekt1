@@ -12,11 +12,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
-	<classpathentry kind="lib" path="D:/Profildaten/Leon/Dokumente/Eigene Dokumente/Studium/Unterlagen zu Vorlesungen/Programmierpraktikum/Projekt 1/xmpbox-2.0.19.jar"/>
-	<classpathentry kind="lib" path="D:/Profildaten/Leon/Dokumente/Eigene Dokumente/Studium/Unterlagen zu Vorlesungen/Programmierpraktikum/Projekt 1/pdfbox-tools-2.0.19.jar"/>
-	<classpathentry kind="lib" path="D:/Profildaten/Leon/Dokumente/Eigene Dokumente/Studium/Unterlagen zu Vorlesungen/Programmierpraktikum/Projekt 1/pdfbox-2.0.19.jar"/>
-	<classpathentry kind="lib" path="D:/Profildaten/Leon/Dokumente/Eigene Dokumente/Studium/Unterlagen zu Vorlesungen/Programmierpraktikum/Projekt 1/fontbox-2.0.19.jar"/>
-	<classpathentry kind="lib" path="D:/Profildaten/Leon/Dokumente/Eigene Dokumente/Studium/Unterlagen zu Vorlesungen/Programmierpraktikum/Projekt 1/commons-logging-1.2-bin/commons-logging-1.2/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="preflight-2.0.19.jar"/>
+	<classpathentry kind="lib" path="pdfbox-2.0.19.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="fontbox-2.0.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
