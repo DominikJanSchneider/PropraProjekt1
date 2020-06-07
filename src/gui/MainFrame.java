@@ -472,13 +472,13 @@ public class MainFrame extends JFrame {
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
 			return;
 		}
-		String familyName = (String)table.getValueAt(row, 1);
-		String firstName = (String)table.getValueAt(row, 2);
-		String date = (String)table.getValueAt(row, 3);
-		String ifwt = (String)table.getValueAt(row, 4);
-		String mnaf = (String)table.getValueAt(row, 5);
-		String intern = (String)table.getValueAt(row, 6);
-		String extern = (String)table.getValueAt(row, 10);
+		String familyName = (String)getValueByColName(table, row, "Name");
+		String firstName = (String)getValueByColName(table, row, "Vorname");
+		String date = (String)getValueByColName(table, row, "Datum");
+		String ifwt = (String)getValueByColName(table, row, "Ifwt");
+		String mnaf = (String)getValueByColName(table, row, "MNaF");
+		String intern = (String)getValueByColName(table, row, "Intern");
+		String extern = (String)getValueByColName(table, row, "Extern");
 		String genInstr = taAllgemeineUnterweisung.getText();
 		String labSetup = taLaboreinrichtungen.getText();
 		String dangerSubst = taGefahrstoffe.getText();
@@ -504,6 +504,17 @@ public class MainFrame extends JFrame {
 		} catch(PrinterException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private Object getValueByColName(JTable table, int row, String colName) {
+		int colCount = table.getColumnCount();
+		Object res = null;
+		for(int i = 0; i < colCount; i++) {
+			if(table.getColumnName(i) == colName) {
+				res = table.getValueAt(row, i);
+			}
+		}
+		return res;
 	}
 	
 	// method to fill JTable with Data from Database
