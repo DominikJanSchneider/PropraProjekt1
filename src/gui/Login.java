@@ -33,7 +33,7 @@ public class Login extends JDialog {
 	private static JTextField tfBenutzername;
 	private static JPasswordField pfPasswort;
 	private JButton btnLogin;
-	private static boolean valid;
+	//private static boolean valid;
 	
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
@@ -93,11 +93,7 @@ public class Login extends JDialog {
 		btnLogin.addActionListener(new ActionListener() {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent evt) {
-				checkValid();
-				if (valid) {
-					//DataEditor dataEditor =DataEditor.getInstance();
-					//dataEditor.setVisible(true);
-					//login.dispose();
+				if (isLoginValid()) {
 					login.setVisible(false);
 					MainFrame.start();
 				} else {
@@ -111,16 +107,23 @@ public class Login extends JDialog {
 		setVisible(true);
 	}
 	
-	public static void checkValid() {
+	public boolean isLoginValid() {
 		Connection con = DBConnection.connectLogin();
 		if (DBConnection.checkLogin(tfBenutzername.getText(), pfPasswort.getText())) {
-			valid = true;
+			return true;
 		} else {
-			valid = false;
+			return false;
 		}
 	}
 	
-	public static boolean getValid() {
-		return valid;
+	public boolean checkAdmin() {
+		Connection con = DBConnection.connectLogin();
+		if (DBConnection.checkAdmin(tfBenutzername.getText())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
+	
+	
 }

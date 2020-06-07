@@ -97,13 +97,14 @@ public class MainFrame extends JFrame {
 	
 	private static Connection conn = null;
 	private static DefaultTableModel dtm;
+	private static Login login;
 
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		Login login = Login.getInstance();
+		login = Login.getInstance();
 	}
 	
 	public static void start() {
@@ -112,6 +113,10 @@ public class MainFrame extends JFrame {
 				try {
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
+					if (!login.checkAdmin()) {
+						//System.out.println("Isnt Admin");
+						frame.fileMenu.setVisible(false);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
