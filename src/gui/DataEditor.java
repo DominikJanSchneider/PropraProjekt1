@@ -316,7 +316,7 @@ public class DataEditor extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int i = MainFrame.getEditorTable().getSelectedRow();
-				//ID = Integer.parseInt((String) MainFrame.getEditorTable().getValueAt(i, 0)); // Isn't needed anymore because of the modified dtm
+				ID = Integer.parseInt(MainFrame.getEditorTable().getValueAt(i, 0).toString());
 
 				fillFields();
 			}

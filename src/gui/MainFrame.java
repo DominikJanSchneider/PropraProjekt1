@@ -92,7 +92,7 @@ public class MainFrame extends JFrame {
 	private JTextArea taGefahrstoffe;
 	private static DefaultTableCellRenderer cellRenderer;
 	private static DefaultTableCellRenderer cellRendererColor;
-	private static Login login;
+	private static DataEditor dataEditor;
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
@@ -103,6 +103,10 @@ public class MainFrame extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Login login = Login.getInstance();
+	}
+	
+	public static void start() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -114,8 +118,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
-	
-	
 
 	/**
 	 * Create the frame.
@@ -184,9 +186,9 @@ public class MainFrame extends JFrame {
 		btnEditData.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        	login = Login.getInstance();
-	        	loginToFront();
-	        	login.setVisible(true);
+	        	dataEditor = DataEditor.getInstance();
+	        	dataEditor.setVisible(true);
+	        	
 	        }
 		});
 		btnEditData.setBorder(null);
@@ -636,7 +638,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	//method to put login Window in front and grants focus to it
-	public void loginToFront() {
+	/*public void loginToFront() {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -645,7 +647,7 @@ public class MainFrame extends JFrame {
 				login.setLocation((getWidth()/2)-(login.getWidth()/2), (getHeight()/2)-login.getHeight()/2);
 			}
 		});
-	}
+	}*/
 	
 	//method that returns the tfSearch JTextField
 	public static JTextField getSearchTF() {

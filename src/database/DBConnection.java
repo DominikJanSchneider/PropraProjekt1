@@ -2,12 +2,10 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 import gui.MainFrame;
 
@@ -30,6 +28,19 @@ public class DBConnection {
     	   return null;
        }
 	}
+	
+	public static Connection connectLogin() {
+	       try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   con = DriverManager.getConnection("jdbc:sqlite:database/Benutzer.db");
+	    	   //System.out.println("Connection SuccesFul");
+	    	   //JOptionPane.showMessageDialog(null, "Verbindung zur Datenbank hergestellt.");
+	    	   return con;
+	       }catch(Exception e) {
+	    	   System.out.println(e.getMessage());
+	    	   return null;
+	       }
+		}
 	
 	public static Object[][] getName() {
 		try {
@@ -377,6 +388,25 @@ public class DBConnection {
 			} catch(SQLException e) {
 				e.printStackTrace();
 				return null;
+			}
+		}
+		
+		public static boolean checkLogin(String name, String pswrt) {
+			try {
+				con = connectLogin();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT Benutzername, Passwort FROM Benutzer WHERE Benutzername='"+name+"';");
+				String benutzername = rs.getString("Benutzername");
+				String passwort = rs.getString("Passwort");
+				System.out.println("usrname: " + benutzername);
+				System.out.println("passwort: " + passwort);
+				if (name.equals(benutzername) && pswrt.equals(passwort)) {
+					return true;
+				}
+				return false;
+			} catch(SQLException e) {
+				//e.printStackTrace();
+				return false;
 			}
 		}
 		
