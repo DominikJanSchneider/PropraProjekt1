@@ -92,30 +92,37 @@ public class MainFrame extends JFrame {
 	private JTextArea taGefahrstoffe;
 	private static DefaultTableCellRenderer cellRenderer;
 	private static DefaultTableCellRenderer cellRendererColor;
-	private static Login login;
+	private static DataEditor dataEditor;
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
 	private static DefaultTableModel dtm;
+	private static Login login;
 
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		login = Login.getInstance();
+	}
+	
+	public static void start() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
+					if (!login.checkAdmin()) {
+						//System.out.println("Isnt Admin");
+						frame.fileMenu.setVisible(false);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-	
-	
 
 	/**
 	 * Create the frame.
@@ -184,9 +191,9 @@ public class MainFrame extends JFrame {
 		btnEditData.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        	login = Login.getInstance();
-	        	loginToFront();
-	        	login.setVisible(true);
+	        	dataEditor = DataEditor.getInstance();
+	        	dataEditor.setVisible(true);
+	        	
 	        }
 		});
 		btnEditData.setBorder(null);
@@ -465,7 +472,6 @@ public class MainFrame extends JFrame {
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
 			return;
 		}
-		
 		String familyName = (String)getValueByColName(table, row, "Name");
 		String firstName = (String)getValueByColName(table, row, "Vorname");
 		String date = (String)getValueByColName(table, row, "Datum");
@@ -500,14 +506,12 @@ public class MainFrame extends JFrame {
 		}
 	}
 	
-	private Object getValueByColName(JTable table, int row, String colName)
-	{
+
+	private Object getValueByColName(JTable table, int row, String colName) {
 		int colCount = table.getColumnCount();
 		Object res = null;
-		for(int i = 0; i < colCount; i++)
-		{
-			if(table.getColumnName(i) == colName)
-			{
+		for(int i = 0; i < colCount; i++) {
+			if(table.getColumnName(i) == colName) {
 				res = table.getValueAt(row, i);
 			}
 		}
@@ -651,7 +655,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	//method to put login Window in front and grants focus to it
-	public void loginToFront() {
+	/*public void loginToFront() {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -660,7 +664,7 @@ public class MainFrame extends JFrame {
 				login.setLocation((getWidth()/2)-(login.getWidth()/2), (getHeight()/2)-login.getHeight()/2);
 			}
 		});
-	}
+	}*/
 	
 	//method that returns the tfSearch JTextField
 	public static JTextField getSearchTF() {
