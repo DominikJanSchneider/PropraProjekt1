@@ -59,6 +59,7 @@ public class Login extends JDialog {
 		setBounds(100, 100, 450, 140);
 		setBackground(frameColor);
 		setForeground(foregroundColor);
+		setLocationRelativeTo(null); //Centers the login dialog
 		
 		// Configuration of the content panel
 		contentPanel = new JPanel();
