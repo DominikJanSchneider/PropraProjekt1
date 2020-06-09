@@ -441,7 +441,7 @@ public class DBConnection {
 			}
 		}
 		
-		//Login data base methods
+		//User data base methods
 		public static Connection connectLogin() {
 		       try {
 		    	   Class.forName("org.sqlite.JDBC");
@@ -454,6 +454,34 @@ public class DBConnection {
 		    	   return null;
 		       }
 			}
+		
+		public static Object[][] getUserData() {
+			try {
+				con = connectLogin();
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Benutzer;");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM Benutzer;");
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] tableData = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					tableData[i][0] = rs.getInt("ID");
+					tableData[i][1] = rs.getString("Benutzername");
+					tableData[i][2] = rs.getString("Passwort");
+					
+					i++;
+				}
+				pstmt.close();
+				con.close();
+				return tableData;
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 		
 		public static boolean checkLogin(String name, String pswrt) {
 			try {
@@ -487,6 +515,7 @@ public class DBConnection {
 				return false;
 			}
 		}
+		
 		
 		//Getter and Setter
 		public static String getURL() {

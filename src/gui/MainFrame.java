@@ -139,6 +139,7 @@ public class MainFrame extends JFrame {
 					if (!login.checkAdmin()) {
 						//System.out.println("Isnt Admin");
 						frame.fileMenu.setVisible(false);
+						frame.btnEditUser.setVisible(false);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
