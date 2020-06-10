@@ -1,14 +1,24 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,39 +30,52 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
+import database.DBExporter;
+import database.DBImporter;
+import database.DBtoCSVExporter;
 import net.miginfocom.swing.MigLayout;
-import userLogin.UserLogin;
 
 
-public class MainFrame extends JFrame implements KeyListener, MouseListener{
+import printer.FormDocPrinter;
+import printer.PrintData;
+
+
+
+public class MainFrame extends JFrame{
 	
+	private static final long serialVersionUID = 1L;
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
+	//private Color redColor = new Color(255, 0, 0);
 	private Color foregroundColor = new Color(255, 255, 255);
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
-	private JMenu menu;
-	private JMenu menu_1;
-	private JMenuItem menuItem;
+	private JMenu fileMenu;
+	private JButton btnPrint;
+	private JButton btnEditData;
+	private JMenuItem miSave;
+	private JMenuItem miImport;
+	private JMenuItem miExport;
 	private JPanel configPanel;
 	private static JPanel tablePanel;
 	private JLabel lblConfigPanel;
 	private JPanel configElementsPanel;
 	private JButton btnStartSearch;
-	private JTextField tfSearch;
+	private static JTextField tfSearch;
 	private JLabel lblInstitut;
 	private JButton btnIfwt;
 	private JButton btnLmn;
@@ -67,7 +90,7 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 	private JButton btnExtern;
 	private static JScrollPane spTable;
 	private static JTable table = new JTable();
-	public static JTable table2 = new JTable();
+	private static JTable editorTable = new JTable();
 	private JPanel infoPanel;
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
@@ -79,23 +102,39 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 	private JScrollPane spGefahrstoffe;
 	private JTextArea taGefahrstoffe;
 	private static DefaultTableCellRenderer cellRenderer;
+	private static DefaultTableCellRenderer cellRendererColor;
+	private static DataEditor dataEditor;
+	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
+/*<<<<<<< HEAD
 	public static DefaultTableModel dtm;
 	
+=======*/
+	private static DefaultTableModel dtm;
+	private static Login login;
+//>>>>>>> branch 'master' of https://github.com/DominikJanSchneider/PropraProjekt1
 
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		login = Login.getInstance();
+	}
+	
+	public static void start() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//MainFrame Objekt wird in der UserLogin Klasse erzeugt(beim richtigen Eingeben des Passworts)
-					UserLogin ulogin = UserLogin.getInstance();
-					//MainFrame frame = new MainFrame();
-					//frame.setVisible(true);
+
+					MainFrame frame = new MainFrame();
+					frame.setVisible(true);
+					if (!login.checkAdmin()) {
+						//System.out.println("Isnt Admin");
+						frame.fileMenu.setVisible(false);
+					}
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -125,69 +164,76 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		menuBar.setForeground(foregroundColor);
 		
 		// Building the menu (Datei)
-		menu = new JMenu("Datei");
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
+		fileMenu = new JMenu("Datei");
+		fileMenu.setForeground(foregroundColor);
+		menuBar.add(fileMenu);
 		
-		// Menu item (Datei Speichern)
-		menuItem = new JMenuItem("Datei Speichern");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
+		// Menu item (Datenbank Speichern)
+		miSave = new JMenuItem("Datenbank Speichern");
+		miSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBExporter.exportDB();
+			}
+		});
+		miSave.setBackground(backgroundColor);
+		miSave.setForeground(foregroundColor);
+		fileMenu.add(miSave);
 		
-		// Menu item (Datei Importieren)
-		menuItem = new JMenuItem("Datei Importieren");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
+		// Menu item (Datenbank Importieren)
+		miImport = new JMenuItem("Datenbank Importieren");
+		miImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBImporter.importDB();
+			}
+		});
+		miImport.setBackground(backgroundColor);
+		miImport.setForeground(foregroundColor);
+		fileMenu.add(miImport);
 		
-		// Menu item (Datei Exportieren)
-		menuItem = new JMenuItem("Datei Exportieren");
-		menuItem.setBackground(backgroundColor);
-		menuItem.setForeground(foregroundColor);
-		menu.add(menuItem);
+		// Menu item (Datenbank Exportieren)
+		miExport = new JMenuItem("Datenbank als CSV exportieren");
+		miExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				DBtoCSVExporter.export();
+			}
+		});
+		miExport.setBackground(backgroundColor);
+		miExport.setForeground(foregroundColor);
+		fileMenu.add(miExport);
 		
-		// Building the menu (Datenbank Laden)
-		menu = new JMenu("Datenbank Laden");
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
+		JLabel space = new JLabel(" ");
+		menuBar.add(space);
 		
-		// Building the menu (Sortieren)
-		menu = new JMenu("Sortieren");
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
-		
-		// Building the menu (Daten Bearbeiten)
-		menu_1 = new JMenu("Daten Bearbeiten");
-		menu_1.addMenuListener(new MenuListener() {
+		// Building the Button (Daten Bearbeiten)
+		btnEditData = new JButton("Daten Bearbeiten");
+		btnEditData.addActionListener(new ActionListener() {
 	        @Override
-	        public void menuSelected(MenuEvent e) {
-	        	Login login = Login.getInstance();
-	        }
-
-	        @Override
-	        public void menuDeselected(MenuEvent e) {
-	            //System.out.println("menuDeselected");
-
-	        }
-
-	        @Override
-	        public void menuCanceled(MenuEvent e) {
-	            //System.out.println("menuCanceled");
-
+	        public void actionPerformed(ActionEvent e) {
+	        	dataEditor = DataEditor.getInstance();
+	        	dataEditor.setVisible(true);
+	        	
 	        }
 		});
-		menu_1.setBackground(backgroundColor);
-		menu_1.setForeground(foregroundColor);
-		menuBar.add(menu_1);
+		btnEditData.setBorder(null);
+		btnEditData.setBackground(frameColor);
+		btnEditData.setForeground(foregroundColor);
+		menuBar.add(btnEditData);
 		
-		// Building the menu (Drucken)
-		menu = new JMenu("Drucken");
-		menu.setBackground(backgroundColor);
-		menu.setForeground(foregroundColor);
-		menuBar.add(menu);
+		space = new JLabel("  ");
+		menuBar.add(space);
+		
+		// Building the Button (Drucken)
+		btnPrint = new JButton("Drucken");
+		btnPrint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				printPressed();
+			}
+		});
+		btnPrint.setBorder(null);
+		btnPrint.setBackground(frameColor);
+		btnPrint.setForeground(foregroundColor);
+		menuBar.add(btnPrint);
 		
 		// Adding the bar to the frame
 		setJMenuBar(menuBar);
@@ -202,7 +248,11 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		// Label for the config panel title
 		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut für Werkstofftechnik und Gerätezentrum MNaF");
 		lblConfigPanel.setFont(new Font("Dialog", Font.BOLD, 18));
-		lblConfigPanel.setForeground(foregroundColor);
+		lblConfigPanel.setForeground(foregroundColor);// Building the menu (Datenbank Laden)
+		//menu = new JMenu("Datenbank Laden");
+		//menu.setBackground(backgroundColor);
+		//menu.setForeground(foregroundColor);
+		//menuBar.add(menu);
 		configPanel.add(lblConfigPanel, "cell 0 0");
 		
 		// Panel that holds the elements form configPanel
@@ -213,10 +263,16 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		configElementsPanel.setLayout(new MigLayout("", "[grow]25[grow]25[grow]25[grow]25[grow]", "[grow]8[grow]"));
 		
 		tfSearch = new JTextField();
+		tfSearch.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent evt) {
+				tfSearch.selectAll();
+			}
+		});
 		tfSearch.setText("Bitte Namen eingeben");
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);
-		tfSearch.addKeyListener(this);
+		
 		
 		
 		
@@ -241,6 +297,11 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		configElementsPanel.add(lblExtern, "cell 4 0");
 		
 		btnStartSearch = new JButton("Suche Starten");
+		btnStartSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getName());
+			}
+		});
 		configElementsPanel.add(btnStartSearch, "cell 0 1,aligny top");
 		
 		btnIfwt = new JButton("Ifwt");
@@ -284,12 +345,27 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		configElementsPanel.add(btnLwf, "cell 1 1,aligny top");
 		
 		btnMnaf = new JButton("MNaF");
+		btnMnaf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getMNaF());
+			}
+		});
 		configElementsPanel.add(btnMnaf, "cell 2 1,aligny top");
 		
 		btnIntern = new JButton("Intern");
+		btnIntern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getIntern());
+			}
+		});
 		configElementsPanel.add(btnIntern, "cell 3 1,aligny top");
 		
 		btnExtern = new JButton("Extern");
+		btnExtern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadFilter(DBConnection.getExtern());
+			}
+		});
 		configElementsPanel.add(btnExtern, "cell 4 1,aligny top");
 		
 		// Building the panel for the table
@@ -298,9 +374,6 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		tablePanel.setForeground(foregroundColor);
 		contentPane.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
-		
-		// Creating a default table model with disabled cell editing
-
 
 		spTable = new JScrollPane();
 		tablePanel.add(spTable, "cell 0 0,grow");
@@ -308,7 +381,18 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		
 		getData();
 		
-		
+		// Fill JTextAreas (Allgemeine Unterweisung, Laboreinrichtungen, Gefahrstoffe)  with data from selected row
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int i = table.getSelectedRow();
+				String fillInstr = (String) table.getModel().getValueAt(i, 12);
+				String fillLab =  (String) table.getModel().getValueAt(i, 13);
+				String fillHazard =  (String) table.getModel().getValueAt(i, 14);
+				taAllgemeineUnterweisung.setText(fillInstr);
+				taLaboreinrichtungen.setText(fillLab);
+				taGefahrstoffe.setText(fillHazard);
+			}
+		});
 		
 		// Building the panel for the informations that will be displayed
 		infoPanel = new JPanel();
@@ -323,10 +407,16 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		lblAllgemeineUnterweisung.setForeground(foregroundColor);
 		infoPanel.add(lblAllgemeineUnterweisung, "cell 0 0");
 		
-		spAllgemeineUnterweisungen = new JScrollPane();
-		infoPanel.add(spAllgemeineUnterweisungen, "cell 0 1,grow");
+		spAllgemeineUnterweisungen = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spAllgemeineUnterweisungen, "width 25%, cell 0 1,grow");
 		
 		taAllgemeineUnterweisung = new JTextArea();
+		taAllgemeineUnterweisung.setLineWrap(true);
+		taAllgemeineUnterweisung.setWrapStyleWord(true);
+		taAllgemeineUnterweisung.setEditable(false);
+		//taAllgemeineUnterweisung.setBackground(redColor);
 		spAllgemeineUnterweisungen.setViewportView(taAllgemeineUnterweisung);
 		
 		// Building the (Laboreinrichtungen) informationen text area with title
@@ -335,10 +425,15 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		lblLaboreinrichtungen.setForeground(foregroundColor);
 		infoPanel.add(lblLaboreinrichtungen, "cell 1 0");
 		
-		spLaboreinrichtungen = new JScrollPane();
-		infoPanel.add(spLaboreinrichtungen, "cell 1 1,grow");
+		spLaboreinrichtungen = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spLaboreinrichtungen, "width 25%, cell 1 1,grow");
 		
 		taLaboreinrichtungen = new JTextArea();
+		taLaboreinrichtungen.setLineWrap(true);
+		taLaboreinrichtungen.setWrapStyleWord(true);
+		taLaboreinrichtungen.setEditable(false);
 		spLaboreinrichtungen.setViewportView(taLaboreinrichtungen);
 		
 		// Building the (Gefahrstoffe) information text area with title
@@ -347,19 +442,29 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 		lblGefahrstoffe.setForeground(foregroundColor);
 		infoPanel.add(lblGefahrstoffe, "cell 2 0");
 		
-		spGefahrstoffe = new JScrollPane();
-		infoPanel.add(spGefahrstoffe, "cell 2 1,grow");
+		spGefahrstoffe = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		infoPanel.add(spGefahrstoffe, "width 25%, cell 2 1,grow");
 		
 		taGefahrstoffe = new JTextArea();
+		taGefahrstoffe.setLineWrap(true);
+		taGefahrstoffe.setWrapStyleWord(true);
+		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
 		
-		table.addMouseListener(this);
+
+		
+
+		//Creating a formulaPrinter
+		fPrinter = new FormDocPrinter();
+
 	}
 	
-	public void loadFilter(String[][] filteredTable) {
+	public void loadFilter(Object[][] filteredTable) {
 		dtm.setRowCount(0);
 		for (int i = 0; i < filteredTable.length; i++) {
-			dtm.addRow(new String[] {filteredTable[i][0],
+			dtm.addRow(new Object[] {filteredTable[i][0],
 									 filteredTable[i][1],
 									 filteredTable[i][2],
 									 filteredTable[i][3],
@@ -370,43 +475,109 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 									 filteredTable[i][8],
 									 filteredTable[i][9],
 									 filteredTable[i][10],
-									 filteredTable[i][11]});
+									 filteredTable[i][11],
+									 filteredTable[i][12],
+									 filteredTable[i][13],
+									 filteredTable[i][14]});
 		}
+	}
+	
+	public static JTable getEditorTable() {
+		return editorTable;
 	}
 	
 	public static DefaultTableModel getDefaultTableModel() {
 		return dtm;
 	}
 	
+	private void printPressed() {
+		//getting table and textArea data
+		int row = table.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
+			return;
+		}
+		String familyName = (String)getValueByColName(table, row, "Name");
+		String firstName = (String)getValueByColName(table, row, "Vorname");
+		String date = (String)getValueByColName(table, row, "Datum");
+		String ifwt = (String)getValueByColName(table, row, "Ifwt");
+		String mnaf = (String)getValueByColName(table, row, "MNaF");
+		String intern = (String)getValueByColName(table, row, "Intern");
+		String extern = (String)getValueByColName(table, row, "Extern");
+		String genInstr = taAllgemeineUnterweisung.getText();
+		String labSetup = taLaboreinrichtungen.getText();
+		String dangerSubst = taGefahrstoffe.getText();
+		
+		//setup of printData
+		PrintData printData = new PrintData();
+		printData.setFamilyName(familyName);
+		printData.setFirstName(firstName);
+		printData.setDate(date);
+		printData.setIfwt(ifwt);
+		printData.setMNaF(mnaf);
+		printData.setIntern(intern);
+		printData.setExtern(extern);
+		printData.setGeneralInstructions(genInstr);
+		printData.setLabSetup(labSetup);
+		printData.setDangerousSubstances(dangerSubst);
+		
+		//start printing process
+		try {
+			fPrinter.print(printData);
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(PrinterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Object getValueByColName(JTable table, int row, String colName) {
+		int colCount = table.getColumnCount();
+		Object res = null;
+		for(int i = 0; i < colCount; i++) {
+			if(table.getColumnName(i) == colName) {
+				res = table.getValueAt(row, i);
+			}
+		}
+		return res;
+	}
 	
 	// method to fill JTable with Data from Database
 	public static void getData() {
 
-		dtm = new DefaultTableModel(new String[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
-				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse" }) {
+		dtm = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
+				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse", "Allgemeine Unterweisung", "Laboreinrichtungen", "Gefahrstoffe" }) {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
 		};
 		table.setModel(dtm);
-		table2.setModel(table.getModel());
+		editorTable.setModel(table.getModel());
 		dtm = (DefaultTableModel) table.getModel();
+		table.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm)); // enabling sorting of the table
+		editorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
 		
-			//von Fiti: die Tabelle ist schonmal mit der Datenbank verbunden.
-			//wir müssen halt noch schauen ob sie direkt geladen werden soll, oder auf Befehl des Users
 		try {
 			conn = DBConnection.connect();
 
 			String query = "SELECT * FROM Personen";
 			PreparedStatement pst = conn.prepareStatement(query);
 			ResultSet resultSet = pst.executeQuery();
-			
-			
-			
 
 			while (resultSet.next()) {
-				String id = resultSet.getString("ID");
+				int id = resultSet.getInt("ID");
 				String name = resultSet.getString("Name");
 				String vorname = resultSet.getString("Vorname");
 				String datum = resultSet.getString("Datum");
@@ -418,9 +589,12 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 				String ende = resultSet.getString("Ende");
 				String extern = resultSet.getString("Extern");
 				String email = resultSet.getString("E-Mail Adresse");
+				String unterw = resultSet.getString("Allgemeine Unterweisung");
+				String labeinr = resultSet.getString("Laboreinrichtungen");
+				String gefahrst = resultSet.getString("Gefahrstoffe");
 
-				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
-						email });
+				dtm.addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
+						email,unterw,labeinr,gefahrst });
 			}
 			dtm.fireTableDataChanged();
 			
@@ -437,12 +611,28 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 			table.getColumnModel().getColumn(9).setPreferredWidth(30);
 			table.getColumnModel().getColumn(10).setPreferredWidth(28);
 			table.getColumnModel().getColumn(11).setPreferredWidth(200);
+			//table.getColumnModel().getColumn(12).setMinWidth(0);
+			//table.getColumnModel().getColumn(12).setMaxWidth(0);
+			//table.getColumnModel().getColumn(13).setMinWidth(0);
+			//table.getColumnModel().getColumn(13).setMaxWidth(0);
+			//table.getColumnModel().getColumn(14).setMinWidth(0);
+			//table.getColumnModel().getColumn(14).setMaxWidth(0);
+			//TableColumnModel tcm = table.getColumnModel();
+			//tcm.removeColumn(tcm.getColumn(12));
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			table.getColumnModel().removeColumn(table.getColumnModel().getColumn(12));		// make column invisible but still accessible
 
 			table.setRowHeight(20);
+			
+			cellRendererColor = new ColorTable();
+			
+			//table.setDefaultRenderer(Object.class,  cellRendererColor);
 
 			cellRenderer = new DefaultTableCellRenderer();
 			cellRenderer.setHorizontalAlignment(JLabel.CENTER);
-			table.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
+			cellRendererColor.setHorizontalAlignment(JLabel.CENTER);
+			table.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
 			table.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
@@ -450,30 +640,33 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 			table.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
 			table.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
 			
-			table2.getColumnModel().getColumn(0).setPreferredWidth(5);
-			table2.getColumnModel().getColumn(1).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(2).setPreferredWidth(65);
-			table2.getColumnModel().getColumn(3).setPreferredWidth(35);
-			table2.getColumnModel().getColumn(4).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(5).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(6).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(7).setPreferredWidth(145);
-			table2.getColumnModel().getColumn(8).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(9).setPreferredWidth(30);
-			table2.getColumnModel().getColumn(10).setPreferredWidth(28);
-			table2.getColumnModel().getColumn(11).setPreferredWidth(200);
+			editorTable.getColumnModel().getColumn(0).setPreferredWidth(5);
+			editorTable.getColumnModel().getColumn(1).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(2).setPreferredWidth(65);
+			editorTable.getColumnModel().getColumn(3).setPreferredWidth(35);
+			editorTable.getColumnModel().getColumn(4).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(5).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(6).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(7).setPreferredWidth(145);
+			editorTable.getColumnModel().getColumn(8).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(9).setPreferredWidth(30);
+			editorTable.getColumnModel().getColumn(10).setPreferredWidth(28);
+			editorTable.getColumnModel().getColumn(11).setPreferredWidth(200);
 
-			table2.setRowHeight(20);
+			editorTable.setRowHeight(20);
 
-			cellRenderer = new DefaultTableCellRenderer();
-			cellRenderer.setHorizontalAlignment(JLabel.CENTER);
-			table2.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
-			table2.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(3).setCellRenderer(cellRendererColor);
+			editorTable.getColumnModel().getColumn(4).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(5).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(6).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(8).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(9).setCellRenderer(cellRenderer);
+			editorTable.getColumnModel().getColumn(10).setCellRenderer(cellRenderer);
+			
+
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
+			editorTable.getColumnModel().removeColumn(editorTable.getColumnModel().getColumn(12));		// make column invisible but still accessible
 
 			
 			pst.close();
@@ -485,114 +678,62 @@ public class MainFrame extends JFrame implements KeyListener, MouseListener{
 
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		String search = tfSearch.getText();
-		dtm.setRowCount(0);
-		table.setModel(dtm);
-		try {
-			Connection conn = DBConnection.connect(); 
-			String query = "SELECT * from Personen WHERE Name LIKE '" + search+ "%'";
-			PreparedStatement pst = conn.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
-			
-			while(rs.next()) {
-				
-				String id = rs.getString("ID");
-				String name = rs.getString("Name");
-				String vorname = rs.getString("Vorname");
-				String datum = rs.getString("Datum");
-				String ifwt = rs.getString("Ifwt");
-				String manf = rs.getString("MNaF");
-				String intern = rs.getString("Intern");
-				String beschverh = rs.getString("Beschaeftigungsverhaeltnis");
-				String beginn = rs.getString("Beginn");
-				String ende = rs.getString("Ende");
-				String extern = rs.getString("Extern");
-				String email = rs.getString("E-Mail Adresse");
-
-				dtm.addRow(new String[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
-						email });
+	
+	
+	//method to put login Window in front and grants focus to it
+	/*public void loginToFront() {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				login.toFront();
+				login.repaint();
+				login.setLocation((getWidth()/2)-(login.getWidth()/2), (getHeight()/2)-login.getHeight()/2);
 			}
-			table.setModel(dtm);
-			
-			
-			rs.close();
-			pst.close();
-			
-			
-			
-		}catch(Exception ex) {
-			ex.getMessage();
-		}
+		});
+	}*/
+	
+	//method that returns the tfSearch JTextField
+	public static JTextField getSearchTF() {
+		return tfSearch;
 	}
 	
-	
+}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		try {
-		Vector v = ((DefaultTableModel) table.getModel()).getDataVector().elementAt(table.getSelectedRow());
-		Connection conn = DBConnection.connect(); 
-		String query = "SELECT * FROM Personen WHERE ID =" +v.get(0).toString();
-		PreparedStatement pst = conn.prepareStatement(query);
-		ResultSet rs = pst.executeQuery();
-		
-		while(rs.next()) {
-		String date = rs.getString("Datum");
-		String allgU = rs.getString("Allgemeine Unterweisung");
-		String labor = rs.getString("Laboreinrichtungen");
-		String gefahrstoffe = rs.getString("Gefahrstoffe");
-		
-		taAllgemeineUnterweisung.setText(date +" " + allgU);
-		taLaboreinrichtungen.setText(labor);
-		taGefahrstoffe.setText(gefahrstoffe);
-		}
-		
-		}catch(Exception e1) {
-			e1.getMessage();
-		}
-		
-		
-	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+//class to paint cells in jtable depending on instruction expiry date
+class ColorTable extends DefaultTableCellRenderer {
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	private static final long serialVersionUID = 1L;
+	String date = null;
+	int daysDiff = 0;
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+ public Component getTableCellRendererComponent(JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
+     super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+     	
+ 		date = (String) table.getModel().getValueAt(row, 3);
+ 		if (!date.isEmpty()) {
+ 			//System.out.println(row);
+ 			//System.out.println(date);
+ 			daysDiff = CalcDateDiff.date(date);		// check difference between given date and actual date in CalcDateDiff-Class
+ 			//System.out.println(daysDiff);
+ 			if (daysDiff > 168 && daysDiff < 182) {		// paint yellow if instruction is outdated in less than 2 weeks
+ 				setBackground(Color.yellow);
+ 			}
+ 			else if (daysDiff > 182) {			// paint red if instruction is outdated
+ 				setBackground(Color.red);
+ 			}
+ 			else {
+ 				setBackground(Color.green);		// paint green if instruction is up-to-date
+ 			}
+ 		}
+ 		else {
+ 			setBackground(Color.white);			// paint white if no expiry date is given
+ 		}
+         
+     return this;
+     
+ }
 }

@@ -3,15 +3,12 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,16 +20,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
 
 public class DataEditor extends JFrame{
 	
+
+	private static final long serialVersionUID = 1L;
+
 	private static DataEditor dataEditor = new DataEditor();
 	
 	private Color frameColor = new Color(32, 32, 32);
@@ -42,18 +40,15 @@ public class DataEditor extends JFrame{
 	private JPanel contentPane;
 	private JPanel elementPanel;
 	private static JPanel tablePanel;
-	private JPanel buttonPanel;
+	private JPanel textFieldPanel;
+	private JPanel textAreaPanel;
 	private JLabel lblBearbeitungselemente;
 	private JButton btnRefresh;
 	private JButton btnAdd;
 	private JButton btnDelete;
 	private static JScrollPane spTable;
-	private JTable table;
-	private JButton btnSave;
-	private static DefaultTableCellRenderer cellRenderer;
 	
 	private static JTextField textField;
-	private static JTextField textField_1;
 	private static JTextField textField_2;
 	private static JTextField textField_3;
 	private static JTextField textField_4;
@@ -64,11 +59,15 @@ public class DataEditor extends JFrame{
 	private static JTextField textField_9;
 	private static JTextField textField_10;
 	private static JTextField textField_11;
+	private static JTextArea textArea_1;
+	private static JTextArea textArea_2;
+	private static JTextArea textArea_3;
+	private JScrollPane spInstr;
+	private JScrollPane spLab;
+	private JScrollPane spHazard;
 	private static int ID = 0;
 	
-	private static DefaultTableModel dtm;
 	private static Connection con = null;
-	private static JTable sqlTabel;
 	static PreparedStatement pstmt = null;
 	
 	
@@ -83,12 +82,12 @@ public class DataEditor extends JFrame{
 		setTitle("Datenbank-Editor");
 		setBackground(frameColor);
 		setForeground(foregroundColor);
-		setBounds(100, 100, 1200, 600);
+		setBounds(100, 100, 1200, 750);
 		contentPane = new JPanel();
 		contentPane.setBackground(backgroundColor);
 		contentPane.setForeground(foregroundColor);
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[grow]", "[85.0][280.0,grow][150.0,grow]"));
+		contentPane.setLayout(new MigLayout("", "[grow]", "[65.0][250.0,grow][120.0,grow][100.0,grow]"));
 		
 		// Panel for the editing elements
 		elementPanel = new JPanel();
@@ -122,7 +121,7 @@ public class DataEditor extends JFrame{
 				newData();
 			}
 		});
-		elementPanel.add(btnAdd, "cell 1 1");
+		elementPanel.add(btnAdd, "gapleft 10, cell 1 1");
 		
 		// delete data button
 		btnDelete = new JButton("Eintrag löschen");
@@ -133,7 +132,7 @@ public class DataEditor extends JFrame{
 				deleteData();
 			}
 		});
-		elementPanel.add(btnDelete, "gapleft 50, cell 2 1");
+		elementPanel.add(btnDelete, "gapleft 30, cell 2 1");
 		
 		// Panel for the table that resembles the database
 		tablePanel = new JPanel();
@@ -146,103 +145,103 @@ public class DataEditor extends JFrame{
 		tablePanel.add(spTable, "cell 0 0,grow");
 		
 		// cloned table for edit window
-		spTable.setViewportView(MainFrame.table2);
+		spTable.setViewportView(MainFrame.getEditorTable());
 	
 		
 		// Panel for the update button
-		buttonPanel = new JPanel();
-		buttonPanel.setBackground(backgroundColor);
-		buttonPanel.setForeground(foregroundColor);
-		contentPane.add(buttonPanel, "cell 0 2,grow");
-		buttonPanel.setLayout(new MigLayout("", "[right][180][right][180][120]", "[]10[]0[]0[]10[]10[]"));
+		textFieldPanel = new JPanel();
+		textFieldPanel.setBackground(backgroundColor);
+		textFieldPanel.setForeground(foregroundColor);
+		contentPane.add(textFieldPanel, "cell 0 2,grow");
+		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]10[]10[]0[]0[]"));
 		
 		// name textfield
 		JLabel lblName = new JLabel("Name:");
 		lblName.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblName.setForeground(foregroundColor);
-		buttonPanel.add(lblName, "cell 0 0");
+		textFieldPanel.add(lblName, "cell 0 0");
 		textField = new JTextField();
-		buttonPanel.add(textField, "width 25%, cell 1 0");
+		textFieldPanel.add(textField, "width 30%, cell 1 0");
 		
 		// prename textfield
 		JLabel lblPname = new JLabel("Vorname:");
 		lblPname.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblPname.setForeground(foregroundColor);
-		buttonPanel.add(lblPname, "cell 0 1");
+		textFieldPanel.add(lblPname, "cell 0 1");
 		textField_2 = new JTextField();
-		buttonPanel.add(textField_2, "width 25%, cell 1 1");
+		textFieldPanel.add(textField_2, "width 30%, cell 1 1");
 		
 		// date textfield
 		JLabel lblDate = new JLabel("Datum:");
 		lblDate.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblDate.setForeground(foregroundColor);
-		buttonPanel.add(lblDate, "cell 0 2");
+		textFieldPanel.add(lblDate, "cell 0 2");
 		textField_3 = new JTextField();
-		buttonPanel.add(textField_3, "width 25%, cell 1 2");
+		textFieldPanel.add(textField_3, "width 30%, cell 1 2");
 		
 		// Ifwt Textfield
 		JLabel lblIfwt = new JLabel("Ifwt:");
 		lblIfwt.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblIfwt.setForeground(foregroundColor);
-		buttonPanel.add(lblIfwt, "cell 0 3");
+		textFieldPanel.add(lblIfwt, "cell 0 3");
 		textField_4 = new JTextField();
-		buttonPanel.add(textField_4, "width 25%, cell 1 3");
+		textFieldPanel.add(textField_4, "width 30%, cell 1 3");
 		
 		// MNaF textfield
 		JLabel lblMNaF = new JLabel("MNaF:");
 		lblMNaF.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblMNaF.setForeground(foregroundColor);
-		buttonPanel.add(lblMNaF, "cell 0 4");
+		textFieldPanel.add(lblMNaF, "cell 0 4");
 		textField_5 = new JTextField();
-		buttonPanel.add(textField_5, "width 25%, cell 1 4");
+		textFieldPanel.add(textField_5, "width 30%, cell 1 4");
 		
 		// intern textfield
 		JLabel lblIntern = new JLabel("Intern:");
 		lblIntern.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblIntern.setForeground(foregroundColor);
-		buttonPanel.add(lblIntern, "cell 0 5");
+		textFieldPanel.add(lblIntern, "cell 0 5");
 		textField_6 = new JTextField();
-		buttonPanel.add(textField_6, "width 25%, cell 1 5");
+		textFieldPanel.add(textField_6, "width 30%, cell 1 5");
 		
 		// employment relationship textfield
 		JLabel lblEmpl = new JLabel("   Beschäftigungsverhältnis:");
 		lblEmpl.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblEmpl.setForeground(foregroundColor);
-		buttonPanel.add(lblEmpl, "cell 2 0");
+		textFieldPanel.add(lblEmpl, "cell 2 0");
 		textField_7 = new JTextField();
-		buttonPanel.add(textField_7, "width 25%, cell 3 0");
+		textFieldPanel.add(textField_7, "width 30%, cell 3 0");
 		
 		// beginning textfield
 		JLabel lblStart = new JLabel("   Beginn:");
 		lblStart.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblStart.setForeground(foregroundColor);
-		buttonPanel.add(lblStart, "cell 2 1");
+		textFieldPanel.add(lblStart, "cell 2 1");
 		textField_8 = new JTextField();
-		buttonPanel.add(textField_8, "width 25%, cell 3 1");
+		textFieldPanel.add(textField_8, "width 30%, cell 3 1");
 		
 		// end textfield
 		JLabel lblEnd = new JLabel("   Ende:");
 		lblEnd.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblEnd.setForeground(foregroundColor);
-		buttonPanel.add(lblEnd, "cell 2 2");
+		textFieldPanel.add(lblEnd, "cell 2 2");
 		textField_9 = new JTextField();
-		buttonPanel.add(textField_9, "width 25%, cell 3 2");
+		textFieldPanel.add(textField_9, "width 30%, cell 3 2");
 		
 		// external textfield
 		JLabel lblExternal = new JLabel("   Extern:");
 		lblExternal.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblExternal.setForeground(foregroundColor);
-		buttonPanel.add(lblExternal, "cell 2 3");
+		textFieldPanel.add(lblExternal, "cell 2 3");
 		textField_10 = new JTextField();
-		buttonPanel.add(textField_10, "width 25%, cell 3 3");
+		textFieldPanel.add(textField_10, "width 30%, cell 3 3");
 		
 		// e-mail textfield
 		JLabel lblMail = new JLabel("   E-Mail:");
 		lblMail.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblMail.setForeground(foregroundColor);
-		buttonPanel.add(lblMail, "cell 2 4");
+		textFieldPanel.add(lblMail, "cell 2 4");
 		textField_11 = new JTextField();
-		buttonPanel.add(textField_11, "width 25%, cell 3 4");
+		textFieldPanel.add(textField_11, "width 30%, cell 3 4");
 		
 		// savebutton
 		String twoLines = "Änderungen \n Speichern";
@@ -259,17 +258,65 @@ public class DataEditor extends JFrame{
 				}
 			}
 		});
-		buttonPanel.add(btnSave, "width 25%, gapleft 50, cell 4 2");
+		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 4");
+		
+		
+		textAreaPanel = new JPanel();
+		textAreaPanel.setBackground(backgroundColor);
+		textAreaPanel.setForeground(foregroundColor);
+		contentPane.add(textAreaPanel, "cell 0 3,grow");
+		textAreaPanel.setLayout(new MigLayout("", "[grow]", "[]2[grow]"));
+		
+		
+		// Allgemeine Unterweisung textfield
+		JLabel lblInstr = new JLabel("Allg. Unterweisung:");
+		lblInstr.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblInstr.setForeground(foregroundColor);
+		spInstr = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		textAreaPanel.add(lblInstr, "cell 0 0");
+		textAreaPanel.add(spInstr, "grow, cell 0 1 1 2");
+		textArea_1 = new JTextArea();
+		textArea_1.setLineWrap(true);
+		textArea_1.setWrapStyleWord(true);
+		spInstr.setViewportView(textArea_1);
+				
+		// Laboreinrichtungen textfield
+		JLabel lblLab = new JLabel("   Laboreinrichtungen:");
+		lblLab.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblLab.setForeground(foregroundColor);
+		spLab = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		textAreaPanel.add(lblLab, "cell 1 0");
+		textAreaPanel.add(spLab, "grow, cell 1 1 1 2");
+		textArea_2 = new JTextArea();
+		textArea_2.setLineWrap(true);
+		textArea_2.setWrapStyleWord(true);
+		spLab.setViewportView(textArea_2);
+		
+		// Gefahrstoffe textfield
+		JLabel lblHazard = new JLabel("   Gefahrstoffe:");
+		lblHazard.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblHazard.setForeground(foregroundColor);
+		spHazard = new JScrollPane(
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		textAreaPanel.add(lblHazard, "cell 2 0");
+		textAreaPanel.add(spHazard, "grow, cell 2 1 1 2");
+		textArea_3 = new JTextArea();
+		textArea_3.setLineWrap(true);
+		textArea_3.setWrapStyleWord(true);
+		spHazard.setViewportView(textArea_3);
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
-		MainFrame.table2.addMouseListener(new MouseAdapter() {
+		MainFrame.getEditorTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = MainFrame.table2.getSelectedRow();
-				String test = (String) MainFrame.table2.getValueAt(i, 10);
-				ID = Integer.parseInt((String) MainFrame.table2.getValueAt(i, 0));
-				System.out.println(ID);
+				int i = MainFrame.getEditorTable().getSelectedRow();
+				ID = Integer.parseInt(MainFrame.getEditorTable().getValueAt(i, 0).toString());
 
 				fillFields();
 			}
@@ -281,13 +328,8 @@ public class DataEditor extends JFrame{
 	}
 	
 	
-	private static void addRow() {
-		
-	}
-	
-	
-	
 	// method to add new data into database
+	@SuppressWarnings("unused")
 	private void newData() {									// used in Actionlistener of JButton btnAdd "Neuer Eintrag"
 
 		JTextField Name = new JTextField();
@@ -301,6 +343,9 @@ public class DataEditor extends JFrame{
 		JTextField End = new JTextField();
 		JTextField External = new JTextField();
 		JTextField Mail = new JTextField();
+		JTextField Instr = new JTextField();
+		JTextField Lab = new JTextField();
+		JTextField Hazard = new JTextField();
 		int g = -1;
 		int h = 1;
 
@@ -317,7 +362,10 @@ public class DataEditor extends JFrame{
 								"Beginn (Text)", Start, 
 								"Ende (Text)", End, 
 								"Extern (Text)", External, 
-								"E-Mail Adresse (Text)", Mail};
+								"E-Mail Adresse (Text)", Mail, 
+								"Allgemeine Unterweisung (Text)", Instr, 
+								"Laboreinrichtungen (Text)", Lab, 
+								"Gefahrstoffe (Text)", Hazard};
 
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 			pane.createDialog(null, "Neue Person anlegen").setVisible(true);
@@ -330,7 +378,9 @@ public class DataEditor extends JFrame{
 			else {
 			try {
 				
-				String iv = "INSERT INTO Personen (Name,Vorname,Datum,Ifwt,MNaF,Intern,Beschaeftigungsverhaeltnis,Beginn,Ende,Extern,'E-Mail Adresse') VALUES (?,?,?,?,?,?,?,?,?,?,?)";		
+				String iv = "INSERT INTO Personen (Name,Vorname,Datum,Ifwt,MNaF,Intern,Beschaeftigungsverhaeltnis,"
+						+ "Beginn,Ende,Extern,'E-Mail Adresse','Allgemeine Unterweisung', Laboreinrichtungen, Gefahrstoffe) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 				
 				int value = ((Integer) pane.getValue()).intValue();
 				System.out.println(pane.getValue());
@@ -354,6 +404,9 @@ public class DataEditor extends JFrame{
 					String EndVar;
 					String ExternalVar;
 					String MailVar;
+					String InstrVar;
+					String LabVar;
+					String HazardVar;
 					
 					h = 1;
 					
@@ -451,6 +504,27 @@ public class DataEditor extends JFrame{
 									h = 0;
 								}
 								
+								try {
+									InstrVar = Instr.getText();
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Allgemeine Unterweisung'", "Dialog", JOptionPane.ERROR_MESSAGE);
+									h = 0;
+								}
+								
+								try {
+									LabVar = Lab.getText();
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Laboreinrichtungen'", "Dialog", JOptionPane.ERROR_MESSAGE);
+									h = 0;
+								}
+								
+								try {
+									HazardVar = Hazard.getText();
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Gefahrstoffe'", "Dialog", JOptionPane.ERROR_MESSAGE);
+									h = 0;
+								}
+								
 							} // End: while (h == 2)
 
 						} catch (Exception e) {
@@ -477,6 +551,9 @@ public class DataEditor extends JFrame{
 								nameVar = Name.getText();
 								ExternalVar = External.getText();
 								MailVar = Mail.getText();
+								InstrVar = Instr.getText();
+								LabVar = Lab.getText();
+								HazardVar = Hazard.getText();
 								
 								
 								
@@ -496,6 +573,9 @@ public class DataEditor extends JFrame{
 								pstmt.setString(9, EndVar);
 								pstmt.setString(10, ExternalVar);
 								pstmt.setString(11, MailVar);
+								pstmt.setString(12, InstrVar);
+								pstmt.setString(13, LabVar);
+								pstmt.setString(14, HazardVar);
 
 								
 								pstmt.executeUpdate();
@@ -512,14 +592,16 @@ public class DataEditor extends JFrame{
 										", Beginn: " + StartVar + 
 										", Ende: " + EndVar + 
 										", Extern: " + ExternalVar + 
-										", E-Mail Adresse: " + MailVar);
+										", E-Mail Adresse: " + MailVar + 
+										", Ende: " + InstrVar + 
+										", Extern: " + LabVar + 
+										", E-Mail Adresse: " + HazardVar);
 								
 								con.close();
 							    pstmt.close();
 							    g++;
 							} catch (SQLException e) {
 					            System.out.println(e.getMessage());
-					            System.out.println("oh oh");
 					            JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 							} catch (Exception e) {
 								//String warning = "Bitte richtiges Datenformat eingeben";
@@ -554,12 +636,7 @@ public class DataEditor extends JFrame{
 				External.setText("");
 				System.out.println(e);
 			}
-
-			/*if (pane.getValue() == null) {
-				g++;
-			}*/
-			// if(pane.getValue() != null);
-			
+	
 			} // End: first Else
 			
 		} // End: while (g < 0)
@@ -605,19 +682,22 @@ public class DataEditor extends JFrame{
 	
 	
 	// method to fill textfields with column-entrys of selected row
-	public static void fillFields() {							// genutzt in MouseListener von JTable table2
-		int a = MainFrame.table2.getSelectedRow();
-		String fillName = (String) MainFrame.table2.getValueAt(a, 1);
-		String fillPname = (String) MainFrame.table2.getValueAt(a, 2);
-		String fillDate = (String) MainFrame.table2.getValueAt(a, 3);
-		String fillIfwt = (String) MainFrame.table2.getValueAt(a, 4);
-		String fillMNaF = (String) MainFrame.table2.getValueAt(a, 5);
-		String fillIntern = (String) MainFrame.table2.getValueAt(a, 6);
-		String fillEmpl = (String) MainFrame.table2.getValueAt(a, 7);
-		String fillStart = (String) MainFrame.table2.getValueAt(a, 8);
-		String fillEnd = (String) MainFrame.table2.getValueAt(a, 9);
-		String fillExternal = (String) MainFrame.table2.getValueAt(a, 10);
-		String fillMail = (String) MainFrame.table2.getValueAt(a, 11);
+	public static void fillFields() {							// genutzt in MouseListener von JTable getEditorTable()
+		int a = MainFrame.getEditorTable().getSelectedRow();
+		String fillName = (String) MainFrame.getEditorTable().getValueAt(a, 1);
+		String fillPname = (String) MainFrame.getEditorTable().getValueAt(a, 2);
+		String fillDate = (String) MainFrame.getEditorTable().getValueAt(a, 3);
+		String fillIfwt = (String) MainFrame.getEditorTable().getValueAt(a, 4);
+		String fillMNaF = (String) MainFrame.getEditorTable().getValueAt(a, 5);
+		String fillIntern = (String) MainFrame.getEditorTable().getValueAt(a, 6);
+		String fillEmpl = (String) MainFrame.getEditorTable().getValueAt(a, 7);
+		String fillStart = (String) MainFrame.getEditorTable().getValueAt(a, 8);
+		String fillEnd = (String) MainFrame.getEditorTable().getValueAt(a, 9);
+		String fillExternal = (String) MainFrame.getEditorTable().getValueAt(a, 10);
+		String fillMail = (String) MainFrame.getEditorTable().getValueAt(a, 11);
+		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 12);
+		String fillLab = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 13);
+		String fillHazard = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 14);
 		
 		textField.setText(fillName);
 		textField_2.setText(fillPname);
@@ -630,11 +710,15 @@ public class DataEditor extends JFrame{
 		textField_9.setText(fillEnd);
 		textField_10.setText(fillExternal);
 		textField_11.setText(fillMail);
+		textArea_1.setText(fillInstr);
+		textArea_2.setText(fillLab);
+		textArea_3.setText(fillHazard);
 
 	}
 	
 	
 	// method to save edited data
+	@SuppressWarnings("unused")
 	public static void saveData() {						// used in ActionListener of JButton btnSave "Änderungen Speichern"
 		String nameVar;
 		String pnameVar;
@@ -648,6 +732,9 @@ public class DataEditor extends JFrame{
 		String EndVar;
 		String ExternalVar;
 		String MailVar;
+		String InstrVar;
+		String LabVar;
+		String HazardVar;
 		
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");		// needed to check if timestamp (Datum) is in correct format
 		
@@ -727,6 +814,24 @@ public class DataEditor extends JFrame{
 					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'E-Mail'", "Dialog", JOptionPane.ERROR_MESSAGE);
 					g = 0;
 				}
+				try {
+					InstrVar = textArea_1.getText();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Allgemeine Unterweisung'", "Dialog", JOptionPane.ERROR_MESSAGE);
+					g = 0;
+				}
+				try {
+					LabVar = textArea_2.getText();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Laboreinrichtungen'", "Dialog", JOptionPane.ERROR_MESSAGE);
+					g = 0;
+				}
+				try {
+					HazardVar = textArea_3.getText();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Gefahrstoffe'", "Dialog", JOptionPane.ERROR_MESSAGE);
+					g = 0;
+				}
 			}
 			
 			
@@ -734,10 +839,10 @@ public class DataEditor extends JFrame{
 			while (g == 1) {
 				g = 0;
 				String query="Update Personen set Name='" + textField.getText() + "' ,Vorname='" + textField_2.getText() + "'  ,Datum='" + textField_3.getText() + 
-							"' ,Ifwt='" + textField_4.getText() + "' ,MNaF='" + textField_5.getText() + "' ,Intern='" + textField_6.getText() + 
-							"' ,Beschaeftigungsverhaeltnis='" + textField_7.getText() + "' ,Beginn='" + textField_8.getText() + "' ,Ende='" + textField_9.getText() +
-							"' ,Extern='" + textField_10.getText() + "' ,'E-Mail Adresse'='" + textField_11.getText() +  "' ,ID='" + ID + 
-							"' where ID='"+ID+"' ";
+						"' ,Ifwt='" + textField_4.getText() + "' ,MNaF='" + textField_5.getText() + "' ,Intern='" + textField_6.getText() + 
+						"' ,Beschaeftigungsverhaeltnis='" + textField_7.getText() + "' ,Beginn='" + textField_8.getText() + "' ,Ende='" + textField_9.getText() +
+						"' ,Extern='" + textField_10.getText() + "' ,'E-Mail Adresse'='" + textField_11.getText() +  "' ,'Allgemeine Unterweisung'='" + textArea_1.getText() + 
+						"' ,'Laboreinrichtungen'='" + textArea_2.getText() +  "' ,'Gefahrstoffe'='" + textArea_3.getText() +  "' ,ID='" + ID + "' where ID='"+ID+"' ";
 				
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);

@@ -3,23 +3,26 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import admin.AccessData;
-import net.miginfocom.swing.MigLayout;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+
+import database.DBConnection;
+import net.miginfocom.swing.MigLayout;
 
 public class Login extends JDialog {
+
+	private static final long serialVersionUID = 1L;
 
 	private static Login login = new Login();
 	
@@ -27,21 +30,31 @@ public class Login extends JDialog {
 	private JPanel buttonPanel;
 	private JLabel lblPasswort;
 	private JLabel lblBenutzername;
-	private JTextField tfBenutzername;
-	private JPasswordField pfPasswort;
+	private static JTextField tfBenutzername;
+	private static JPasswordField pfPasswort;
 	private JButton btnLogin;
+	//private static boolean valid;
 	
 	private Color frameColor = new Color(32, 32, 32);
 	private Color backgroundColor = new Color(25, 25, 25);
 	private Color foregroundColor = new Color(255, 255, 255);
 	
 	public static Login getInstance() {
+		tfBenutzername.setText("");
+		pfPasswort.setText("");
 		return login;
 	}
 
 	// Creating the dialog.
 	private Login() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				
+				System.exit(0);
+			}
+		});
 		setTitle("Admin Login");
 		setBounds(100, 100, 450, 140);
 		setBackground(frameColor);
@@ -78,10 +91,11 @@ public class Login extends JDialog {
 		
 		btnLogin = new JButton("Anmelden");
 		btnLogin.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent evt) {
-				if (AccessData.chekUsrname(tfBenutzername.getText()) && AccessData.checkPassword(pfPasswort.getText())) {
-					DataEditor dataEditor =DataEditor.getInstance();
-					login.dispose();
+				if (isLoginValid()) {
+					login.setVisible(false);
+					MainFrame.start();
 				} else {
 					JOptionPane.showMessageDialog(null, "Benutzername oder Passwort falsch!");
 				}
@@ -92,4 +106,24 @@ public class Login extends JDialog {
 		
 		setVisible(true);
 	}
+	
+	public boolean isLoginValid() {
+		Connection con = DBConnection.connectLogin();
+		if (DBConnection.checkLogin(tfBenutzername.getText(), pfPasswort.getText())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean checkAdmin() {
+		Connection con = DBConnection.connectLogin();
+		if (DBConnection.checkAdmin(tfBenutzername.getText())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
 }
