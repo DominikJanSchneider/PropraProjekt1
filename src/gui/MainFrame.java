@@ -136,8 +136,7 @@ public class MainFrame extends JFrame{
 	
 	private static Connection conn = null;
 
-	private static DefaultTableModel dtm;
-	private static Login login;
+	
 
 	
 	
