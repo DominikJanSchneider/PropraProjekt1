@@ -12,8 +12,14 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="pdfbox-2.0.19.jar"/>
 	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="fontbox-2.0.19.jar"/>
+=======
+	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="fontbox-2.0.19.jar"/>
+	<classpathentry kind="lib" path="pdfbox-2.0.19.jar"/>
+>>>>>>> refs/remotes/origin/master
 	<classpathentry kind="output" path="bin"/>
 </classpath>

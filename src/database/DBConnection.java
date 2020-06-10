@@ -29,14 +29,74 @@ public class DBConnection {
        }
 	}
 	
+	public static Object[][] getGeraeteData() {
+		try {
+			con = DriverManager.getConnection(url);
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (Ger\u00e4teID) FROM Ger\u00e4te;");
+			ResultSet rs = pstmt.executeQuery();
+			int rowCount = rs.getInt(1);
+			pstmt = con.prepareStatement("SELECT * FROM Ger\u00e4te;");
+			rs = pstmt.executeQuery();
+			int columnCount = rs.getMetaData().getColumnCount();
+			Object[][] tableData = new Object[rowCount][columnCount];
+			int i = 0;
+			
+			while (rs.next()) {
+				tableData[i][0] = rs.getInt("Ger\u00e4teID");
+				tableData[i][1] = rs.getString("Name");
+				tableData[i][2] = rs.getString("Beschreibung");
+				tableData[i][3] = rs.getString("Raum");
+				
+				i++;
+			}
+			pstmt.close();
+			con.close();
+			return tableData;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Object[][] getRaeumeData() {
+		try {
+			con = DriverManager.getConnection(url);
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (RaumID) FROM R\u00e4ume;");
+			ResultSet rs = pstmt.executeQuery();
+			int rowCount = rs.getInt(1);
+			pstmt = con.prepareStatement("SELECT * FROM R\u00e4ume;");
+			rs = pstmt.executeQuery();
+			int columnCount = rs.getMetaData().getColumnCount();
+			Object[][] tableData = new Object[rowCount][columnCount];
+			int i = 0;
+			
+			while (rs.next()) {
+				tableData[i][0] = rs.getInt("RaumID");
+				tableData[i][1] = rs.getString("Name");
+				tableData[i][2] = rs.getString("Beschreibung");
+				
+				i++;
+			}
+			pstmt.close();
+			con.close();
+			return tableData;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public static Object[][] getName() {
 		try {
 			con = DriverManager.getConnection(url);
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
+			//Statement stmt = con.createStatement();
+			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
+			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			rs = stmt.executeQuery("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
+			pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
+			//rs = stmt.executeQuery("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
+			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
 			Object[][] filteredTable = new Object[rowCount][columnCount];
 			int i = 0;
@@ -60,6 +120,8 @@ public class DBConnection {
 				
 				i++;
 			}
+			pstmt.close();
+			con.close();
 			return filteredTable;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -379,7 +441,7 @@ public class DBConnection {
 			}
 		}
 		
-		//Login data base methods
+		//User data base methods
 		public static Connection connectLogin() {
 		       try {
 		    	   Class.forName("org.sqlite.JDBC");
@@ -392,6 +454,34 @@ public class DBConnection {
 		    	   return null;
 		       }
 			}
+		
+		public static Object[][] getUserData() {
+			try {
+				con = connectLogin();
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Benutzer;");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM Benutzer;");
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] tableData = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					tableData[i][0] = rs.getInt("ID");
+					tableData[i][1] = rs.getString("Benutzername");
+					tableData[i][2] = rs.getString("Passwort");
+					
+					i++;
+				}
+				pstmt.close();
+				con.close();
+				return tableData;
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 		
 		public static boolean checkLogin(String name, String pswrt) {
 			try {
@@ -425,6 +515,7 @@ public class DBConnection {
 				return false;
 			}
 		}
+		
 		
 		//Getter and Setter
 		public static String getURL() {
