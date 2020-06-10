@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -33,11 +32,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -63,6 +64,24 @@ public class MainFrame extends JFrame{
 	private Color foregroundColor = new Color(255, 255, 255);
 
 	private JPanel contentPane;
+	private JTabbedPane tabbedPane;
+	private JPanel personenTab;
+	private JPanel configPanel;
+	private JPanel configElementsPanel;
+	private static JPanel tablePanel;
+	private JPanel infoPanel;
+	private JPanel geraeteTab;
+	private static JPanel geraeteTablePanel;
+	private JPanel raeumeTab;
+	private static JPanel raeumeTablePanel;
+	
+	private static JScrollPane spTable;
+	private JScrollPane spAllgemeineUnterweisungen;
+	private JScrollPane spLaboreinrichtungen;
+	private JScrollPane spGefahrstoffe;
+	private JScrollPane spGeraete;
+	private JScrollPane spRaeume;
+	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
 	private JButton btnPrint;
@@ -70,10 +89,8 @@ public class MainFrame extends JFrame{
 	private JMenuItem miSave;
 	private JMenuItem miImport;
 	private JMenuItem miExport;
-	private JPanel configPanel;
-	private static JPanel tablePanel;
+	
 	private JLabel lblConfigPanel;
-	private JPanel configElementsPanel;
 	private JButton btnStartSearch;
 	private static JTextField tfSearch;
 	private JLabel lblInstitut;
@@ -88,37 +105,42 @@ public class MainFrame extends JFrame{
 	private JButton btnIntern;
 	private JLabel lblExtern;
 	private JButton btnExtern;
-	private static JScrollPane spTable;
+	private JButton btnEditUser;
+	
 	private static JTable table = new JTable();
 	private static JTable editorTable = new JTable();
-	private JPanel infoPanel;
+	private static JTable geraeteTable = new JTable();
+	private static JTable raeumeTable = new JTable();
+	
+	private static DefaultTableModel dtm;
+	private static DefaultTableModel geraeteTableModel;
+	private static DefaultTableModel raeumeTableModel;
+	
+	private static DefaultTableCellRenderer cellRenderer;
+	private static DefaultTableCellRenderer cellRendererColor;
+	private static DefaultTableCellRenderer geraeteCellRenderer;
+	private static DefaultTableCellRenderer raeumeCellRenderer;
+	
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
 	private JLabel lblGefahrstoffe;
-	private JScrollPane spAllgemeineUnterweisungen;
+	
 	private JTextArea taAllgemeineUnterweisung;
-	private JScrollPane spLaboreinrichtungen;
 	private JTextArea taLaboreinrichtungen;
-	private JScrollPane spGefahrstoffe;
 	private JTextArea taGefahrstoffe;
-	private static DefaultTableCellRenderer cellRenderer;
-	private static DefaultTableCellRenderer cellRendererColor;
+	
+	private static Login login;
 	private static DataEditor dataEditor;
+	private static UserEditor userEditor;
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
-/*<<<<<<< HEAD
-	public static DefaultTableModel dtm;
-	
-=======*/
+
 	private static DefaultTableModel dtm;
 	private static Login login;
-//>>>>>>> branch 'master' of https://github.com/DominikJanSchneider/PropraProjekt1
 
 	
-	/**
-	 * Launch the application.
-	 */
+	
 	public static void main(String[] args) {
 		login = Login.getInstance();
 	}
@@ -133,6 +155,7 @@ public class MainFrame extends JFrame{
 					if (!login.checkAdmin()) {
 						//System.out.println("Isnt Admin");
 						frame.fileMenu.setVisible(false);
+						frame.btnEditUser.setVisible(false);
 					}
 
 				} catch (Exception e) {
@@ -147,7 +170,7 @@ public class MainFrame extends JFrame{
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Sicherheitsunterweisung am Institut für Werkstofftechnik der Universität Siegen");
+		setTitle("Sicherheitsunterweisung am Institut f\u00fcr Werkstofftechnik der Universit\u00e4t Siegen");
 		setBackground(frameColor);
 		setForeground(foregroundColor);
 		setBounds(100, 100, 1200, 600);
@@ -155,8 +178,8 @@ public class MainFrame extends JFrame{
 		contentPane.setBackground(backgroundColor);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
-		
+		//contentPane.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
+		contentPane.setLayout(new MigLayout("","[grow]","[grow]"));
 
 		// Building the menu bar
 		menuBar = new JMenuBar();
@@ -235,24 +258,51 @@ public class MainFrame extends JFrame{
 		btnPrint.setForeground(foregroundColor);
 		menuBar.add(btnPrint);
 		
+		space = new JLabel("  ");
+		menuBar.add(space);
+		
+		//Building the Button (Benutzer Verwalten)
+		btnEditUser = new JButton("Benutzer Verwalten");
+		btnEditUser.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userEditor = UserEditor.getInstance();
+				userEditor.setVisible(true);
+			}
+		});
+		btnEditUser.setBorder(null);
+		btnEditUser.setBackground(frameColor);
+		btnEditUser.setForeground(foregroundColor);
+		menuBar.add(btnEditUser);
+		
 		// Adding the bar to the frame
 		setJMenuBar(menuBar);
+		
+		//Tabbed Pane
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setBackground(backgroundColor);
+		
+		//tabbedPane.borderHightlightColor(Color.WHITE);
+		contentPane.add(tabbedPane, "cell 0 0,grow");
+		
+		//###Tab Personen###
+		personenTab = new JPanel();
+		personenTab.setBackground(backgroundColor);
+		personenTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
+		
+		tabbedPane.addTab("Personen", personenTab);
 		
 		// Building the panel for all elements like buttons
 		configPanel = new JPanel();
 		configPanel.setBackground(backgroundColor);
 		configPanel.setForeground(foregroundColor);
-		contentPane.add(configPanel, "cell 0 0,grow");
+		personenTab.add(configPanel, "cell 0 0,grow");
 		configPanel.setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
 		
 		// Label for the config panel title
-		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut für Werkstofftechnik und Gerätezentrum MNaF");
+		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut f\u00fcr Werkstofftechnik und Ger\u00e4tezentrum MNaF");
 		lblConfigPanel.setFont(new Font("Dialog", Font.BOLD, 18));
-		lblConfigPanel.setForeground(foregroundColor);// Building the menu (Datenbank Laden)
-		//menu = new JMenu("Datenbank Laden");
-		//menu.setBackground(backgroundColor);
-		//menu.setForeground(foregroundColor);
-		//menuBar.add(menu);
+		lblConfigPanel.setForeground(foregroundColor);
 		configPanel.add(lblConfigPanel, "cell 0 0");
 		
 		// Panel that holds the elements form configPanel
@@ -273,15 +323,14 @@ public class MainFrame extends JFrame{
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);
 		
-		
-		
-		
-		lblInstitut = new JLabel("Institut für Werkstoffstechnik (Ifwt)");
+
+		lblInstitut = new JLabel("Institut f\u00fcr Werkstoffstechnik (Ifwt)");
+
 		lblInstitut.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblInstitut.setForeground(foregroundColor);
 		configElementsPanel.add(lblInstitut, "cell 1 0");
 		
-		lblGeraetezentrum = new JLabel("Gerätezentrum (MNaF)");
+		lblGeraetezentrum = new JLabel("Ger\u00e4tezentrum (MNaF)");
 		lblGeraetezentrum.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblGeraetezentrum.setForeground(foregroundColor);
 		configElementsPanel.add(lblGeraetezentrum, "cell 2 0");
@@ -372,7 +421,7 @@ public class MainFrame extends JFrame{
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
-		contentPane.add(tablePanel, "cell 0 1,grow");
+		personenTab.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 
 		spTable = new JScrollPane();
@@ -398,7 +447,7 @@ public class MainFrame extends JFrame{
 		infoPanel = new JPanel();
 		infoPanel.setBackground(backgroundColor);
 		infoPanel.setForeground(foregroundColor);
-		contentPane.add(infoPanel, "cell 0 2,grow");
+		personenTab.add(infoPanel, "cell 0 2,grow");
 		infoPanel.setLayout(new MigLayout("", "[grow]25[grow]25[grow]", "[][grow]"));
 		
 		// Building the (Allgemeine Unterweisung) information text area with title
@@ -454,6 +503,40 @@ public class MainFrame extends JFrame{
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
 		
 
+		//###Tab Geraete###
+		geraeteTab = new JPanel();
+		geraeteTab.setBackground(backgroundColor);
+		geraeteTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow]"));
+		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
+		
+		geraeteTablePanel = new JPanel();
+		geraeteTablePanel.setBackground(backgroundColor);
+		geraeteTab.add(geraeteTablePanel, "cell 0 1, grow");
+		geraeteTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow]"));
+		
+		spGeraete = new JScrollPane();
+		geraeteTablePanel.add(spGeraete, "cell 0 0,grow");
+		spGeraete.setViewportView(geraeteTable);
+		
+		getGeraeteData();
+		
+		
+		//###Tab Raeume###
+		raeumeTab = new JPanel();
+		raeumeTab.setBackground(backgroundColor);
+		raeumeTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow]"));
+		tabbedPane.addTab("R\u00e4ume", raeumeTab);
+		
+		raeumeTablePanel = new JPanel();
+		raeumeTablePanel.setBackground(backgroundColor);
+		raeumeTab.add(raeumeTablePanel, "cell 0 1, grow");
+		raeumeTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow]"));
+		
+		spRaeume = new JScrollPane();
+		raeumeTablePanel.add(spRaeume, "cell 0 1, grow");
+		spRaeume.setViewportView(raeumeTable);
+		
+		getRaeumeData();
 		
 
 		//Creating a formulaPrinter
@@ -494,7 +577,7 @@ public class MainFrame extends JFrame{
 		//getting table and textArea data
 		int row = table.getSelectedRow();
 		if (row == -1) {
-			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgewählt!");
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
 			return;
 		}
 		String familyName = (String)getValueByColName(table, row, "Name");
@@ -681,6 +764,82 @@ public class MainFrame extends JFrame{
 
 
 	
+	
+	public static void getGeraeteData() {
+		geraeteTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Ger\u00e4teID", "Name", "Beschreibung", "Raum"}) {
+			private static final long serialVersionUID = 2L;
+			
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
+		};
+		
+		geraeteTable.setModel(geraeteTableModel);
+		geraeteTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
+		
+		for (int i=0; i < DBConnection.getGeraeteData().length; i++) {
+			geraeteTableModel.addRow(new Object[] {DBConnection.getGeraeteData()[i][0],
+												   DBConnection.getGeraeteData()[i][1],
+												   DBConnection.getGeraeteData()[i][2],
+												   DBConnection.getGeraeteData()[i][3]
+			});
+		}
+		geraeteTableModel.fireTableDataChanged();
+		
+		geraeteCellRenderer = new DefaultTableCellRenderer();
+		geraeteCellRenderer.setHorizontalAlignment(JLabel.CENTER);
+		
+		geraeteTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		geraeteTable.setRowHeight(20);
+	}
+	
+	public static void getRaeumeData() {
+		raeumeTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "RaumID", "Name", "Beschreibung"}) {
+			private static final long serialVersionUID = 3L;
+			
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
+		};
+		
+		raeumeTable.setModel(raeumeTableModel);
+		raeumeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(raeumeTableModel));
+		
+		for (int i = 0; i < DBConnection.getRaeumeData().length; i++) {
+			raeumeTableModel.addRow(new Object[] {DBConnection.getRaeumeData()[i][0],
+												  DBConnection.getRaeumeData()[i][1],
+												  DBConnection.getRaeumeData()[i][2]
+			});
+		}
+		raeumeTableModel.fireTableDataChanged();
+		
+		raeumeCellRenderer = new DefaultTableCellRenderer();
+		raeumeCellRenderer.setHorizontalAlignment(JLabel.CENTER);
+		
+		raeumeTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		raeumeTable.setRowHeight(20);
+		
+	}
 	
 	//method to put login Window in front and grants focus to it
 	/*public void loginToFront() {

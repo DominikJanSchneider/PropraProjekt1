@@ -22,13 +22,14 @@ public class DBImporter {
 			DBConnection.setURL("jdbc:sqlite:"+selFile);
 			Connection con = DBConnection.connect(); // Connecting to existing data base
 			try {
-				ResultSet rsTableNames = con.getMetaData().getTables(null, null, null, null); //Getting all tables from data base
-				ArrayList<String> tables = new ArrayList<String>(); //Creating ArrayList for table names
-				while(rsTableNames.next()) {
-					tables.add(rsTableNames.getString("TABLE_NAME")); //Saving table names from data base in ArrayList
-				}
+				//ResultSet rsTableNames = con.getMetaData().getTables(null, null, null, null); //Getting all tables from data base
+				//ArrayList<String> tables = new ArrayList<String>(); //Creating ArrayList for table names
+				//while(rsTableNames.next()) {
+				//	tables.add(rsTableNames.getString("TABLE_NAME")); //Saving table names from data base in ArrayList
+				//}
 				//System.out.println(tables.get(0));
-				String query = "SELECT * FROM "+tables.get(0)+";";
+				//String query = "SELECT * FROM "+tables.get(0)+";";
+				String query = "SELECT * FROM Personen;";
 				PreparedStatement getTable = con.prepareStatement(query);
 				ResultSet rs = getTable.executeQuery();
 				

@@ -12,8 +12,14 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="/Users/fithawiseyoum/git/PropraProjekt1/pdfbox-2.0.19.jar"/>
 	<classpathentry kind="lib" path="/Users/fithawiseyoum/git/PropraProjekt1/fontbox-2.0.19.jar"/>
 	<classpathentry kind="lib" path="/Users/fithawiseyoum/git/PropraProjekt1/commons-logging-1.2.jar"/>
+=======
+	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="fontbox-2.0.19.jar"/>
+	<classpathentry kind="lib" path="pdfbox-2.0.19.jar"/>
+>>>>>>> branch 'master' of https://github.com/DominikJanSchneider/PropraProjekt1
 	<classpathentry kind="output" path="bin"/>
 </classpath>
