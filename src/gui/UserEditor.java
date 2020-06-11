@@ -250,7 +250,7 @@ public class UserEditor extends JFrame {
 									  + "VALUES (?,?);";	
 					
 					int value = ((Integer) pane.getValue()).intValue();
-					System.out.println(pane.getValue());
+					//System.out.println(pane.getValue());
 					
 					if (value == 0) {
 						String userNameVar;
@@ -307,15 +307,15 @@ public class UserEditor extends JFrame {
 									pstmt.executeUpdate();
 									con.commit();
 									
-									System.out.println("Benutzer erstellt \n" +
+									/*System.out.println("Benutzer erstellt \n" +
 													   "Benutzername: " + userNameVar +
 													   "Passwort: " + userPasswordVar);
-									
+									*/
 									con.close();
 									pstmt.close();
 									g++;
 								} catch (SQLException e) {
-									System.out.println(e.getMessage());
+									//System.out.println(e.getMessage());
 									JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 								} catch (Exception e) {
 									JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
@@ -367,7 +367,7 @@ public class UserEditor extends JFrame {
 			JOptionPane.showMessageDialog(new JFrame(), "Benutzer gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
 		
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
@@ -411,7 +411,7 @@ public class UserEditor extends JFrame {
 				Connection con = DBConnection.connectLogin();
 				PreparedStatement pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
-				System.out.println("Speichert Eintrag...");
+				//System.out.println("Speichert Eintrag...");
 				pstmt.execute();
 				con.commit();
 				
@@ -422,7 +422,7 @@ public class UserEditor extends JFrame {
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag ge\u00e4ndert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
