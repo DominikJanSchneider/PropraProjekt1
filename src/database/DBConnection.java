@@ -441,6 +441,270 @@ public class DBConnection {
 			}
 		}
 		
+		public static Object[][] getGeraeteID() {
+			try {
+				
+				tableName = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Ger\u00e4teID='"+ MainFrame.getTxtGeraeteID().getText()+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Ger\u00e4teID='"+MainFrame.getTxtGeraeteID().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					filteredTable[i][3] = rs.getString("Raum");
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGeraeteName() {
+			try {
+				
+				tableName = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Name='"+ MainFrame.getTxtGeraeteName().getText()+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+MainFrame.getTxtGeraeteName().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					filteredTable[i][3] = rs.getString("Raum");
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGeraeteBesch() {
+			try {
+				
+				tableName = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Beschreibung='"+ MainFrame.getTxtGeraeteBeschreibung().getText()+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung='"+MainFrame.getTxtGeraeteBeschreibung().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					filteredTable[i][3] = rs.getString("Raum");
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGeraeteRaum() {
+			try {
+				
+				tableName = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Raum='"+ MainFrame.getTxtGeraeteraum().getText()+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Raum='"+MainFrame.getTxtGeraeteraum().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					filteredTable[i][3] = rs.getString("Raum");
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRaeumeID() {
+			try {
+				tableName = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (RaumID) FROM "+tableName+ " WHERE RaumID= '" + Integer.parseInt(MainFrame.getTfRaumID().getText())+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+ " WHERE RaumID= '" + Integer.parseInt(MainFrame.getTfRaumID().getText())+"'");
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("RaumID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					
+					i++;
+				}
+				tableName= "Personen";
+				pstmt.close();
+				con.close();
+				return filteredTable;
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRaumName() {
+			try {
+				
+				tableName = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(RaumID) FROM "+tableName+" WHERE Name='"+ MainFrame.getTfRaumname().getText()+"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+MainFrame.getTfRaumname().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("RaumID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRaumBesch() {
+			try {
+				
+				tableName = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(RaumID) FROM "+tableName+" WHERE Beschreibung= '"+ MainFrame.getTxtBeschreibungEingeben().getText()+ "'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung= '"+MainFrame.getTxtBeschreibungEingeben().getText()+"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("RaumID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					
+					
+					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
 		//User data base methods
 		public static Connection connectLogin() {
 		       try {

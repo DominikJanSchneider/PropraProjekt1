@@ -135,11 +135,31 @@ public class MainFrame extends JFrame{
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
+	private JPanel filterPanel;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+	private JButton btnNewButton_2;
+	private JButton btnNewButton_3;
+	private JPanel filterPanel2;
+	private static JTextField tfRaumID;
+	private static JTextField tfRaumname;
+	private static JTextField txtBeschreibungEingeben;
+	private JButton btnNewButton_4;
+	private JButton btnNewButton_5;
+	private JButton btnNewButton_6;
+	private static JTextField txtGeraeteID;
+	private static JTextField txtGeraeteName;
+	private static JTextField txtGeraeteBeschreibung;
+	private static JTextField txtGeraeteraum;
+	private JButton btnNewButton_7;
+	private JButton btnNewButton_8;
 
 	
 
 	
 	
+	
+
 	public static void main(String[] args) {
 		login = Login.getInstance();
 	}
@@ -285,11 +305,108 @@ public class MainFrame extends JFrame{
 		contentPane.add(tabbedPane, "cell 0 0,grow");
 		
 		//###Tab Personen###
-		personenTab = new JPanel();
-		personenTab.setBackground(backgroundColor);
-		personenTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
+				personenTab = new JPanel();
+				personenTab.setBackground(backgroundColor);
+				personenTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
+				
+				tabbedPane.addTab("Personen", personenTab);
 		
-		tabbedPane.addTab("Personen", personenTab);
+
+		//###Tab Geraete###
+		geraeteTab = new JPanel();
+		geraeteTab.setBackground(backgroundColor);
+		geraeteTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow][]"));
+		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
+		
+		
+		filterPanel = new JPanel();
+		filterPanel.setBackground(backgroundColor);
+		filterPanel.setForeground(foregroundColor);
+		geraeteTab.add(filterPanel, "cell 0 0,grow");
+		filterPanel.setLayout(new MigLayout("", "[300,grow][300,grow][300,grow][300,grow]", "[][grow][][grow]"));
+		
+		txtGeraeteID = new JTextField();
+		txtGeraeteID.setText("Bitte Geräte-ID eingeben");
+		filterPanel.add(txtGeraeteID, "cell 0 0,growx");
+		txtGeraeteID.setColumns(10);
+		
+		txtGeraeteName = new JTextField();
+		txtGeraeteName.setText("Bitte Gerätenamen eingeben");
+		filterPanel.add(txtGeraeteName, "cell 1 0,growx");
+		txtGeraeteName.setColumns(10);
+		
+		txtGeraeteBeschreibung = new JTextField();
+		txtGeraeteBeschreibung.setText("Bitte Gerätebeschreibung eingeben");
+		filterPanel.add(txtGeraeteBeschreibung, "cell 2 0,growx");
+		txtGeraeteBeschreibung.setColumns(10);
+		
+		txtGeraeteraum = new JTextField();
+		txtGeraeteraum.setText("Bitte Geräteraum eingeben");
+		filterPanel.add(txtGeraeteraum, "cell 3 0,growx");
+		txtGeraeteraum.setColumns(10);
+		
+		
+		
+		btnNewButton = new JButton("Geräte-ID suchen");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteID());
+			}
+		});
+		
+		filterPanel.add(btnNewButton, "cell 0 2,alignx left");
+		
+		
+		btnNewButton_1 = new JButton("Gerätenamen suchen");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteName());
+			}
+		});
+		filterPanel.add(btnNewButton_1, "cell 1 2,alignx left");
+		
+		btnNewButton_2 = new JButton("Beschreibung suchen");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteBesch());
+			}
+		});
+		filterPanel.add(btnNewButton_2, "cell 2 2");
+		
+		
+		
+		btnNewButton_3 = new JButton("Raum suchen");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteRaum());
+			}
+		});
+		filterPanel.add(btnNewButton_3, "cell 3 2");
+		
+
+		
+		
+	
+		
+		
+		geraeteTablePanel = new JPanel();
+		geraeteTablePanel.setBackground(backgroundColor);
+		geraeteTab.add(geraeteTablePanel, "cell 0 1, grow");
+		geraeteTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][grow][][][]"));
+		
+		spGeraete = new JScrollPane();
+		geraeteTablePanel.add(spGeraete, "cell 0 0,grow");
+		spGeraete.setViewportView(geraeteTable);
+		
+		btnNewButton_7 = new JButton("Alle Geräte anzeigen");
+		btnNewButton_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteData());
+			}
+		});
+		geraeteTablePanel.add(btnNewButton_7, "cell 0 3");
+		
+		
 		
 		// Building the panel for all elements like buttons
 		configPanel = new JPanel();
@@ -501,21 +618,11 @@ public class MainFrame extends JFrame{
 		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
 		
-
-		//###Tab Geraete###
-		geraeteTab = new JPanel();
-		geraeteTab.setBackground(backgroundColor);
-		geraeteTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow]"));
-		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
 		
-		geraeteTablePanel = new JPanel();
-		geraeteTablePanel.setBackground(backgroundColor);
-		geraeteTab.add(geraeteTablePanel, "cell 0 1, grow");
-		geraeteTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow]"));
-		
-		spGeraete = new JScrollPane();
-		geraeteTablePanel.add(spGeraete, "cell 0 0,grow");
-		spGeraete.setViewportView(geraeteTable);
+		taGefahrstoffe.setLineWrap(true);
+		taGefahrstoffe.setWrapStyleWord(true);
+		taGefahrstoffe.setEditable(false);
+		spGefahrstoffe.setViewportView(taGefahrstoffe);
 		
 		getGeraeteData();
 		
@@ -526,14 +633,67 @@ public class MainFrame extends JFrame{
 		raeumeTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow]"));
 		tabbedPane.addTab("R\u00e4ume", raeumeTab);
 		
+		filterPanel2 = new JPanel();
+		filterPanel2.setBackground(backgroundColor);
+		filterPanel2.setForeground(foregroundColor);
+		filterPanel2.setLayout(new MigLayout("", "[400,grow][400,grow][400,grow]", "[grow][][][grow]"));
+		raeumeTab.add(filterPanel2, "cell 0 0,grow");
+		
+		tfRaumID = new JTextField();
+		tfRaumID.setText("Bitte Raum-ID eingeben");
+		filterPanel2.add(tfRaumID, "cell 0 1,growx");
+		tfRaumID.setColumns(10);
+		
+		tfRaumname = new JTextField();
+		tfRaumname.setText("Bitte Raumnamen eingeben");
+		filterPanel2.add(tfRaumname, "cell 1 1,growx");
+		tfRaumname.setColumns(10);
+		
+		txtBeschreibungEingeben = new JTextField();
+		txtBeschreibungEingeben.setText("Bitte Beschreibung eingeben");
+		filterPanel2.add(txtBeschreibungEingeben, "cell 2 1,growx");
+		txtBeschreibungEingeben.setColumns(10);
+		
+		btnNewButton_4 = new JButton("Raum-ID suchen");
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterRaum(DBConnection.getRaeumeID());
+			}
+		});
+		filterPanel2.add(btnNewButton_4, "cell 0 2");
+		
+		btnNewButton_5 = new JButton("Raumnamen suchen");
+		btnNewButton_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterRaum(DBConnection.getRaumName());
+			}
+		});
+		filterPanel2.add(btnNewButton_5, "cell 1 2");
+		
+		btnNewButton_6 = new JButton("Beschreibung suchen");
+		btnNewButton_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterRaum(DBConnection.getRaumBesch());
+			}
+		});
+		filterPanel2.add(btnNewButton_6, "cell 2 2");
+		
 		raeumeTablePanel = new JPanel();
 		raeumeTablePanel.setBackground(backgroundColor);
 		raeumeTab.add(raeumeTablePanel, "cell 0 1, grow");
-		raeumeTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow]"));
+		raeumeTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][][]"));
 		
 		spRaeume = new JScrollPane();
 		raeumeTablePanel.add(spRaeume, "cell 0 1, grow");
 		spRaeume.setViewportView(raeumeTable);
+		
+		btnNewButton_8 = new JButton("Alle Räume anzeigen");
+		btnNewButton_8.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterRaum(DBConnection.getRaeumeData());
+			}
+		});
+		raeumeTablePanel.add(btnNewButton_8, "cell 0 2");
 		
 		getRaeumeData();
 		
@@ -545,7 +705,9 @@ public class MainFrame extends JFrame{
 	
 	public void loadFilter(Object[][] filteredTable) {
 		dtm.setRowCount(0);
+		
 		for (int i = 0; i < filteredTable.length; i++) {
+			
 			dtm.addRow(new Object[] {filteredTable[i][0],
 									 filteredTable[i][1],
 									 filteredTable[i][2],
@@ -561,7 +723,38 @@ public class MainFrame extends JFrame{
 									 filteredTable[i][12],
 									 filteredTable[i][13],
 									 filteredTable[i][14]});
+									 
 		}
+	}
+	
+	public void loadFilterGeraete(Object[][] filteredTable) {
+		geraeteTableModel.setRowCount(0);
+		
+for (int i = 0; i < filteredTable.length; i++) {
+			
+			geraeteTableModel.addRow(new Object[] {filteredTable[i][0],
+									 filteredTable[i][1],
+									 filteredTable[i][2],
+									 filteredTable[i][3]
+									  });
+									 
+		}
+		
+	}
+	
+	public void loadFilterRaum(Object[][] filteredTable) {
+		raeumeTableModel.setRowCount(0);
+		
+for (int i = 0; i < filteredTable.length; i++) {
+			
+	raeumeTableModel.addRow(new Object[] {filteredTable[i][0],
+									 filteredTable[i][1],
+									 filteredTable[i][2],
+									 
+									  });
+									 
+		}
+		
 	}
 	
 	public static JTable getEditorTable() {
@@ -857,6 +1050,64 @@ public class MainFrame extends JFrame{
 		return tfSearch;
 	}
 	
+	public static JTextField getTxtGeraeteID() {
+		return txtGeraeteID;
+	}
+
+	public static void setTxtGeraeteID(JTextField txtGeraeteID) {
+		MainFrame.txtGeraeteID = txtGeraeteID;
+	}
+
+	public static JTextField getTxtGeraeteName() {
+		return txtGeraeteName;
+	}
+
+	public static void setTxtGeraeteName(JTextField txtGeraeteName) {
+		MainFrame.txtGeraeteName = txtGeraeteName;
+	}
+
+	public static JTextField getTxtGeraeteBeschreibung() {
+		return txtGeraeteBeschreibung;
+	}
+
+	public static void setTxtGeraeteBeschreibung(JTextField txtGeraeteBeschreibung) {
+		MainFrame.txtGeraeteBeschreibung = txtGeraeteBeschreibung;
+	}
+
+	public static JTextField getTxtGeraeteraum() {
+		return txtGeraeteraum;
+	}
+
+	public static void setTxtGeraeteraum(JTextField txtGeraeteraum) {
+		MainFrame.txtGeraeteraum = txtGeraeteraum;
+	}
+
+	public static JTextField getTfRaumID() {
+		return tfRaumID;
+	}
+
+	public static void setTfRaumID(JTextField tfRaumID) {
+		MainFrame.tfRaumID = tfRaumID;
+	}
+
+	public static JTextField getTfRaumname() {
+		return tfRaumname;
+	}
+
+	public static void setTfRaumname(JTextField tfRaumname) {
+		MainFrame.tfRaumname = tfRaumname;
+	}
+
+	public static JTextField getTxtBeschreibungEingeben() {
+		return txtBeschreibungEingeben;
+	}
+
+	public static void setTxtBeschreibungEingeben(JTextField txtBeschreibungEingeben) {
+		MainFrame.txtBeschreibungEingeben = txtBeschreibungEingeben;
+	}
+
+	
+	
 }
 
 
@@ -894,4 +1145,6 @@ class ColorTable extends DefaultTableCellRenderer {
      return this;
      
  }
+ 
+ 
 }
