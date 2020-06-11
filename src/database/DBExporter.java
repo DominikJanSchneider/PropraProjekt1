@@ -68,6 +68,13 @@ public class DBExporter {
 									 		   +rs.getString("Intern")+"','"+rs.getString("Beschaeftigungsverhaeltnis")+"','"+rs.getString("Beginn")+"','"+rs.getString("Ende")+"','"+rs.getString("Extern")+"','"
 									 		   +rs.getString("E-Mail Adresse")+"','"+rs.getString("Allgemeine Unterweisung")+"','"+rs.getString("Laboreinrichtungen")+"','"+rs.getString("Gefahrstoffe")+"');");							
 				}
+				
+				//Table Geraete
+				
+				//Table Raume
+				
+				//Table Geraetezuweisung
+				
 				createTable.close();
 				fillTable.close();
 				getTable.close();
