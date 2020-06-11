@@ -352,7 +352,11 @@ public class UserEditor extends JFrame {
 			Connection con = DBConnection.connectLogin();
 			PreparedStatement pstmt = con.prepareStatement(query);
 			con.setAutoCommit(false);
-			System.out.println("Lösche Eintrag...");
+			//System.out.println("Lösche Eintrag...");
+			pstmt.execute();
+			con.commit();
+			pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(id-1)+"' WHERE name='Benutzer';");
+			con.setAutoCommit(false);
 			pstmt.execute();
 			con.commit();
 			

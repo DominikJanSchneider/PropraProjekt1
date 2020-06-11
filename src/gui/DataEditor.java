@@ -658,7 +658,11 @@ public class DataEditor extends JFrame{
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
-				System.out.println("Lösche Eintrag...");
+				//System.out.println("Lösche Eintrag...");
+				pstmt.execute();
+				con.commit();
+				pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(ID-1)+"' WHERE name='Personen';");
+				con.setAutoCommit(false);
 				pstmt.execute();
 				con.commit();
 				
