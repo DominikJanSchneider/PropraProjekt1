@@ -435,6 +435,11 @@ public class MainFrame extends JFrame{
 				tfSearch.selectAll();
 			}
 		});
+		tfSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilter(DBConnection.getName());
+			}
+		});
 		tfSearch.setText("Bitte Namen eingeben");
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);

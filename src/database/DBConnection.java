@@ -91,10 +91,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM "+tableName+" WHERE Name LIKE '%"+MainFrame.getSearchTF().getText()+"%';");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
+			pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+MainFrame.getSearchTF().getText()+"%';");
 			//rs = stmt.executeQuery("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
