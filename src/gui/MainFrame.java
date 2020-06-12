@@ -300,6 +300,7 @@ public class MainFrame extends JFrame{
 		//Tabbed Pane
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBackground(backgroundColor);
+		tabbedPane.setForeground(foregroundColor);
 		
 		//tabbedPane.borderHightlightColor(Color.WHITE);
 		contentPane.add(tabbedPane, "cell 0 0,grow");
