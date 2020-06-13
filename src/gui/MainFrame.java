@@ -74,6 +74,8 @@ public class MainFrame extends JFrame{
 	private static JPanel geraeteTablePanel;
 	private JPanel raeumeTab;
 	private static JPanel raeumeTablePanel;
+	private JPanel gefahrstoffeTab;
+	private static JPanel gefahrstoffeTablePanel;
 	
 	private static JScrollPane spTable;
 	private JScrollPane spAllgemeineUnterweisungen;
@@ -81,6 +83,7 @@ public class MainFrame extends JFrame{
 	private JScrollPane spGefahrstoffe;
 	private JScrollPane spGeraete;
 	private JScrollPane spRaeume;
+	private JScrollPane spGefahrstoffeTab;
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -111,15 +114,18 @@ public class MainFrame extends JFrame{
 	private static JTable editorTable = new JTable();
 	private static JTable geraeteTable = new JTable();
 	private static JTable raeumeTable = new JTable();
+	private static JTable gefahrstoffeTable = new JTable();
 	
 	private static DefaultTableModel dtm;
 	private static DefaultTableModel geraeteTableModel;
 	private static DefaultTableModel raeumeTableModel;
+	private static DefaultTableModel gefahrstoffeTableModel;
 	
 	private static DefaultTableCellRenderer cellRenderer;
 	private static DefaultTableCellRenderer cellRendererColor;
 	private static DefaultTableCellRenderer geraeteCellRenderer;
 	private static DefaultTableCellRenderer raeumeCellRenderer;
+	private static DefaultTableCellRenderer gefahrstoffeCellRenderer;
 	
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
@@ -141,6 +147,7 @@ public class MainFrame extends JFrame{
 	private JButton btnNewButton_2;
 	private JButton btnNewButton_3;
 	private JPanel filterPanel2;
+	private JPanel filterPanel3;
 	private static JTextField tfRaumID;
 	private static JTextField tfRaumname;
 	private static JTextField txtBeschreibungEingeben;
@@ -153,6 +160,12 @@ public class MainFrame extends JFrame{
 	private static JTextField txtGeraeteraum;
 	private JButton btnNewButton_7;
 	private JButton btnNewButton_8;
+	private static JTextField txtGefahrstoffID;
+	private static JTextField txtGefahrstoffName;
+	private JButton searchButtonGefahrstoffName;
+	private JButton searchButtonGefahrstoffID;
+	private JButton allButtonGefahrstoffe;
+	
 
 	
 
@@ -406,8 +419,6 @@ public class MainFrame extends JFrame{
 			}
 		});
 		geraeteTablePanel.add(btnNewButton_7, "cell 0 3");
-		
-		
 		
 		// Building the panel for all elements like buttons
 		configPanel = new JPanel();
@@ -703,8 +714,66 @@ public class MainFrame extends JFrame{
 		
 		getRaeumeData();
 		
+		//###Tab Gefahrstoffe###
+				gefahrstoffeTab = new JPanel();
+				gefahrstoffeTab.setBackground(backgroundColor);
+				gefahrstoffeTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow][]"));
+				tabbedPane.addTab("Gefahrstoffe", gefahrstoffeTab);
+				
+				filterPanel3 = new JPanel();
+				filterPanel3.setBackground(backgroundColor);
+				filterPanel3.setForeground(foregroundColor);
+				filterPanel3.setLayout(new MigLayout("", "[400,grow][400,grow][400,grow]", "[grow][][][grow]"));
+				gefahrstoffeTab.add(filterPanel3, "cell 0 0,grow");
+				
+				txtGefahrstoffID = new JTextField();
+				txtGefahrstoffID.setText("Bitte Geräte-ID eingeben");
+				filterPanel3.add(txtGefahrstoffID, "cell 0 0,growx");
+				txtGefahrstoffID.setColumns(10);
+				
+				txtGefahrstoffName = new JTextField();
+				txtGefahrstoffName.setText("Bitte Gefahrstoffnamen eingeben");
+				filterPanel3.add(txtGefahrstoffName, "cell 1 0,growx");
+				txtGefahrstoffName.setColumns(10);
+				
+				searchButtonGefahrstoffID = new JButton("Gefahrstoff-ID suchen");
+				searchButtonGefahrstoffID.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						loadFilterGefahrstoffe(DBConnection.getGefahrstoffID());
+					}
+				});
+				
+				filterPanel3.add(searchButtonGefahrstoffID, "cell 0 2,alignx left");
+				
+				
+				searchButtonGefahrstoffName = new JButton("Gefahrstoffenamen suchen");
+				searchButtonGefahrstoffName.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						loadFilterGefahrstoffe(DBConnection.getGefahrstoffName());
+					}
+				});
+				filterPanel3.add(searchButtonGefahrstoffName, "cell 1 2,alignx left");
+				
+				gefahrstoffeTablePanel = new JPanel();
+				gefahrstoffeTablePanel.setBackground(backgroundColor);
+				gefahrstoffeTab.add(gefahrstoffeTablePanel, "cell 0 1, grow");
+				gefahrstoffeTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][grow][][][]"));
+				
+				spGefahrstoffeTab = new JScrollPane();
+				gefahrstoffeTablePanel.add(spGefahrstoffeTab, "cell 0 0,grow");
+				spGefahrstoffeTab.setViewportView(gefahrstoffeTable);
+				
+				allButtonGefahrstoffe = new JButton("Alle Gefahrstoffe anzeigen");
+				allButtonGefahrstoffe.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						loadFilterGefahrstoffe(DBConnection.getGefahrstoffeData());
+					}
+				});
+				gefahrstoffeTablePanel.add(allButtonGefahrstoffe, "cell 0 3");
+				
+				getGefahrstoffeData();
 
-		//Creating a formulaPrinter
+		//Creating a formPrinter
 		fPrinter = new FormDocPrinter();
 
 	}
@@ -736,14 +805,13 @@ public class MainFrame extends JFrame{
 	public void loadFilterGeraete(Object[][] filteredTable) {
 		geraeteTableModel.setRowCount(0);
 		
-for (int i = 0; i < filteredTable.length; i++) {
+		for (int i = 0; i < filteredTable.length; i++) {
 			
-			geraeteTableModel.addRow(new Object[] {filteredTable[i][0],
-									 filteredTable[i][1],
-									 filteredTable[i][2],
-									 filteredTable[i][3]
-									  });
-									 
+			geraeteTableModel.addRow(new Object[] {
+									filteredTable[i][0],
+									filteredTable[i][1],
+									filteredTable[i][2],
+									filteredTable[i][3]});	 
 		}
 		
 	}
@@ -751,16 +819,25 @@ for (int i = 0; i < filteredTable.length; i++) {
 	public void loadFilterRaum(Object[][] filteredTable) {
 		raeumeTableModel.setRowCount(0);
 		
-for (int i = 0; i < filteredTable.length; i++) {
+		for (int i = 0; i < filteredTable.length; i++) {
 			
-	raeumeTableModel.addRow(new Object[] {filteredTable[i][0],
-									 filteredTable[i][1],
-									 filteredTable[i][2],
-									 
-									  });
-									 
+			raeumeTableModel.addRow(new Object[] {
+									filteredTable[i][0],
+									filteredTable[i][1],
+									filteredTable[i][2]});			 
 		}
 		
+	}
+	
+	public void loadFilterGefahrstoffe(Object[][] filteredTable) {
+		gefahrstoffeTableModel.setRowCount(0);
+		
+		for (int i = 0; i < filteredTable.length; i++) {
+			
+			gefahrstoffeTableModel.addRow(new Object[] {
+									filteredTable[i][0],
+									filteredTable[i][1],});			 
+		}
 	}
 	
 	public static JTable getEditorTable() {
@@ -1035,8 +1112,46 @@ for (int i = 0; i < filteredTable.length; i++) {
 		raeumeCellRenderer = new DefaultTableCellRenderer();
 		raeumeCellRenderer.setHorizontalAlignment(JLabel.CENTER);
 		
-		raeumeTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		raeumeTable.getColumnModel().getColumn(0).setCellRenderer(raeumeCellRenderer);
 		raeumeTable.setRowHeight(20);
+		
+	}
+	
+	public static void getGefahrstoffeData() {
+		gefahrstoffeTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "GefahrstoffID", "Name"}) {
+			private static final long serialVersionUID = 3L;
+			
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+			
+			@Override
+			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+				if (column == 0) {
+					return Integer.class;
+				} else {
+					return String.class;
+				}
+			}
+		};
+		
+		gefahrstoffeTable.setModel(gefahrstoffeTableModel);
+		gefahrstoffeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(gefahrstoffeTableModel));
+		
+		for (int i = 0; i < DBConnection.getGefahrstoffeData().length; i++) {
+			gefahrstoffeTableModel.addRow(new Object[] {
+													DBConnection.getGefahrstoffeData()[i][0],
+													DBConnection.getGefahrstoffeData()[i][1]
+			});
+		}
+		gefahrstoffeTableModel.fireTableDataChanged();
+		
+		gefahrstoffeCellRenderer = new DefaultTableCellRenderer();
+		gefahrstoffeCellRenderer.setHorizontalAlignment(JLabel.CENTER);
+		
+		gefahrstoffeTable.getColumnModel().getColumn(0).setCellRenderer(gefahrstoffeCellRenderer);
+		gefahrstoffeTable.setRowHeight(20);
 		
 	}
 	
@@ -1112,9 +1227,14 @@ for (int i = 0; i < filteredTable.length; i++) {
 	public static void setTxtBeschreibungEingeben(JTextField txtBeschreibungEingeben) {
 		MainFrame.txtBeschreibungEingeben = txtBeschreibungEingeben;
 	}
-
 	
+	public static String getTxtGefahrstoffID() {
+		return txtGefahrstoffID.getText();
+	}
 	
+	public static String getTxtGefahrstoffName() {
+		return txtGefahrstoffName.getText();
+	}
 }
 
 

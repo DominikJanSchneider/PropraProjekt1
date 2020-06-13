@@ -86,6 +86,36 @@ public class DBConnection {
 		}
 	}
 	
+	public static Object[][] getGefahrstoffeData() {
+		try {
+			con = DriverManager.getConnection(url);
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (GefahrstoffID) FROM Gefahrstoffe;");
+			ResultSet rs = pstmt.executeQuery();
+			int rowCount = rs.getInt(1);
+			pstmt = con.prepareStatement("SELECT * FROM Gefahrstoffe;");
+			rs = pstmt.executeQuery();
+			int columnCount = rs.getMetaData().getColumnCount();
+			Object[][] tableData = new Object[rowCount][columnCount];
+			int i = 0;
+			
+			while (rs.next()) {
+				tableData[i][0] = rs.getInt("GefahrstoffID");
+				tableData[i][1] = rs.getString("Name");
+				i++;
+			}
+			pstmt.close();
+			con.close();
+			return tableData;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	
+	
 	public static Object[][] getName() {
 		try {
 			con = DriverManager.getConnection(url);
@@ -731,6 +761,70 @@ public class DBConnection {
 					
 					
 					
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGefahrstoffID() {
+			try {
+				tableName = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				String id = MainFrame.getTxtGefahrstoffID();
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (GefahrstoffID) FROM "+tableName+ " WHERE GefahrstoffID= '" + id +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+ " WHERE GefahrstoffID= '" + id +"'");
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("GefahrstoffID");
+					filteredTable[i][1] = rs.getString("Name");
+					i++;
+				}
+				tableName= "Personen";
+				pstmt.close();
+				con.close();
+				return filteredTable;
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGefahrstoffName() {
+			try {
+				
+				tableName = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				
+				String name = MainFrame.getTxtGefahrstoffName();
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(GefahrstoffID) FROM "+tableName+" WHERE Name='"+ name +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+ name +"'");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("GefahrstoffID");
+					filteredTable[i][1] = rs.getString("Name");
 					i++;
 				}
 				
