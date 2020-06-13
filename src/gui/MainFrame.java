@@ -300,6 +300,7 @@ public class MainFrame extends JFrame{
 		//Tabbed Pane
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBackground(backgroundColor);
+		tabbedPane.setForeground(foregroundColor);
 		
 		//tabbedPane.borderHightlightColor(Color.WHITE);
 		contentPane.add(tabbedPane, "cell 0 0,grow");
@@ -433,6 +434,11 @@ public class MainFrame extends JFrame{
 			@Override
 			public void focusGained(FocusEvent evt) {
 				tfSearch.selectAll();
+			}
+		});
+		tfSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilter(DBConnection.getName());
 			}
 		});
 		tfSearch.setText("Bitte Namen eingeben");

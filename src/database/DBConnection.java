@@ -91,10 +91,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM "+tableName+" WHERE Name='"+MainFrame.getSearchTF().getText()+"';");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM "+tableName+" WHERE Name LIKE '%"+MainFrame.getSearchTF().getText()+"%';");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
+			pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+MainFrame.getSearchTF().getText()+"%';");
 			//rs = stmt.executeQuery("SELECT * FROM "+tableName+" WHERE Name ='"+MainFrame.getSearchTF().getText()+"';");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
@@ -399,10 +399,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE Intern='Ja'");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE Intern='Ja'");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT Intern IS NULL");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE Intern='Ja'");
+			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT Intern IS NULL");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
 			Object[][] filteredTable = new Object[rowCount][columnCount];
@@ -443,10 +443,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				//Statement stmt = con.createStatement();
 				//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE Extern='Ja'");
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE Extern='Ja'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT Extern IS NULL");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM Personen WHERE Extern='Ja'"	);
+				pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT Extern IS NULL"	);
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
 				Object[][] filteredTable = new Object[rowCount][columnCount];

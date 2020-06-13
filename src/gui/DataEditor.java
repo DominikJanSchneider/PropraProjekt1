@@ -383,7 +383,7 @@ public class DataEditor extends JFrame{
 						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 				
 				int value = ((Integer) pane.getValue()).intValue();
-				System.out.println(pane.getValue());
+				//System.out.println(pane.getValue());
 
 				
 				if (value == 0) {
@@ -581,7 +581,7 @@ public class DataEditor extends JFrame{
 								pstmt.executeUpdate();
 								con.commit();
 								
-								System.out.println("Person erstellt \n" + 
+								/*System.out.println("Person erstellt \n" + 
 										"Name: " + nameVar + 
 										", Vorname: " + pnameVar + 
 										", Datum: " + dateVar2 + 
@@ -596,12 +596,12 @@ public class DataEditor extends JFrame{
 										", Ende: " + InstrVar + 
 										", Extern: " + LabVar + 
 										", E-Mail Adresse: " + HazardVar);
-								
+								*/
 								con.close();
 							    pstmt.close();
 							    g++;
 							} catch (SQLException e) {
-					            System.out.println(e.getMessage());
+					            //System.out.println(e.getMessage());
 					            JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 							} catch (Exception e) {
 								//String warning = "Bitte richtiges Datenformat eingeben";
@@ -658,7 +658,11 @@ public class DataEditor extends JFrame{
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
-				System.out.println("Lösche Eintrag...");
+				//System.out.println("Lösche Eintrag...");
+				pstmt.execute();
+				con.commit();
+				pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(ID-1)+"' WHERE name='Personen';");
+				con.setAutoCommit(false);
 				pstmt.execute();
 				con.commit();
 				
@@ -671,7 +675,7 @@ public class DataEditor extends JFrame{
 				
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
             JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception e) {
@@ -847,7 +851,7 @@ public class DataEditor extends JFrame{
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
-				System.out.println("Speichert Eintrag...");
+				//System.out.println("Speichert Eintrag...");
 				pstmt.execute();
 				con.commit();
 				
@@ -860,7 +864,7 @@ public class DataEditor extends JFrame{
 
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
             JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception e) {
