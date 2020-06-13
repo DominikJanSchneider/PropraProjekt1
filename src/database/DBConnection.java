@@ -514,12 +514,10 @@ public class DBConnection {
 				
 				tableName = "Ger\u00e4te";
 				con = DriverManager.getConnection(url);
-				
-				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Ger\u00e4teID='"+id+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Ger\u00e4teID LIKE '%"+id+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Ger\u00e4teID='"+id+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Ger\u00e4teID LIKE '%"+id+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -555,10 +553,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Name='"+name+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+name+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -592,10 +590,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Beschreibung='"+descript+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung='"+descript+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -631,10 +629,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Raum='"+geraeteRaum+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Raum LIKE '%"+geraeteRaum+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Raum='"+geraeteRaum+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Raum LIKE '%"+geraeteRaum+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -670,10 +668,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Name='"+name+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+name+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -703,10 +701,10 @@ public class DBConnection {
 				
 				tableName = "R\u00e4ume";
 				con = DriverManager.getConnection(url);
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Beschreibung= '"+descript+ "'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung= '"+descript+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
