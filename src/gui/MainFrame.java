@@ -109,7 +109,9 @@ public class MainFrame extends JFrame{
 	
 	private static JTable table = new JTable();
 	private static JTable editorTable = new JTable();
+	private static JTable geraeteEditorTable = new JTable();
 	private static JTable geraeteTable = new JTable();
+	private static JTable raeumeEditorTable = new JTable();
 	private static JTable raeumeTable = new JTable();
 	
 	private static DefaultTableModel dtm;
@@ -549,7 +551,7 @@ public class MainFrame extends JFrame{
 		tablePanel.add(spTable, "cell 0 0,grow");
 		spTable.setViewportView(table);
 		
-		getData();
+		getPersonData();
 		
 		// Fill JTextAreas (Allgemeine Unterweisung, Laboreinrichtungen, Gefahrstoffe)  with data from selected row
 		table.addMouseListener(new MouseAdapter() {
@@ -770,6 +772,18 @@ for (int i = 0; i < filteredTable.length; i++) {
 		return dtm;
 	}
 	
+	public static JTable getGeraeteEditorTable() {
+		return geraeteEditorTable;
+	}
+	
+	public static DefaultTableModel getGeraeteTableModel() {
+		return geraeteTableModel;
+	}
+	
+	public static JTable getRaeumeEditorTable() {
+		return raeumeEditorTable;
+	}
+	
 	private void printPressed() {
 		//getting table and textArea data
 		int row = table.getSelectedRow();
@@ -823,7 +837,7 @@ for (int i = 0; i < filteredTable.length; i++) {
 	}
 	
 	// method to fill JTable with Data from Database
-	public static void getData() {
+	public static void getPersonData() {
 
 		dtm = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
 				"Intern", "Beschaeftigungsverhaeltnis", "Beginn", "Ende", "Extern", "E-Mail Adresse", "Allgemeine Unterweisung", "Laboreinrichtungen", "Gefahrstoffe" }) {
@@ -983,6 +997,9 @@ for (int i = 0; i < filteredTable.length; i++) {
 		
 		geraeteTable.setModel(geraeteTableModel);
 		geraeteTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
+		geraeteEditorTable.setModel(geraeteTableModel);
+		geraeteEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
+		
 		
 		for (int i=0; i < DBConnection.getGeraeteData().length; i++) {
 			geraeteTableModel.addRow(new Object[] {DBConnection.getGeraeteData()[i][0],
@@ -998,6 +1015,9 @@ for (int i = 0; i < filteredTable.length; i++) {
 		
 		geraeteTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
 		geraeteTable.setRowHeight(20);
+		
+		geraeteEditorTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		geraeteEditorTable.setRowHeight(20);
 	}
 	
 	public static void getRaeumeData() {
@@ -1021,6 +1041,8 @@ for (int i = 0; i < filteredTable.length; i++) {
 		
 		raeumeTable.setModel(raeumeTableModel);
 		raeumeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(raeumeTableModel));
+		raeumeEditorTable.setModel(raeumeTableModel);
+		raeumeEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(raeumeTableModel));
 		
 		for (int i = 0; i < DBConnection.getRaeumeData().length; i++) {
 			raeumeTableModel.addRow(new Object[] {DBConnection.getRaeumeData()[i][0],

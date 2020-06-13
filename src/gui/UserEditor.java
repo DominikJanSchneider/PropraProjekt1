@@ -59,6 +59,8 @@ public class UserEditor extends JFrame {
 	private JButton btnDeleteUser;
 	private JButton btnSave;
 	
+	private int confirmed = 0;
+	
 	
 	//Method for getting the frame, because of singelton scheme
 	public static UserEditor getInstance() {
@@ -241,7 +243,9 @@ public class UserEditor extends JFrame {
 			
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 			pane.createDialog(null, "Neuen Nutzer anlegen").setVisible(true);
-			
+			if (pane.getValue() != null) {
+				confirmed = 1;
+			}
 			if (pane.getValue() == null) {
 				g++;
 			} else {
@@ -340,7 +344,12 @@ public class UserEditor extends JFrame {
 		} //End: while (g < 0)
 		
 		getBenutzerData();
-		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt", "Dialog", JOptionPane.INFORMATION_MESSAGE);
+		if (confirmed == 1) {
+			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
+		} else {
+			JOptionPane.showMessageDialog(new JFrame(), "Bearbeitung abgebrochen");
+		}
+		confirmed = 0;
 	}
 	
 	//Method to delete user entry from database
@@ -357,7 +366,7 @@ public class UserEditor extends JFrame {
 			con.commit();
 			pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(id-1)+"' WHERE name='Benutzer';");
 			con.setAutoCommit(false);
-			pstmt.execute();
+			pstmt.executeUpdate();
 			con.commit();
 			
 			pstmt.close();
