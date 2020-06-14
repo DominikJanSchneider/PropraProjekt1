@@ -43,6 +43,7 @@ public class DataEditor extends JFrame{
 	private JPanel personenTab;
 	private JPanel geraeteTab;
 	private JPanel raeumeTab;
+	private JPanel gefahrstoffeTab;
 	private JPanel elementPanel;
 	private static JPanel tablePanel;
 	private JPanel textFieldPanel;
@@ -72,10 +73,12 @@ public class DataEditor extends JFrame{
 	private static JTextField tfDeviceRoom;
 	private static JTextField tfRoomName;
 	private static JTextField tfRoomDescription;
+	private static JTextField tfHazardousSubstance;
 	private JScrollPane spInstr;
 	private JScrollPane spLab;
 	private JScrollPane spHazard;
 	private static int ID = 0;
+	private static String name;
 	private int confirmed = 0;
 	
 	private static Connection con = null;
@@ -454,8 +457,8 @@ public class DataEditor extends JFrame{
 		btnSave.setIcon(saveIcon);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (tfName.getText().isEmpty() | tfPname.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(new JFrame(), "Bitte Name und Vorname eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
+				if (tfDeviceName.getText().isEmpty() | tfDeviceRoom.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(new JFrame(), "Bitte Ger\u00e4tenamen und Ger\u00e4teraum eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					saveDeviceData();
@@ -573,8 +576,8 @@ public class DataEditor extends JFrame{
 		btnSave.setIcon(saveIcon);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (tfName.getText().isEmpty() | tfPname.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(new JFrame(), "Bitte Name und Vorname eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
+				if (tfRoomName.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(new JFrame(), "Bitte Raumnamen eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					saveRoomData();
@@ -589,12 +592,122 @@ public class DataEditor extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int i = MainFrame.getRaeumeEditorTable().getSelectedRow();
-				ID = Integer.parseInt(MainFrame.getRaeumeEditorTable().getValueAt(i, 0).toString());
+				name = MainFrame.getRaeumeEditorTable().getValueAt(i, 0).toString();
 
 				fillRoomData();
 			}
 		});
 		
+		
+		//###Gefahrstoffe Tab###
+		gefahrstoffeTab = new JPanel();
+		gefahrstoffeTab.setBackground(backgroundColor);
+		gefahrstoffeTab.setForeground(foregroundColor);
+		gefahrstoffeTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
+		tabbedPane.addTab("Gefahrstoffe", gefahrstoffeTab);
+		
+		// Panel for the editing elements
+		elementPanel = new JPanel();
+		elementPanel.setBackground(backgroundColor);
+		elementPanel.setForeground(foregroundColor);
+		gefahrstoffeTab.add(elementPanel, "cell 0 0,grow");
+		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
+		
+		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
+		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblBearbeitungselemente.setForeground(foregroundColor);
+		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		
+		//refresh button
+		btnRefresh = new JButton("Aktualisieren");
+		refreshIcon = new ImageIcon(DataEditor.class.getResource("/images/refresh.png"));
+		btnRefresh.setIcon(refreshIcon);
+		elementPanel.add(btnRefresh, "cell 0 1");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				MainFrame.getGefahrstoffeData();
+			}
+		});
+		
+		// add Data Button
+		btnAdd = new JButton("Neuer Eintrag");
+		newIcon = new ImageIcon(DataEditor.class.getResource("/images/new.png"));
+		btnAdd.setIcon(newIcon);
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				newHazardousSubstancesData();
+			}
+		});
+		elementPanel.add(btnAdd, "gapleft 10, cell 1 1");
+		
+		// delete data button
+		btnDelete = new JButton("Eintrag löschen");
+		deleteIcon = new ImageIcon(DataEditor.class.getResource("/images/delete.png"));
+		btnDelete.setIcon(deleteIcon);
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteHazardousSubstancesData();
+			}
+		});
+		elementPanel.add(btnDelete, "gapleft 30, cell 2 1");
+		
+		// Panel for the table that resembles the database
+		tablePanel = new JPanel();
+		tablePanel.setBackground(backgroundColor);
+		tablePanel.setForeground(foregroundColor);
+		gefahrstoffeTab.add(tablePanel, "cell 0 1,grow");
+		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
+		
+		spTable = new JScrollPane();
+		tablePanel.add(spTable, "cell 0 0,grow");
+		
+		// cloned table for edit window
+		spTable.setViewportView(MainFrame.getGefahrstoffeEditorTable());
+	
+		
+		// Panel for the update button
+		textFieldPanel = new JPanel();
+		textFieldPanel.setBackground(backgroundColor);
+		textFieldPanel.setForeground(foregroundColor);
+		gefahrstoffeTab.add(textFieldPanel, "cell 0 2,grow");
+		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]"));
+		
+		// name textfield
+		lblName = new JLabel("Name:");
+		lblName.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblName.setForeground(foregroundColor);
+		textFieldPanel.add(lblName, "cell 0 0");
+		tfHazardousSubstance = new JTextField();
+		textFieldPanel.add(tfHazardousSubstance, "width 30%, cell 1 0");
+		
+		// savebutton
+		twoLines = "Änderungen \n Speichern";
+		btnSave = new JButton("<html>" + twoLines.replaceAll("\\n", "<br>") + "</html>");
+		saveIcon = new ImageIcon(DataEditor.class.getResource("/images/save.png"));
+		btnSave.setIcon(saveIcon);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (tfHazardousSubstance.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(new JFrame(), "Bitte Name und Vorname eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+					saveHazardousSubstancesData();
+				}
+			}
+		});
+		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 1");
+		
+		
+		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
+		MainFrame.getGefahrstoffeEditorTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i = MainFrame.getGefahrstoffeEditorTable().getSelectedRow();
+				name = MainFrame.getGefahrstoffeEditorTable().getValueAt(i, 0).toString();
+
+				fillHazardousSubstancesData();
+			}
+		});
 		
 		setVisible(true);
 	}
@@ -1167,6 +1280,109 @@ public class DataEditor extends JFrame{
 	}
 	
 	
+	private void newHazardousSubstancesData() {
+		JTextField hazardousSubstance = new JTextField();
+		int g = -1;
+		int h = 1;
+		
+		while (g < 0) { // while loop does exit when window is closed or new entry is confirmed (g++;)
+			//initialize fields for user entries
+			Object[] message = {"Gefahrstoff (Text)", hazardousSubstance};
+			
+			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE);
+			pane.createDialog(null, "Neuen Gefahrstoff hinzuf\u00fcgen").setVisible(true);
+			if (pane.getValue() != null) {
+				confirmed = 1;
+			}
+			if (pane.getValue() == null) {
+				g++;
+			} else {
+				try {
+					String insertDevice = "INSERT INTO Gefahrstoffe (Name) "
+										+ "VALUES (?);";
+					
+					int value = ((Integer) pane.getValue()).intValue();
+					//System.out.println(pane.getValue());
+					
+					if (value == 0) {
+						String hazardousSubstanceVar;
+						
+						h = 1;
+						
+						if (hazardousSubstance.getText().isEmpty()) {
+							String warning = "Bitte Gefahrstoff eingeben\n";
+							JOptionPane.showMessageDialog(new JFrame(), warning, "Dialog", JOptionPane.ERROR_MESSAGE);
+							h = 0;
+						}
+						else if (!hazardousSubstance.getText().isEmpty() && h != 0) {
+							try {
+								h = 2;	//h = 2 for first while-loop ; h = 1 for 2nd while-loop ;
+										//h = 0 to exit else if (repeats method)
+								
+								while (h == 2) {
+									h = 1;
+									
+									try {
+										hazardousSubstanceVar = hazardousSubstance.getText();
+									} catch (Exception e) {
+										JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Gefahrstoff'", "Dialog", JOptionPane.ERROR_MESSAGE);
+										h = 0;
+									}
+								} //End: while (h == 2)
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+							}
+							
+							//Execute database command if there are no wrong entries
+							while (h == 1) {
+								h = 0;
+								try {
+									hazardousSubstanceVar = hazardousSubstance.getText();
+									
+									con = DBConnection.connect();
+									con.setAutoCommit(false);
+									
+									PreparedStatement pstmt = con.prepareStatement(insertDevice);
+									pstmt.setString(1, hazardousSubstanceVar);
+									
+									pstmt.executeUpdate();
+									con.commit();
+									
+									con.close();
+									pstmt.close();
+									g++;
+								} catch (SQLException e) {
+									JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+								}
+							} //End: while (h == 1)
+						} //End: else if
+						
+						else {
+							
+						}
+					} //End: if (value == 0)
+					
+					else {
+						g++;
+					}
+				} catch (NullPointerException e) {
+					hazardousSubstance.setText("");
+					System.out.print(e);
+				}
+			} //End: first else
+		} //End: while (g < 0)
+		MainFrame.getGefahrstoffeData();
+		if (confirmed == 1) {
+			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
+		} else {
+			JOptionPane.showMessageDialog(new JFrame(), "Bearbeitung abgebrochen");
+		}
+		confirmed = 0;
+	}
+	
+	
 	// method to delete entry from database
 	private static void deletePersonData() {						// used in ActionListener of JButton btnDel "Eintrag  Löschen"
 		
@@ -1241,7 +1457,7 @@ public class DataEditor extends JFrame{
 	private static void deleteRoomData() {
 		try {
 			// gets currently selected row's ID, compares the Database ID's and deletes matching entry
-			String query="DELETE FROM R\u00e4ume WHERE RaumID='"+ID+"' ";
+			String query="DELETE FROM R\u00e4ume WHERE Name='"+name+"' ";
 			
 			con = DBConnection.connect();
 			pstmt = con.prepareStatement(query);
@@ -1249,10 +1465,10 @@ public class DataEditor extends JFrame{
 			//System.out.println("Lösche Eintrag...");
 			pstmt.execute();
 			con.commit();
-			pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(ID-1)+"' WHERE name='R\u00e4ume';");
-			con.setAutoCommit(false);
-			pstmt.executeUpdate();
-			con.commit();
+			//pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(ID-1)+"' WHERE name='R\u00e4ume';");
+			//con.setAutoCommit(false);
+			//pstmt.executeUpdate();
+			//con.commit();
 			
 		    pstmt.close();
 		    con.close();
@@ -1271,6 +1487,33 @@ public class DataEditor extends JFrame{
 		}
 	}
 	
+	private static void deleteHazardousSubstancesData() {
+		try {
+			// gets currently selected row's ID, compares the Database ID's and deletes matching entry
+			String query="DELETE FROM Gefahrstoffe WHERE Name='"+name+"' ";
+			
+			con = DBConnection.connect();
+			pstmt = con.prepareStatement(query);
+			con.setAutoCommit(false);
+			
+			pstmt.execute();
+			con.commit();
+			
+		    pstmt.close();
+		    con.close();
+
+			MainFrame.getGefahrstoffeData();
+			
+			JOptionPane.showMessageDialog(new JFrame(), "Eintrag gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
+
+		} catch (SQLException e) {
+			//System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 	
 	// method to fill textfields with column-entrys of selected row
 	public static void fillPersonFields() {							// genutzt in MouseListener von JTable getEditorTable()
@@ -1322,11 +1565,19 @@ public class DataEditor extends JFrame{
 	
 	public static void fillRoomData() {
 		int selRow = MainFrame.getRaeumeEditorTable().getSelectedRow();
-		String fillRoomName = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 1);
-		String fillRoomDescription = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 2);
+		String fillRoomName = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 0);
+		String fillRoomDescription = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 1);
 		
 		tfRoomName.setText(fillRoomName);
 		tfRoomDescription.setText(fillRoomDescription);
+	}
+	
+	
+	public static void fillHazardousSubstancesData() {
+		int selRow = MainFrame.getGefahrstoffeEditorTable().getSelectedRow();
+		String fillHazardousSubstance = (String) MainFrame.getGefahrstoffeEditorTable().getValueAt(selRow, 0);
+		
+		tfHazardousSubstance.setText(fillHazardousSubstance);
 	}
 	
 	
@@ -1575,8 +1826,8 @@ public class DataEditor extends JFrame{
 			// execute Database update if there are no wrong entrys
 			while (g == 1) {
 				g = 0;
-				String query="UPDATE R\u00e4ume SET Name='" + tfRoomName.getText() + "' ,Beschreibung='" + tfDeviceDescription.getText() + 
-							  "' ,RaumID='" + ID + "' WHERE RaumID='"+ID+"' ";
+				String query="UPDATE R\u00e4ume SET Name='" + tfRoomName.getText() + "' ,Beschreibung='" + tfRoomDescription.getText() + 
+							 "' WHERE Name='"+name+"' ";
 							
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
@@ -1589,6 +1840,54 @@ public class DataEditor extends JFrame{
 				pstmt.close();
 						    
 				MainFrame.getRaeumeData();
+						    
+				JOptionPane.showMessageDialog(new JFrame(), "Eintrag geändert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
+
+			}
+		} catch (SQLException e) {
+			//System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+	public static void saveHazardousSubstancesData() {
+		String hazardousSubstanceVar;
+		
+		int g = 0;
+		
+		try {
+			g = 2;
+			
+			// queries to disallow wrong database entries
+			while (g == 2) {
+				g = 1;
+				try {
+					hazardousSubstanceVar = tfHazardousSubstance.getText();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Ger\u00e4tename'", "Dialog", JOptionPane.ERROR_MESSAGE);
+					g = 0;
+				}
+			}
+			
+			// execute Database update if there are no wrong entrys
+			while (g == 1) {
+				g = 0;
+				String query="UPDATE Gefahrstoffe SET Name='" + tfHazardousSubstance.getText() + 
+							 "' WHERE Name='"+name+"' ";
+							
+				con = DBConnection.connect();
+				pstmt = con.prepareStatement(query);
+				con.setAutoCommit(false);
+				pstmt.execute();
+				con.commit();
+							
+				con.close();
+				pstmt.close();
+						    
+				MainFrame.getGefahrstoffeData();
 						    
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag geändert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 

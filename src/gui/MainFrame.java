@@ -117,7 +117,9 @@ public class MainFrame extends JFrame{
 	private static JTable geraeteTable = new JTable();
 	private static JTable raeumeEditorTable = new JTable();
 	private static JTable raeumeTable = new JTable();
+	private static JTable gefahrstoffeEditorTable = new JTable();
 	private static JTable gefahrstoffeTable = new JTable();
+	
 	
 	private static DefaultTableModel dtm;
 	private static DefaultTableModel geraeteTableModel;
@@ -912,6 +914,10 @@ public class MainFrame extends JFrame{
 		return raeumeEditorTable;
 	}
 	
+	public static JTable getGefahrstoffeEditorTable() {
+		return gefahrstoffeEditorTable;
+	}
+	
 	private void printPressed() {
 		//getting table and textArea data
 		int row = table.getSelectedRow();
@@ -1180,11 +1186,11 @@ public class MainFrame extends JFrame{
 		
 		geraeteTable.setModel(geraeteTableModel);
 		geraeteTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
-		/*
+		
 		geraeteEditorTable.setModel(geraeteTableModel);
 		geraeteEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
 		
-		
+		/*
 		for (int i=0; i < DBConnection.getGeraeteData().length; i++) {
 			geraeteTableModel.addRow(new Object[] {DBConnection.getGeraeteData()[i][0],
 												   DBConnection.getGeraeteData()[i][1],
@@ -1262,6 +1268,8 @@ public class MainFrame extends JFrame{
 		
 		gefahrstoffeTable.setModel(gefahrstoffeTableModel);
 		gefahrstoffeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(gefahrstoffeTableModel));
+		gefahrstoffeEditorTable.setModel(gefahrstoffeTableModel);
+		gefahrstoffeEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(gefahrstoffeTableModel));
 		
 		Object[][] data = DBConnection.getGefahrstoffeData();
 		for (int i = 0; i < data.length; i++) {
