@@ -815,6 +815,8 @@ public class DBConnection {
 				//System.out.println("usrname: " + benutzername);
 				//System.out.println("passwort: " + passwort);
 				if (name.equals(benutzername) && pswrt.equals(passwort)) {
+					pstmt.close();
+					con.close();
 					return true;
 				}
 				pstmt.close();
