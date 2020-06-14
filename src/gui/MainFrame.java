@@ -914,8 +914,16 @@ public class MainFrame extends JFrame{
 		return raeumeEditorTable;
 	}
 	
+	public static DefaultTableModel getRaeumeTableModel() {
+		return raeumeTableModel;
+	}
+	
 	public static JTable getGefahrstoffeEditorTable() {
 		return gefahrstoffeEditorTable;
+	}
+	
+	public static DefaultTableModel getGefahrstoffeTableModel() {
+		return gefahrstoffeTableModel;
 	}
 	
 	private void printPressed() {
