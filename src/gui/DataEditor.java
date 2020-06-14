@@ -109,6 +109,7 @@ public class DataEditor extends JFrame{
 		//Tabbed Pane
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBackground(backgroundColor);
+		tabbedPane.setForeground(foregroundColor);
 		contentPane.add(tabbedPane, "cell 0 0, grow");
 		
 		//Personen Tab
