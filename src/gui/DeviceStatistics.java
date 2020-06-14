@@ -30,9 +30,9 @@ public class DeviceStatistics extends JFrame{
 	private Container contentPane;
 	private static DeviceStatistics deviceStats;
 	private JScrollPane spStats;
-	private JTextField searchTf;
+	private JTextField tfSearch;
 	private JPanel filterPanel;
-	private JButton searchButton;
+	private JButton btnSearch;
 	private static int gID;
 	
 	public DeviceStatistics(int pgID)
@@ -54,23 +54,23 @@ public class DeviceStatistics extends JFrame{
 		//search
 		filterPanel = new JPanel(new MigLayout("", "[200,grow][grow]", "[10][10]"));
 		filterPanel.setBackground(backgroundColor);
-		searchTf = new JTextField();
-		searchTf.setColumns(20);
-		searchTf.setText("Bitte Namen eingeben");
-		filterPanel.add(searchTf, "cell 0 0, alignx left");
-		searchButton = new JButton("Suche Starten");
-		searchButton.addActionListener(new ActionListener() {
+		tfSearch = new JTextField();
+		tfSearch.setColumns(20);
+		tfSearch.setText("Bitte Namen eingeben");
+		filterPanel.add(tfSearch, "cell 0 0, alignx left");
+		btnSearch = new JButton("Suche Starten");
+		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				triggerSearch();
 			}
 			
 		});
-		searchTf.addFocusListener(new FocusAdapter() {
+		tfSearch.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent evt) {
-				searchTf.selectAll();
+				tfSearch.selectAll();
 			}
 		});
-		searchTf.addKeyListener(new KeyListener() {
+		tfSearch.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {}
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
@@ -79,7 +79,7 @@ public class DeviceStatistics extends JFrame{
 			}
 			public void keyReleased(KeyEvent e) {}
 		});
-		filterPanel.add(searchButton, "cell 0 1, alignx left");
+		filterPanel.add(btnSearch, "cell 0 1, alignx left");
 		contentPane.add(filterPanel, "cell 0 0, grow");
 		
 		//statistic table
@@ -111,7 +111,7 @@ public class DeviceStatistics extends JFrame{
 	}
 	
 	public static void getStatsData(int gID) {
-		statTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Nutzungszeit"}) {
+		statTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Nutzungszeit (in Stunden)"}) {
 			private static final long serialVersionUID = 3L;
 			
 			public boolean isCellEditable(int row, int column) {
@@ -169,7 +169,7 @@ public class DeviceStatistics extends JFrame{
 	
 	private void triggerSearch()
 	{
-		String name = searchTf.getText();
+		String name = tfSearch.getText();
 		Object[][] filteredTable = DBConnection.getDeviceStatsFilteredData(gID, name);
 		loadFilterStats(filteredTable);
 	}
