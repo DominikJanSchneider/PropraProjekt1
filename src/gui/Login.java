@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -109,21 +111,37 @@ public class Login extends JDialog {
 	}
 	
 	public boolean isLoginValid() {
-		Connection con = DBConnection.connectLogin();
-		if (DBConnection.checkLogin(tfBenutzername.getText(), pfPasswort.getText())) {
-			return true;
-		} else {
+		try {
+			Connection con = DBConnection.connectLogin();
+			if (DBConnection.checkLogin(tfBenutzername.getText(), pfPasswort.getText())) {
+				con.close();
+				return true;
+			} else {
+				con.close();
+				return false;
+			}
+		} catch(SQLException e) {
+			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		
 	}
 	
 	public boolean checkAdmin() {
-		Connection con = DBConnection.connectLogin();
-		if (DBConnection.checkAdmin(tfBenutzername.getText())) {
-			return true;
-		} else {
+		try {
+			Connection con = DBConnection.connectLogin();
+			if (DBConnection.checkAdmin(tfBenutzername.getText())) {
+				con.close();
+				return true;
+			} else {
+				con.close();
+				return false;
+			}
+		} catch(SQLException e) {
+			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		
 	}
 	
 	
