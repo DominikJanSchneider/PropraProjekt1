@@ -54,7 +54,6 @@ public class DBExporter {
 				createTable.execute();
 				
 				//Filling the copied table with data from the default data base table
-				//Filling the copied table with data from the default data base table
 				Statement fillTable = conOut.createStatement();
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO Personen ("+attributes[0]+","+attributes[1]+","+attributes[2]+","+attributes[3]+","+attributes[4]+","+attributes[5]+","
@@ -63,17 +62,34 @@ public class DBExporter {
 									 "VALUES ("+rs.getString("ID")+",'"+rs.getString("Name")+"','"+rs.getString("Vorname")+"','"+rs.getString("Datum")+"','"+rs.getString("Ifwt")+"','"+rs.getString("MNaF")+"','"
 									 		   +rs.getString("Intern")+"','"+rs.getString("Beschaeftigungsverhaeltnis")+"','"+rs.getString("Beginn")+"','"+rs.getString("Ende")+"','"+rs.getString("Extern")+"','"
 									 		   +rs.getString("E-Mail Adresse")+"','"+rs.getString("Allgemeine Unterweisung")+"','"+rs.getString("Laboreinrichtungen")+"','"+rs.getString("Gefahrstoffe")+"');");	
+					Statement update = conOut.createStatement();
+					
+					if (rs.getString("Beschaeftigungsverhaeltnis") == null) {
+						update.execute("UPDATE Personen SET Beschaeftigungsverhaeltnis=NULL WHERE ID="+rs.getString("ID")+";");
+					}
 					if (rs.getString("Ifwt") == null) {
-						System.out.println("Fired");
+						update.execute("UPDATE Personen SET Ifwt=NULL WHERE ID="+rs.getString("ID")+";");
 					}
 					if (rs.getString("MNaF") == null) {
-						System.out.println("Fired");
+						update.execute("UPDATE Personen SET MNaF=NULL WHERE ID="+rs.getString("ID")+";");
 					}
 					if (rs.getString("Intern") == null) {
-						System.out.println("Fired");
+						update.execute("UPDATE Personen SET Intern=NULL WHERE ID="+rs.getString("ID")+";");
 					}
 					if (rs.getString("Extern") == null) {
-						System.out.println("Fired");
+						update.execute("UPDATE Personen SET Extern=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("E-Mail Adresse") == null) {
+						update.execute("UPDATE Personen SET 'E-Mail Adresse'=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("Allgemeine Unterweisung") == null) {
+						update.execute("UPDATE Personen SET 'Allgemeine Unterweisung'=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("Laboreinrichtungen") == null) {
+						update.execute("UPDATE Personen SET Laboreinrichtungen=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("Gefahrstoffe") == null) {
+						update.execute("UPDATE Personen SET Gefahrstoffe=NULL WHERE ID="+rs.getString("ID")+";");
 					}
 				}
 				
@@ -104,7 +120,12 @@ public class DBExporter {
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO Ger\u00e4te ("+attributes[0]+","+attributes[1]+","+attributes[2]+","+attributes[3]+") "+
 									 "VALUES ("+rs.getString("Ger\u00e4teID")+",'"+rs.getString("Name")+"','"+rs.getString("Beschreibung")+
-									 "','"+rs.getString("Raum")+"');");							
+									 "','"+rs.getString("Raum")+"');");	
+					Statement update = conOut.createStatement();
+					
+					if (rs.getString("Beschreibung") == null) {
+						update.execute("UPDATE Ger\u00e4te SET Beschreibung=NULL WHERE Ger\u00e4teID="+rs.getString("Ger\u00e4teID")+";");
+					}
 				}
 				
 				
@@ -129,7 +150,13 @@ public class DBExporter {
 				fillTable = conOut.createStatement();
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO R\u00e4ume ("+attributes[0]+","+attributes[1]+") "+
-									 "VALUES ('"+rs.getString("Name")+"','"+rs.getString("Beschreibung")+"');");							
+									 "VALUES ('"+rs.getString("Name")+"','"+rs.getString("Beschreibung")+"');");
+					
+					Statement update = conOut.createStatement();
+					
+					if (rs.getString("Beschreibung") == null) {
+						update.execute("UPDATE R\u00e4ume SET Beschreibung=NULL WHERE Name="+rs.getString("Name")+";");
+					}
 				}
 				
 				
@@ -157,7 +184,13 @@ public class DBExporter {
 				fillTable = conOut.createStatement();
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO Ger\u00e4tezuordnung ("+attributes[0]+","+attributes[1]+","+attributes[2]+") "+
-									 "VALUES ("+rs.getString("Ger\u00e4teID")+",'"+rs.getString("PersonenID")+"','"+rs.getString("Nutzungszeit")+"');");							
+									 "VALUES ("+rs.getString("Ger\u00e4teID")+",'"+rs.getString("PersonenID")+"','"+rs.getString("Nutzungszeit")+"');");	
+					
+					Statement update = conOut.createStatement();
+					
+					if (rs.getString("Nutzungszeit") == null) {
+						update.execute("UPDATE Ger\u00e4tezuordnung SET Nutzungszeit=NULL WHERE Ger\u00e4teID="+rs.getString("Ger\u00e4teID")+";");
+					}
 				}
 				
 				

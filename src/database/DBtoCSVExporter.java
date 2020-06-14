@@ -95,17 +95,16 @@ public class DBtoCSVExporter {
 						columnNames[i] = rs.getMetaData().getColumnName(i+1);
 					}
 					
-					head = String.format("%s; %s; %s;%n",
-							  columnNames[0], columnNames[1], columnNames[2]);
+					head = String.format("%s; %s;%n",
+							  columnNames[0], columnNames[1]);
 					fileWriter.write(head);
 					
 					while(rs.next()) {
-						int id = rs.getInt("RaumID");
 						String name = rs.getString("Name");
 						String beschreibung = rs.getString("Beschreibung");
 						
-						line = String.format("%d, %s; %s;%n",
-											  id, name, beschreibung);
+						line = String.format("%s; %s;%n",
+											  name, beschreibung);
 						fileWriter.write(line);
 					}
 					fileWriter.write("\n\n");
@@ -119,16 +118,38 @@ public class DBtoCSVExporter {
 						columnNames[i] = rs.getMetaData().getColumnName(i+1);
 					}
 					
-					head = String.format("%s; %s;%n",
-							  columnNames[0], columnNames[1]);
+					head = String.format("%s; %s; %s;%n",
+							  columnNames[0], columnNames[1], columnNames[2]);
 					fileWriter.write(head);
 					
 					while(rs.next()) {
 						int geraeteID = rs.getInt("Ger\u00e4teID");
 						int personenID = rs.getInt("PersonenID");
+						double nutzungszeit = rs.getDouble("Nutzungszeit");
 						
-						line = String.format("%d, %d;%n",
-											  geraeteID, personenID);
+						line = String.format("%d, %d; %s;%n",
+											  geraeteID, personenID, nutzungszeit);
+						fileWriter.write(line);
+					}
+					fileWriter.write("\n\n");
+					
+					
+					//Gefahrstoffe Table
+					getTable = con.prepareStatement("SELECT * FROM Gefahrstoffe;");
+					rs = getTable.executeQuery();
+					
+					columnNames = new String[rs.getMetaData().getColumnCount()];
+					for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+						columnNames[i] = rs.getMetaData().getColumnName(i+1);
+					}
+					
+					head = String.format("%s;%n",columnNames[0]);
+					fileWriter.write(head);
+					
+					while(rs.next()) {
+						String hazardousSubstance = rs.getString("Name");
+						
+						line = String.format("%s;%n", hazardousSubstance);
 						fileWriter.write(line);
 					}
 					fileWriter.write("\n\n");
