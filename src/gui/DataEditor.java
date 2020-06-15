@@ -1560,21 +1560,24 @@ public class DataEditor extends JFrame{
 	
 	// method to fill textfields with column-entrys of selected row
 	public static void fillPersonFields() {							// genutzt in MouseListener von JTable getEditorTable()
-		int selRow = MainFrame.getEditorTable().getSelectedRow();
-		String fillName = (String) MainFrame.getEditorTable().getValueAt(selRow, 1);
-		String fillPname = (String) MainFrame.getEditorTable().getValueAt(selRow, 2);
-		String fillDate = (String) MainFrame.getEditorTable().getValueAt(selRow, 3);
-		String fillIfwt = (String) MainFrame.getEditorTable().getValueAt(selRow, 4);
-		String fillMNaF = (String) MainFrame.getEditorTable().getValueAt(selRow, 5);
-		String fillIntern = (String) MainFrame.getEditorTable().getValueAt(selRow, 6);
-		String fillEmpl = (String) MainFrame.getEditorTable().getValueAt(selRow, 7);
-		String fillStart = (String) MainFrame.getEditorTable().getValueAt(selRow, 8);
-		String fillEnd = (String) MainFrame.getEditorTable().getValueAt(selRow, 9);
-		String fillExternal = (String) MainFrame.getEditorTable().getValueAt(selRow, 10);
-		String fillMail = (String) MainFrame.getEditorTable().getValueAt(selRow, 11);
-		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(selRow, 12);
-		String fillLab = (String) MainFrame.getEditorTable().getModel().getValueAt(selRow, 13);
-		String fillHazard = (String) MainFrame.getEditorTable().getModel().getValueAt(selRow, 14);
+		int a = MainFrame.getEditorTable().getSelectedRow();
+		JTable editorTable = MainFrame.getEditorTable();
+		String fillName = (String)MainFrame.getValueByColName(editorTable, a, "Name");
+		String fillPname = (String)MainFrame.getValueByColName(editorTable, a, "Vorname");
+		String fillDate = (String)MainFrame.getValueByColName(editorTable, a, "Datum");
+		String fillIfwt = (String)MainFrame.getValueByColName(editorTable, a, "Ifwt");
+		String fillMNaF = (String)MainFrame.getValueByColName(editorTable, a, "MNaF");
+		String fillIntern = (String)MainFrame.getValueByColName(editorTable, a, "Intern");
+		String fillEmpl = (String)MainFrame.getValueByColName(editorTable, a, "Beschaeftigungsverhaeltnis");
+		String fillStart = (String)MainFrame.getValueByColName(editorTable, a, "Beginn");
+		String fillEnd = (String)MainFrame.getValueByColName(editorTable, a, "Ende");
+		String fillExternal = (String)MainFrame.getValueByColName(editorTable, a, "Extern");
+		String fillMail = (String)MainFrame.getValueByColName(editorTable, a, "E-Mail Adresse");
+		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 12);
+		
+		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), a, "ID");
+		String fillLab = DBConnection.getLabComment(pID);
+		String fillHazard = DBConnection.getDangerSubstComment(pID);
 		
 		tfName.setText(fillName);
 		tfPname.setText(fillPname);
