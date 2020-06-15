@@ -361,7 +361,6 @@ public class UserEditor extends JFrame {
 			JOptionPane.showMessageDialog(new JFrame(), "Bearbeitung abgebrochen");
 		}
 		confirmed = 0;
-		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 
 	}
 	

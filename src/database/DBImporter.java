@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -22,13 +21,7 @@ public class DBImporter {
 			DBConnection.setURL("jdbc:sqlite:"+selFile);
 			Connection con = DBConnection.connect(); // Connecting to existing data base
 			try {
-				//ResultSet rsTableNames = con.getMetaData().getTables(null, null, null, null); //Getting all tables from data base
-				//ArrayList<String> tables = new ArrayList<String>(); //Creating ArrayList for table names
-				//while(rsTableNames.next()) {
-				//	tables.add(rsTableNames.getString("TABLE_NAME")); //Saving table names from data base in ArrayList
-				//}
-				//System.out.println(tables.get(0));
-				//String query = "SELECT * FROM "+tables.get(0)+";";
+				
 				String query = "SELECT * FROM Personen;";
 				PreparedStatement getTable = con.prepareStatement(query);
 				ResultSet rs = getTable.executeQuery();
@@ -51,9 +44,11 @@ public class DBImporter {
 					String unterw = rs.getString("Allgemeine Unterweisung");
 					String labeinr = rs.getString("Laboreinrichtungen");
 					String gefahrst = rs.getString("Gefahrstoffe");
+					String labKommentar = rs.getString("LabKommentar");
+					String gefKommentar = rs.getString("GefKommentar");
 
 					MainFrame.getDefaultTableModel().addRow(new Object[] { id, name, vorname, datum, ifwt, manf, intern, beschverh, beginn, ende, extern,
-								email,unterw,labeinr,gefahrst });
+								email,unterw,labeinr,gefahrst,labKommentar,gefKommentar});
 				}
 				MainFrame.getDefaultTableModel().fireTableDataChanged();
 				

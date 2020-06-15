@@ -11,7 +11,7 @@ import gui.MainFrame;
 
 public class DBConnection {
 	
-	private static String url = "jdbc:sqlite:database/Personen.db";
+	private static String url = "jdbc:sqlite:database/CoreDatabase.db";
 	private static String tableName = "Personen";
 	private static Connection con;
 	
@@ -1161,7 +1161,7 @@ public class DBConnection {
 		public static Connection connectLogin() {
 		       try {
 		    	   Class.forName("org.sqlite.JDBC");
-		    	   con = DriverManager.getConnection("jdbc:sqlite:database/Benutzer.db");
+		    	   con = DriverManager.getConnection("jdbc:sqlite:database/UserDatabase.db");
 		    	   //System.out.println("Connection SuccesFul");
 		    	   //JOptionPane.showMessageDialog(null, "Verbindung zur Datenbank hergestellt.");
 		    	   return con;
