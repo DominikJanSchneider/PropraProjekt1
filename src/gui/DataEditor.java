@@ -1037,12 +1037,12 @@ public class DataEditor extends JFrame{
 				
 			} catch (NullPointerException e) {
 				Name.setText("");
-				MNaF.setText("");
-				Intern.setText("");
+				//MNaF.setText("");
+				//Intern.setText("");
 				Empl.setText("");
 				Start.setText("");
 				End.setText("");
-				External.setText("");
+				//External.setText("");
 				System.out.println(e);
 			}
 	
