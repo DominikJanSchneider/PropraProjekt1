@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -1730,11 +1732,17 @@ public class DataEditor extends JFrame{
 					g = 0;
 				}
 				try {
-					MailVar = tfEmail.getText();
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'E-Mail'", "Dialog", JOptionPane.ERROR_MESSAGE);
-					g = 0;
-				}
+                    String s = tfEmail.getText();
+                    if(isValidEMail(s)) {
+                        MailVar = tfEmail.getText();
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'E-Mail'", "Dialog",
+                            JOptionPane.ERROR_MESSAGE);
+                    g = 0;
+                }
 				try {
 					InstrVar = taInstructions.getText();
 				} catch (Exception e) {
@@ -1790,6 +1798,15 @@ public class DataEditor extends JFrame{
 		}
 		
 	}
+	
+	public static boolean isValidEMail(String s) {
+		String regex = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
+		Pattern emailPat = Pattern.compile(regex);
+		
+		Matcher matcher = emailPat.matcher(s);
+		return matcher.matches();
+    }
+
 	
 	private void btnEditDevicesPressed()
 	{
