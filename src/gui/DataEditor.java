@@ -80,6 +80,8 @@ public class DataEditor extends JFrame{
 	private static int ID = 0;
 	private static String name;
 	private int confirmed = 0;
+	private static DeviceAssignement deviceAssignement;
+	private static DangerSubstAssignement dangerSubstAssignement;
 	
 	private static Connection con = null;
 	static PreparedStatement pstmt = null;
@@ -288,6 +290,26 @@ public class DataEditor extends JFrame{
 			}
 		});
 		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 4");
+		
+		//edit devices button
+		JButton btnEditDevices = new JButton("Geräte bearbeiten");
+		btnEditDevices.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnEditDevicesPressed();
+				deviceAssignement.setVisible(true);
+			}
+		});
+		textFieldPanel.add(btnEditDevices, "width 25%, gapleft 50, cell 4 2");
+		
+		//edit dangerous substances button
+		JButton btnEditDangerSubst = new JButton("Gefahrstoffe bearbeiten");
+		btnEditDangerSubst.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnEditDangerSubstPressed();
+				dangerSubstAssignement.setVisible(true);
+			}
+		});
+		textFieldPanel.add(btnEditDangerSubst, "cell 4 1,width 25%,gapx 50");
 		
 		
 		textAreaPanel = new JPanel();
@@ -1733,6 +1755,27 @@ public class DataEditor extends JFrame{
 		
 	}
 	
+	private void btnEditDevicesPressed()
+	{
+		int row = MainFrame.getEditorTable().getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
+		deviceAssignement = DeviceAssignement.getInstance(pID);
+	}
+	
+	private void btnEditDangerSubstPressed()
+	{
+		int row = MainFrame.getEditorTable().getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
+		dangerSubstAssignement = DangerSubstAssignement.getInstance(pID);
+	}
 	
 	public static void saveDeviceData() {
 		String deviceNameVar;
