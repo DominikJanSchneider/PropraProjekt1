@@ -462,8 +462,8 @@ public class MainFrame extends JFrame{
 				String fillLab =  (String) table.getModel().getValueAt(i, 13);
 				String fillHazard =  (String) table.getModel().getValueAt(i, 14);
 				taGeneralInstruction.setText(fillInstr);
-				taGeneralInstruction.setText(fillLab);
-				taGeneralInstruction.setText(fillHazard);
+				taLabSetup.setText(fillLab);
+				taDangerSubst.setText(fillHazard);
 			}
 		});
 				
