@@ -30,9 +30,10 @@ public class DBtoCSVExporter {
 				for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
 					columnNames[i] = rs.getMetaData().getColumnName(i+1);
 				}
-				String head = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
+				String head = String.format("%s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
 						columnNames[0], columnNames[1], columnNames[2], columnNames[3], columnNames[4], columnNames[5], columnNames[6],
-						columnNames[7], columnNames[8], columnNames[9], columnNames[10], columnNames[11], columnNames[12], columnNames[13]);
+						columnNames[7], columnNames[8], columnNames[9], columnNames[10], columnNames[11], columnNames[12], columnNames[13],
+						columnNames[14], columnNames[15]);
 				fileWriter.write(head);
 				
 				while (rs.next()) {
@@ -51,10 +52,12 @@ public class DBtoCSVExporter {
 					String unterw = rs.getString("Allgemeine Unterweisung");
 					String labeinr = rs.getString("Laboreinrichtungen");
 					String gefahrst = rs.getString("Gefahrstoffe");
+					String labKommentar = rs.getString("LabKommentar");
+					String gefKommentar = rs.getString("GefKommentar");
 					
-					line = String.format("%d; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
+					line = String.format("%d; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s; %s;%n",
 												id, name, vorname, datum, ifwt, manf, intern, beschverh, 
-												ende, extern, email, unterw, labeinr, gefahrst);
+												ende, extern, email, unterw, labeinr, gefahrst, labKommentar, gefKommentar);
 					fileWriter.write(line);
 				}
 				fileWriter.write("\n\n");
@@ -150,6 +153,30 @@ public class DBtoCSVExporter {
 						String hazardousSubstance = rs.getString("Name");
 						
 						line = String.format("%s;%n", hazardousSubstance);
+						fileWriter.write(line);
+					}
+					fileWriter.write("\n\n");
+					
+					
+					//Gefahrstoffzuordnung
+					getTable = con.prepareStatement("SELECT * FROM Gefahrstoffzuordnung;");
+					rs = getTable.executeQuery();
+					
+					columnNames = new String[rs.getMetaData().getColumnCount()];
+					for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+						columnNames[i] = rs.getMetaData().getColumnName(i+1);
+					}
+					
+					head = String.format("%s; %s;%n",
+							  columnNames[0], columnNames[1]);
+					fileWriter.write(head);
+					
+					while(rs.next()) {
+						String gefahrstoff = rs.getString("Gefahrstoff");
+						int personenID = rs.getInt("PersonenID");
+						
+						line = String.format("%s, %d;%n",
+											  gefahrstoff, personenID);
 						fileWriter.write(line);
 					}
 					fileWriter.write("\n\n");
