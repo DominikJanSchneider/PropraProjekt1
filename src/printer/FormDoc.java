@@ -22,11 +22,13 @@ public class FormDoc extends PDDocument
 {
 	private PrintData data;
 	private final int textSX;
+	private final int textEX;
 	private final int textSY;
 	private final int textEY;
 	private int textY;
 	private int headerLineDistance;
 	private int lineDistance;
+	private int labelGap;
 	private PDPageContentStream contentStream;
 	private PDPage currPage;
 	private PDFont font;
@@ -45,9 +47,11 @@ public class FormDoc extends PDDocument
 		pageHeight = currPage.getMediaBox().getHeight();
 		addPage(currPage);
 		textSX = 100;
+		textEX = (int)(pageWidth - 100);
 		textSY = 750;
 		textEY = 50;
 		textY = textSY;
+		labelGap = 100;
 		headerLineDistance = 30;
 		lineDistance = 20;
 		font = PDType1Font.HELVETICA_BOLD;
@@ -108,7 +112,7 @@ public class FormDoc extends PDDocument
         textY -= headerLineDistance;
         for(int i = 0; i < values.length; i++)
         {
-        	createTextField(values[i], textSX + 100, textY - 5, 200, 15, false);
+        	createTextField(values[i], textSX + labelGap, textY - 5, textEX - (textSX + labelGap), 15, false);
         	textY -= lineDistance;
         }
         
@@ -118,9 +122,10 @@ public class FormDoc extends PDDocument
         String labSetup = data.getLabSetup();
         String dangerSubst = data.getDangerousSubstances();
         
-        createTextAreaBlock("Allgemeine Unterweisung", genInstr);
-        createTextAreaBlock("Laboreinrichtungen", labSetup);
-        createTextAreaBlock("Gefahrstoffe", dangerSubst);
+        int textAreaBlockWidth = textEX - textSX;
+        createTextAreaBlock("Allgemeine Unterweisung", genInstr, textAreaBlockWidth);
+        createTextAreaBlock("Laboreinrichtungen", labSetup, textAreaBlockWidth);
+        createTextAreaBlock("Gefahrstoffe", dangerSubst, textAreaBlockWidth);
         
 		//signature
 		contentStream.moveTo(textSX, textEY + 50);
@@ -148,14 +153,41 @@ public class FormDoc extends PDDocument
 			contentStream.endText();
 		}
 		
+		
 		// Makes sure that the content stream is closed:
 		contentStream.close();
 	}
 	
-	private void createTextAreaBlock(String title, String value) throws IOException
+	private void createTextAreaBlock(String title, String value, int fieldWidth) throws IOException
 	{
+		int charWidth = 9;
+		int charCount = fieldWidth/charWidth;
 		String text = value;
+		StringBuffer strBuffer;
         String[] lines = value.split("\n");
+        for(int i = 0; i < lines.length; i++)
+        {
+        	if(lines[i].length() > charCount)
+        	{
+        		strBuffer = new StringBuffer(lines[i]);
+        		int j = charCount - 1;
+        		for(; strBuffer.charAt(j) != ' '; j--)
+        		{
+        			if(j == 0)
+        			{
+        				strBuffer = strBuffer.insert(charCount - 1, "\n");
+        				break;
+        			}
+        		}
+        		if(j != 0)
+        		{
+        			strBuffer = strBuffer.replace(j, j + 1, "\n");
+        		}
+        		lines[i] = strBuffer.toString();
+        		text = linesToString(lines, 0, lines.length - 1);
+        		lines = text.split("\n");
+        	}
+        }
         int lineCount = lines.length;
     	final int fieldLineHeight = 14;
     	final int extra = 22;
@@ -168,12 +200,12 @@ public class FormDoc extends PDDocument
         		textY -= lineDistance;
         		showTextAreaFieldTitle(title);
         		textY -= lineDistance + fieldHeight;
-        		createTextField(text, textSX, textY, 300, fieldHeight, true);
+        		createTextField(text, textSX, textY, fieldWidth, fieldHeight, true);
         		break;
         	}
         	else if(rest >= fieldLineHeight * 3 + extra)
         	{
-        		lines = createTextBlockPart(title, lines, fieldLineHeight, extra, rest);
+        		lines = createTextBlockPart(title, lines, fieldWidth, fieldLineHeight, extra, rest);
         		text = linesToString(lines, 0, lines.length - 1);
             	createNewPageAndSetFocus();
             	lineCount = lines.length;
@@ -183,7 +215,7 @@ public class FormDoc extends PDDocument
         	{
         		createNewPageAndSetFocus();
         		rest = textY - 2 * lineDistance - (textEY + 70);
-        		lines = createTextBlockPart(title, lines, fieldLineHeight, extra, rest);
+        		lines = createTextBlockPart(title, lines, fieldWidth, fieldLineHeight, extra, rest);
         		text = linesToString(lines, 0, lines.length - 1);
         		lineCount = lines.length;
         		fieldHeight = fieldLineHeight * lineCount + extra;
@@ -230,7 +262,7 @@ public class FormDoc extends PDDocument
 		textY = textSY;
 	}
 	
-	private String[] createTextBlockPart(String title, String[] lines, int fieldLineHeight, int extra, int rest) throws IOException
+	private String[] createTextBlockPart(String title, String[] lines, int fieldWidth, int fieldLineHeight, int extra, int rest) throws IOException
 	{
 		int lineCount = rest/fieldLineHeight;
 		if(lines.length <= lineCount)
@@ -241,7 +273,7 @@ public class FormDoc extends PDDocument
 		showTextAreaFieldTitle(title);
 		textY -= lineDistance + lineCount * fieldLineHeight + extra;
 		String text = linesToString(lines, 0, lineCount - 1);
-		createTextField(text, textSX, textY, 300, lineCount * fieldLineHeight + extra, true);
+		createTextField(text, textSX, textY, fieldWidth, lineCount * fieldLineHeight + extra, true);
 		
 		String[] restText = new String[lines.length - lineCount];
 		
