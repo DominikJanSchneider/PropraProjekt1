@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import gui.MainFrame;
 
 
@@ -760,6 +763,152 @@ public class DBConnection {
 				return null;
 			}
 		}
+		
+		public static Object[][] getDeviceUnassignedData(int pID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(GeräteID) FROM Geräte WHERE "
+																+ "(Geräte.GeräteID IN ("
+																	+"SELECT Geräte.GeräteID FROM Geräte EXCEPT SELECT Gerätezuordnung.GeräteID FROM Gerätezuordnung WHERE PersonenID='"+pID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT GeräteID, Name, Beschreibung, Raum FROM Geräte WHERE "
+							+ "(Geräte.GeräteID IN ("
+								+"SELECT Geräte.GeräteID FROM Geräte EXCEPT SELECT Gerätezuordnung.GeräteID FROM Gerätezuordnung WHERE PersonenID='"+pID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					if(filteredTable[i][1] == null)
+						filteredTable[i][1] = "";
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					if(filteredTable[i][2] == null)
+						filteredTable[i][2] = "";
+					filteredTable[i][3] = rs.getString("Raum");
+					if(filteredTable[i][3] == null)
+						filteredTable[i][3] = "";
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDeviceAssignedData(int pID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(PersonenID) FROM "+tableName1+" WHERE PersonenID='"+ pID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Ger\u00e4teID, Name, Beschreibung, Raum, Nutzungszeit FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Ger\u00e4teID = "+tableName2+".Ger\u00e4teID WHERE PersonenID='"+ pID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					if(filteredTable[i][1] == null)
+						filteredTable[i][1] = "";
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					if(filteredTable[i][2] == null)
+						filteredTable[i][2] = "";
+					filteredTable[i][3] = rs.getString("Raum");
+					if(filteredTable[i][3] == null)
+						filteredTable[i][3] = "";
+					filteredTable[i][4] = rs.getInt("Nutzungszeit");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static void assignDevice(int dID, int pID){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "INSERT INTO Ger\u00e4tezuordnung (Ger\u00e4teID, PersonenID) "
+						+ "VALUES (?, ?)";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.setInt(1, dID);
+				pstmt.setInt(2, pID);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignDevice(int dID, int pID) {
+			try {
+				String stmt="delete from Ger\u00e4tezuordnung where Ger\u00e4teID='"+dID+"' AND PersonenID='"+pID+"'";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.execute();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void setUseTime(int dID, int pID, double useTime)
+		{
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "UPDATE Ger\u00e4tezuordnung SET Nutzungszeit="+useTime+" WHERE Ger\u00e4teID='"+dID+"' AND PersonenID='"+pID+"'";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 		//User data base methods
 		public static Connection connectLogin() {

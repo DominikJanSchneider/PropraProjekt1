@@ -992,12 +992,24 @@ public class MainFrame extends JFrame{
 		deviceStats.setVisible(true);
 	}
 	
-	private Object getValueByColName(JTable table, int row, String colName) {
+	public static Object getValueByColName(JTable table, int row, String colName) {
 		int colCount = table.getColumnCount();
 		Object res = null;
 		for(int i = 0; i < colCount; i++) {
 			if(table.getColumnName(i) == colName) {
 				res = table.getValueAt(row, i);
+			}
+		}
+		return res;
+	}
+	
+	public static int getColBayColName(JTable table, String colName)
+	{
+		int colCount = table.getColumnCount();
+		int res = 0;
+		for(int i = 0; i < colCount; i++) {
+			if(table.getColumnName(i) == colName) {
+				res = i;
 			}
 		}
 		return res;
