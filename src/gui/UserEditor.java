@@ -340,6 +340,7 @@ public class UserEditor extends JFrame {
 		} //End: while (g < 0)
 		
 		getBenutzerData();
+		
 		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 	}
 	

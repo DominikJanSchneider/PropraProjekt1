@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
+import javax.swing.JTabbedPane;
 
 public class DataEditor extends JFrame{
 	
@@ -87,13 +88,17 @@ public class DataEditor extends JFrame{
 		contentPane.setBackground(backgroundColor);
 		contentPane.setForeground(foregroundColor);
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[grow]", "[65.0][250.0,grow][120.0,grow][100.0,grow]"));
+		contentPane.setLayout(new MigLayout("", "[grow]", "[grow][65.0][250.0,grow][120.0,grow][100.0,grow]"));
+		
+		
+		
+		
 		
 		// Panel for the editing elements
 		elementPanel = new JPanel();
 		elementPanel.setBackground(backgroundColor);
 		elementPanel.setForeground(foregroundColor);
-		contentPane.add(elementPanel, "cell 0 0,grow");
+		contentPane.add(elementPanel, "cell 0 1,grow");
 		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
 		
 		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
@@ -138,7 +143,7 @@ public class DataEditor extends JFrame{
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
-		contentPane.add(tablePanel, "cell 0 1,grow");
+		contentPane.add(tablePanel, "cell 0 2,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 		
 		spTable = new JScrollPane();
@@ -152,7 +157,7 @@ public class DataEditor extends JFrame{
 		textFieldPanel = new JPanel();
 		textFieldPanel.setBackground(backgroundColor);
 		textFieldPanel.setForeground(foregroundColor);
-		contentPane.add(textFieldPanel, "cell 0 2,grow");
+		contentPane.add(textFieldPanel, "cell 0 3,grow");
 		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]10[]10[]0[]0[]"));
 		
 		// name textfield
@@ -264,7 +269,7 @@ public class DataEditor extends JFrame{
 		textAreaPanel = new JPanel();
 		textAreaPanel.setBackground(backgroundColor);
 		textAreaPanel.setForeground(foregroundColor);
-		contentPane.add(textAreaPanel, "cell 0 3,grow");
+		contentPane.add(textAreaPanel, "cell 0 4,grow");
 		textAreaPanel.setLayout(new MigLayout("", "[grow]", "[]2[grow]"));
 		
 		
