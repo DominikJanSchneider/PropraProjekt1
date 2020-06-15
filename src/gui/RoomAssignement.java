@@ -199,11 +199,12 @@ public class RoomAssignement extends JFrame {
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
 			return;
 		}
-		String room = (String)MainFrame.getValueByColName(unassignedTable, row, "Raum");
+		String room = (String)MainFrame.getValueByColName(unassignedTable, row, "Name");
 		DBConnection.assignRoom(geraeteID, room);
 		getAssignedData(geraeteID);
 		getUnassignedData(geraeteID);
 		tablePanel.updateUI();
+		MainFrame.getGeraeteData();
 	}
 	
 	private void unassignButtonPressed() {
@@ -217,5 +218,6 @@ public class RoomAssignement extends JFrame {
 		getAssignedData(geraeteID);
 		getUnassignedData(geraeteID);
 		tablePanel.updateUI();
+		MainFrame.getGeraeteData();
 	}
 }

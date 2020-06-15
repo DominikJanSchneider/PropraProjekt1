@@ -1044,7 +1044,7 @@ public class DBConnection {
 				con.setAutoCommit(false);
 				String stmt = "UPDATE Ger\u00e4te SET Raum='"+room+"' WHERE Ger\u00e4teID="+dID+" ;";
 				PreparedStatement pstmt = con.prepareStatement(stmt);
-				pstmt.executeUpdate();
+				pstmt.execute();
 				con.commit();
 				pstmt.close();
 				con.close();
