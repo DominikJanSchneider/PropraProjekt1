@@ -417,7 +417,7 @@ public class UserEditor extends JFrame {
 			//Execute database update if there are no wrong entries
 			while (g == 1) {
 				g = 0;
-				String query = "UPDATE Benutzer SET Benutzername='"+tfUserName.getText()+"', Passwort='"+tfUserPassword.getText()+", ID='"+id+"' WHERE ID='"+id+"';";
+				String query = "UPDATE Benutzer SET Benutzername='"+tfUserName.getText()+"', Passwort='"+tfUserPassword.getText()+"', ID='"+id+"' WHERE ID='"+id+"';";
 				
 				Connection con = DBConnection.connectLogin();
 				PreparedStatement pstmt = con.prepareStatement(query);
