@@ -1003,7 +1003,7 @@ public class MainFrame extends JFrame{
 		return res;
 	}
 	
-	public static int getColBayColName(JTable table, String colName)
+	public static int getColByColName(JTable table, String colName)
 	{
 		int colCount = table.getColumnCount();
 		int res = 0;

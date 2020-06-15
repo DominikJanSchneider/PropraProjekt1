@@ -305,7 +305,7 @@ public class DataEditor extends JFrame{
 		spInstr.setViewportView(textArea_1);
 				
 		// Laboreinrichtungen textfield
-		JLabel lblLab = new JLabel("   Laboreinrichtungen:");
+		JLabel lblLab = new JLabel("   Laboreinrichtungen (Kommentar):");
 		lblLab.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblLab.setForeground(foregroundColor);
 		spLab = new JScrollPane(
@@ -319,7 +319,7 @@ public class DataEditor extends JFrame{
 		spLab.setViewportView(textArea_2);
 		
 		// Gefahrstoffe textfield
-		JLabel lblHazard = new JLabel("   Gefahrstoffe:");
+		JLabel lblHazard = new JLabel("   Gefahrstoffe (Kommentar):");
 		lblHazard.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblHazard.setForeground(foregroundColor);
 		spHazard = new JScrollPane(
@@ -709,6 +709,7 @@ public class DataEditor extends JFrame{
 	
 	// method to fill textfields with column-entrys of selected row
 	public static void fillFields() {							// genutzt in MouseListener von JTable getEditorTable()
+		//TODO 
 		int a = MainFrame.getEditorTable().getSelectedRow();
 		String fillName = (String) MainFrame.getEditorTable().getValueAt(a, 1);
 		String fillPname = (String) MainFrame.getEditorTable().getValueAt(a, 2);
@@ -722,8 +723,10 @@ public class DataEditor extends JFrame{
 		String fillExternal = (String) MainFrame.getEditorTable().getValueAt(a, 10);
 		String fillMail = (String) MainFrame.getEditorTable().getValueAt(a, 11);
 		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 12);
-		String fillLab = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 13);
-		String fillHazard = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 14);
+		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), a, "ID");
+		String fillLab = DBConnection.getLabComment(pID);
+		String fillHazard = DBConnection.getDangerSubstComment(pID);
+
 		
 		textField.setText(fillName);
 		textField_2.setText(fillPname);
@@ -864,12 +867,13 @@ public class DataEditor extends JFrame{
 			// execute Database update if there are no wrong entrys
 			while (g == 1) {
 				g = 0;
+				
 				String query="Update Personen set Name='" + textField.getText() + "' ,Vorname='" + textField_2.getText() + "'  ,Datum='" + textField_3.getText() + 
 						"' ,Ifwt='" + textField_4.getText() + "' ,MNaF='" + textField_5.getText() + "' ,Intern='" + textField_6.getText() + 
 						"' ,Beschaeftigungsverhaeltnis='" + textField_7.getText() + "' ,Beginn='" + textField_8.getText() + "' ,Ende='" + textField_9.getText() +
 						"' ,Extern='" + textField_10.getText() + "' ,'E-Mail Adresse'='" + textField_11.getText() +  "' ,'Allgemeine Unterweisung'='" + textArea_1.getText() + 
-						"' ,'Laboreinrichtungen'='" + textArea_2.getText() +  "' ,'Gefahrstoffe'='" + textArea_3.getText() +  "' ,ID='" + ID + "' where ID='"+ID+"' ";
-				
+						"' ,LabKommentar='"+textArea_2.getText()+"' ,'Laboreinrichtungen'='"+getLabSetupTxt(ID)+"' , GefKommentar='"+textArea_3.getText()+"' ,'Gefahrstoffe'='"+getDangerSubstTxt(ID) +  
+						"' ,ID='" + ID + "' where ID='"+ID+"' ";
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
@@ -915,6 +919,46 @@ public class DataEditor extends JFrame{
 		}
 		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
 		dangerSubstAssignement = DangerSubstAssignement.getInstance(pID);
+	}
+	
+	private static String getDangerSubstTxt(int pID)
+	{
+		String comment = textArea_3.getText();
+		String res = comment;
+		Object[][] data = DBConnection.getDangerSubstAssignedData(pID);
+		if(!comment.isEmpty())
+		{
+			res = res.concat("\nGefahrstoffe mit denen gearbeitet wird:");
+		}
+		else
+		{
+			res = res.concat("Gefahrstoffe mit denen gearbeitet wird:");
+		}
+		for(int i = 0; i < data.length; i++)
+		{
+			res = res.concat("\n-"+data[i][0]);
+		}
+		return res;
+	}
+	
+	private static String getLabSetupTxt(int pID)
+	{
+		String comment = textArea_2.getText();
+		String res = comment;
+		Object[][] data = DBConnection.getDeviceAssignedData(pID);
+		if(!comment.isEmpty())
+		{
+			res = res.concat("\nGer\u00e4te mit denen gearbeitet wird:");
+		}
+		else
+		{
+			res = res.concat("Ger\u00e4te mit denen gearbeitet wird:");
+		}
+		for(int i = 0; i < data.length; i++)
+		{
+			res = res.concat("\n-Ger\u00e4teID: "+data[i][0]+", Name: "+data[i][1]+", Raum: "+data[i][3]);
+		}
+		return res;
 	}
 	
 }

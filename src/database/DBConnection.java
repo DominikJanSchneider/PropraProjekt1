@@ -929,6 +929,42 @@ public class DBConnection {
 			}
 		}
 		
+		public static String getLabComment(int pID)
+		{
+			try
+			{
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT LabKommentar FROM "+tableName+" WHERE ID='"+pID+"'");
+				ResultSet rs = pstmt.executeQuery();
+				String res = rs.getString("LabKommentar");
+				pstmt.close();
+				con.close();
+				return res;
+			} 
+			catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static String getDangerSubstComment(int pID)
+		{
+			try
+			{
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT GefKommentar FROM "+tableName+" WHERE ID='"+pID+"'");
+				ResultSet rs = pstmt.executeQuery();
+				String res = rs.getString("GefKommentar");
+				pstmt.close();
+				con.close();
+				return res;
+			} 
+			catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
 		public static void assignDevice(int dID, int pID){
 			try {
 				con = DriverManager.getConnection(url);
