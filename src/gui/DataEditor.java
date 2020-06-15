@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -83,6 +84,7 @@ public class DataEditor extends JFrame{
 	private int confirmed = 0;
 	private static DeviceAssignement deviceAssignement;
 	private static DangerSubstAssignement dangerSubstAssignement;
+	private static RoomAssignement roomAssignement;
 	
 	private static Connection con = null;
 	static PreparedStatement pstmt = null;
@@ -113,6 +115,7 @@ public class DataEditor extends JFrame{
 		//Tabbed Pane
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBackground(backgroundColor);
+		tabbedPane.setForeground(foregroundColor);
 		contentPane.add(tabbedPane, "cell 0 0, grow");
 		
 		//Personen Tab
@@ -305,7 +308,9 @@ public class DataEditor extends JFrame{
 		btnEditDevices.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditDevicesPressed();
-				deviceAssignement.setVisible(true);
+				if(deviceAssignement != null) {
+					deviceAssignement.setVisible(true);
+				}
 			}
 		});
 		textFieldPanel.add(btnEditDevices, "width 25%, gapleft 50, cell 4 2");
@@ -315,7 +320,9 @@ public class DataEditor extends JFrame{
 		btnEditDangerSubst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditDangerSubstPressed();
-				dangerSubstAssignement.setVisible(true);
+				if(dangerSubstAssignement != null) {
+					dangerSubstAssignement.setVisible(true);
+				}
 			}
 		});
 		textFieldPanel.add(btnEditDangerSubst, "cell 4 1,width 25%,gapx 50");
@@ -344,7 +351,7 @@ public class DataEditor extends JFrame{
 		spInstr.setViewportView(taInstructions);
 				
 		// Laboreinrichtungen textfield
-		JLabel lblLab = new JLabel("   Laboreinrichtungen:");
+		JLabel lblLab = new JLabel("   Laboreinrichtungen (Kommentar):");
 		lblLab.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblLab.setForeground(foregroundColor);
 		spLab = new JScrollPane(
@@ -358,7 +365,7 @@ public class DataEditor extends JFrame{
 		spLab.setViewportView(taLab);
 		
 		// Gefahrstoffe textfield
-		JLabel lblHazard = new JLabel("   Gefahrstoffe:");
+		JLabel lblHazard = new JLabel("   Gefahrstoffe (Kommentar):");
 		lblHazard.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblHazard.setForeground(foregroundColor);
 		spHazard = new JScrollPane(
@@ -482,6 +489,17 @@ public class DataEditor extends JFrame{
 		textFieldPanel.add(tfDeviceRoom, "width 30%, cell 1 1");
 		
 		
+		//edit rooms button
+		JButton btnEditRooms = new JButton("R\u00e4ume bearbeiten");
+		btnEditRooms.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnEditRoomsPressed();
+				roomAssignement.setVisible(true);
+			}
+		});
+		textFieldPanel.add(btnEditRooms, "width 25%, gapleft 50, cell 4 1");
+		
+		
 		// savebutton
 		twoLines = "Änderungen \n Speichern";
 		btnSave = new JButton("<html>" + twoLines.replaceAll("\\n", "<br>") + "</html>");
@@ -497,7 +515,7 @@ public class DataEditor extends JFrame{
 				}
 			}
 		});
-		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 1");
+		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 2");
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
@@ -1484,7 +1502,7 @@ public class DataEditor extends JFrame{
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+		
 	
 	private static void deleteRoomData() {
 		try {
@@ -1734,6 +1752,7 @@ public class DataEditor extends JFrame{
 			// execute Database update if there are no wrong entrys
 			while (g == 1) {
 				g = 0;
+				
 				String query="Update Personen set Name='" + tfName.getText() + "' ,Vorname='" + tfPname.getText() + "'  ,Datum='" + tfDate.getText() + 
 						"' ,Ifwt='" + tfIfwt.getText() + "' ,MNaF='" + tfMNaF.getText() + "' ,Intern='" + tfIntern.getText() + 
 						"' ,Beschaeftigungsverhaeltnis='" + tfBeschverh.getText() + "' ,Beginn='" + tfStart.getText() + "' ,Ende='" + tfEnde.getText() +
@@ -1785,6 +1804,16 @@ public class DataEditor extends JFrame{
 		}
 		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
 		dangerSubstAssignement = DangerSubstAssignement.getInstance(pID);
+	}
+	
+	private void btnEditRoomsPressed() {
+		int row = MainFrame.getDeviceEditorTable().getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int dID = (int)MainFrame.getValueByColName(MainFrame.getDeviceEditorTable(), row, "Ger\u00e4teID");
+		roomAssignement = RoomAssignement.getInstance(dID);
 	}
 	
 	public static void saveDeviceData() {
@@ -1951,5 +1980,45 @@ public class DataEditor extends JFrame{
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private static String getDangerSubstTxt(int pID)
+	{
+		String comment = taHazard.getText();
+		String res = comment;
+		Object[][] data = DBConnection.getDangerSubstAssignedData(pID);
+		if(!comment.isEmpty())
+		{
+			res = res.concat("\nGefahrstoffe mit denen gearbeitet wird:");
+		}
+		else
+		{
+			res = res.concat("Gefahrstoffe mit denen gearbeitet wird:");
+		}
+		for(int i = 0; i < data.length; i++)
+		{
+			res = res.concat("\n-"+data[i][0]);
+		}
+		return res;
+	}
+	
+	private static String getLabSetupTxt(int pID)
+	{
+		String comment = taLab.getText();
+		String res = comment;
+		Object[][] data = DBConnection.getDeviceAssignedData(pID);
+		if(!comment.isEmpty())
+		{
+			res = res.concat("\nGer\u00e4te mit denen gearbeitet wird:");
+		}
+		else
+		{
+			res = res.concat("Ger\u00e4te mit denen gearbeitet wird:");
+		}
+		for(int i = 0; i < data.length; i++)
+		{
+			res = res.concat("\n-Ger\u00e4teID: "+data[i][0]+", Name: "+data[i][1]+", Raum: "+data[i][3]);
+		}
+		return res;
 	}
 }
