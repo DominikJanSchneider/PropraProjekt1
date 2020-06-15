@@ -11,7 +11,7 @@ import gui.MainFrame;
 
 public class DBConnection {
 	
-	private static String url = "jdbc:sqlite:database/Personen.db";
+	private static String url = "jdbc:sqlite:database/CoreDatabase.db";
 	private static String tableName = "Personen";
 	private static Connection con;
 	
