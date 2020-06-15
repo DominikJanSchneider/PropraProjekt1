@@ -32,7 +32,7 @@ public class DBConnection {
        }
 	}
 	
-	public static Object[][] getGeraeteData() {
+	public static Object[][] getDeviceData() {
 		try {
 			con = DriverManager.getConnection(url);
 			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (Ger\u00e4teID) FROM Ger\u00e4te;");
@@ -61,7 +61,7 @@ public class DBConnection {
 		}
 	}
 	
-	public static Object[][] getRaeumeData() {
+	public static Object[][] getRoomsData() {
 		try {
 			con = DriverManager.getConnection(url);
 			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (Name) FROM R\u00e4ume;");
@@ -512,7 +512,7 @@ public class DBConnection {
 		}
 		
 		//User data base connection
-		public static Object[][] getGeraeteByID(String id) {
+		public static Object[][] getDeviceByID(String id) {
 			try {
 				
 				tableName = "Ger\u00e4te";
@@ -549,7 +549,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteByName(String name) {
+		public static Object[][] getDeviceByName(String name) {
 			try {
 				
 				tableName = "Ger\u00e4te";
@@ -586,7 +586,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteByDescript(String descript) {
+		public static Object[][] getDeviceByDescript(String descript) {
 			try {
 				
 				tableName = "Ger\u00e4te";
@@ -625,7 +625,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteByRaum(String geraeteRaum) {
+		public static Object[][] getDeviceByRoom(String geraeteRaum) {
 			try {
 				
 				tableName = "Ger\u00e4te";
@@ -664,7 +664,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getRaeumeByName(String name) {
+		public static Object[][] getRoomByName(String name) {
 			try {
 				
 				tableName = "R\u00e4ume";
@@ -699,7 +699,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getRaeumeByDescript(String descript) {
+		public static Object[][] getRoomByDescript(String descript) {
 			try {
 				
 				tableName = "R\u00e4ume";
@@ -732,7 +732,7 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGefahrstoffByName(String name) {
+		public static Object[][] getDangerSubstByName(String name) {
 			try {
 				
 				tableName = "Gefahrstoffe";

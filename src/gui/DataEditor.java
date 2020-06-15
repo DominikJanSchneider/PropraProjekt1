@@ -41,15 +41,15 @@ public class DataEditor extends JFrame{
 	
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private JPanel personenTab;
-	private JPanel geraeteTab;
-	private JPanel raeumeTab;
-	private JPanel gefahrstoffeTab;
+	private JPanel personTab;
+	private JPanel devicesTab;
+	private JPanel roomsTab;
+	private JPanel dangerSubstTab;
 	private JPanel elementPanel;
 	private static JPanel tablePanel;
 	private JPanel textFieldPanel;
 	private JPanel textAreaPanel;
-	private JLabel lblBearbeitungselemente;
+	private JLabel lblEditingElements;
 	private JButton btnRefresh;
 	private JButton btnAdd;
 	private JButton btnDelete;
@@ -116,11 +116,11 @@ public class DataEditor extends JFrame{
 		contentPane.add(tabbedPane, "cell 0 0, grow");
 		
 		//Personen Tab
-		personenTab = new JPanel();
-		personenTab.setBackground(backgroundColor);
-		personenTab.setForeground(foregroundColor);
-		personenTab.setLayout(new MigLayout("", "[grow]", "[65.0][250.0,grow][120.0,grow][100.0,grow]"));
-		tabbedPane.addTab("Personen", personenTab);
+		personTab = new JPanel();
+		personTab.setBackground(backgroundColor);
+		personTab.setForeground(foregroundColor);
+		personTab.setLayout(new MigLayout("", "[grow]", "[65.0][250.0,grow][120.0,grow][100.0,grow]"));
+		tabbedPane.addTab("Personen", personTab);
 
 		
 		// Panel for the editing elements
@@ -128,14 +128,14 @@ public class DataEditor extends JFrame{
 		elementPanel.setBackground(backgroundColor);
 		elementPanel.setForeground(foregroundColor);
 
-		personenTab.add(elementPanel, "cell 0 0,grow");
+		personTab.add(elementPanel, "cell 0 0,grow");
 
 		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
 		
-		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
-		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblBearbeitungselemente.setForeground(foregroundColor);
-		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		lblEditingElements = new JLabel("Bearbeitungselemente");
+		lblEditingElements.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblEditingElements.setForeground(foregroundColor);
+		elementPanel.add(lblEditingElements, "cell 0 0");
 		
 		//refresh button
 		btnRefresh = new JButton("Aktualisieren");
@@ -175,7 +175,7 @@ public class DataEditor extends JFrame{
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
 
-		personenTab.add(tablePanel, "cell 0 1,grow");
+		personTab.add(tablePanel, "cell 0 1,grow");
 
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 		
@@ -191,7 +191,7 @@ public class DataEditor extends JFrame{
 		textFieldPanel.setBackground(backgroundColor);
 		textFieldPanel.setForeground(foregroundColor);
 
-		personenTab.add(textFieldPanel, "cell 0 2,grow");
+		personTab.add(textFieldPanel, "cell 0 2,grow");
 
 		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]10[]10[]0[]0[]"));
 		
@@ -325,7 +325,7 @@ public class DataEditor extends JFrame{
 		textAreaPanel.setBackground(backgroundColor);
 		textAreaPanel.setForeground(foregroundColor);
 
-		personenTab.add(textAreaPanel, "cell 0 3,grow");
+		personTab.add(textAreaPanel, "cell 0 3,grow");
 		textAreaPanel.setLayout(new MigLayout("", "[grow]", "[]2[grow]"));
 		
 		
@@ -385,23 +385,23 @@ public class DataEditor extends JFrame{
 		
 		
 		//###Geraete Tab###
-		geraeteTab = new JPanel();
-		geraeteTab.setBackground(backgroundColor);
-		geraeteTab.setForeground(foregroundColor);
-		geraeteTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
-		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
+		devicesTab = new JPanel();
+		devicesTab.setBackground(backgroundColor);
+		devicesTab.setForeground(foregroundColor);
+		devicesTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
+		tabbedPane.addTab("Ger\u00e4te", devicesTab);
 		
 		// Panel for the editing elements
 		elementPanel = new JPanel();
 		elementPanel.setBackground(backgroundColor);
 		elementPanel.setForeground(foregroundColor);
-		geraeteTab.add(elementPanel, "cell 0 0,grow");
+		devicesTab.add(elementPanel, "cell 0 0,grow");
 		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
 		
-		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
-		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblBearbeitungselemente.setForeground(foregroundColor);
-		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		lblEditingElements = new JLabel("Bearbeitungselemente");
+		lblEditingElements.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblEditingElements.setForeground(foregroundColor);
+		elementPanel.add(lblEditingElements, "cell 0 0");
 		
 		//refresh button
 		btnRefresh = new JButton("Aktualisieren");
@@ -410,7 +410,7 @@ public class DataEditor extends JFrame{
 		elementPanel.add(btnRefresh, "cell 0 1");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainFrame.getGeraeteData();
+				MainFrame.getDeviceData();
 			}
 		});
 		
@@ -440,21 +440,21 @@ public class DataEditor extends JFrame{
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
-		geraeteTab.add(tablePanel, "cell 0 1,grow");
+		devicesTab.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 		
 		spTable = new JScrollPane();
 		tablePanel.add(spTable, "cell 0 0,grow");
 		
 		// cloned table for edit window
-		spTable.setViewportView(MainFrame.getGeraeteEditorTable());
+		spTable.setViewportView(MainFrame.getDeviceEditorTable());
 	
 		
 		// Panel for the update button
 		textFieldPanel = new JPanel();
 		textFieldPanel.setBackground(backgroundColor);
 		textFieldPanel.setForeground(foregroundColor);
-		geraeteTab.add(textFieldPanel, "cell 0 2,grow");
+		devicesTab.add(textFieldPanel, "cell 0 2,grow");
 		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]"));
 		
 		// name textfield
@@ -501,11 +501,11 @@ public class DataEditor extends JFrame{
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
-		MainFrame.getGeraeteEditorTable().addMouseListener(new MouseAdapter() {
+		MainFrame.getDeviceEditorTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = MainFrame.getGeraeteEditorTable().getSelectedRow();
-				ID = Integer.parseInt(MainFrame.getGeraeteEditorTable().getValueAt(i, 0).toString());
+				int i = MainFrame.getDeviceEditorTable().getSelectedRow();
+				ID = Integer.parseInt(MainFrame.getDeviceEditorTable().getValueAt(i, 0).toString());
 
 				fillDeviceData();
 			}
@@ -513,23 +513,23 @@ public class DataEditor extends JFrame{
 		
 		
 		//###Raeume Tab###
-		raeumeTab = new JPanel();
-		raeumeTab.setBackground(backgroundColor);
-		raeumeTab.setForeground(foregroundColor);
-		raeumeTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
-		tabbedPane.addTab("R\u00e4ume", raeumeTab);
+		roomsTab = new JPanel();
+		roomsTab.setBackground(backgroundColor);
+		roomsTab.setForeground(foregroundColor);
+		roomsTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
+		tabbedPane.addTab("R\u00e4ume", roomsTab);
 		
 		// Panel for the editing elements
 		elementPanel = new JPanel();
 		elementPanel.setBackground(backgroundColor);
 		elementPanel.setForeground(foregroundColor);
-		raeumeTab.add(elementPanel, "cell 0 0,grow");
+		roomsTab.add(elementPanel, "cell 0 0,grow");
 		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
 		
-		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
-		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblBearbeitungselemente.setForeground(foregroundColor);
-		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		lblEditingElements = new JLabel("Bearbeitungselemente");
+		lblEditingElements.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblEditingElements.setForeground(foregroundColor);
+		elementPanel.add(lblEditingElements, "cell 0 0");
 		
 		//refresh button
 		btnRefresh = new JButton("Aktualisieren");
@@ -538,7 +538,7 @@ public class DataEditor extends JFrame{
 		elementPanel.add(btnRefresh, "cell 0 1");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainFrame.getRaeumeData();
+				MainFrame.getRoomData();
 			}
 		});
 		
@@ -568,21 +568,21 @@ public class DataEditor extends JFrame{
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
-		raeumeTab.add(tablePanel, "cell 0 1,grow");
+		roomsTab.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 		
 		spTable = new JScrollPane();
 		tablePanel.add(spTable, "cell 0 0,grow");
 		
 		// cloned table for edit window
-		spTable.setViewportView(MainFrame.getRaeumeEditorTable());
+		spTable.setViewportView(MainFrame.getRoomsEditorTable());
 	
 		
 		// Panel for the update button
 		textFieldPanel = new JPanel();
 		textFieldPanel.setBackground(backgroundColor);
 		textFieldPanel.setForeground(foregroundColor);
-		raeumeTab.add(textFieldPanel, "cell 0 2,grow");
+		roomsTab.add(textFieldPanel, "cell 0 2,grow");
 		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]"));
 		
 		// name textfield
@@ -620,11 +620,11 @@ public class DataEditor extends JFrame{
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
-		MainFrame.getRaeumeEditorTable().addMouseListener(new MouseAdapter() {
+		MainFrame.getRoomsEditorTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = MainFrame.getRaeumeEditorTable().getSelectedRow();
-				name = MainFrame.getRaeumeEditorTable().getValueAt(i, 0).toString();
+				int i = MainFrame.getRoomsEditorTable().getSelectedRow();
+				name = MainFrame.getRoomsEditorTable().getValueAt(i, 0).toString();
 
 				fillRoomData();
 			}
@@ -632,23 +632,23 @@ public class DataEditor extends JFrame{
 		
 		
 		//###Gefahrstoffe Tab###
-		gefahrstoffeTab = new JPanel();
-		gefahrstoffeTab.setBackground(backgroundColor);
-		gefahrstoffeTab.setForeground(foregroundColor);
-		gefahrstoffeTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
-		tabbedPane.addTab("Gefahrstoffe", gefahrstoffeTab);
+		dangerSubstTab = new JPanel();
+		dangerSubstTab.setBackground(backgroundColor);
+		dangerSubstTab.setForeground(foregroundColor);
+		dangerSubstTab.setLayout(new MigLayout("", "[grow]", "[65.0][370.0,grow][100.0,grow]"));
+		tabbedPane.addTab("Gefahrstoffe", dangerSubstTab);
 		
 		// Panel for the editing elements
 		elementPanel = new JPanel();
 		elementPanel.setBackground(backgroundColor);
 		elementPanel.setForeground(foregroundColor);
-		gefahrstoffeTab.add(elementPanel, "cell 0 0,grow");
+		dangerSubstTab.add(elementPanel, "cell 0 0,grow");
 		elementPanel.setLayout(new MigLayout("", "[][]", "[]10[]"));
 		
-		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
-		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblBearbeitungselemente.setForeground(foregroundColor);
-		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		lblEditingElements = new JLabel("Bearbeitungselemente");
+		lblEditingElements.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblEditingElements.setForeground(foregroundColor);
+		elementPanel.add(lblEditingElements, "cell 0 0");
 		
 		//refresh button
 		btnRefresh = new JButton("Aktualisieren");
@@ -657,7 +657,7 @@ public class DataEditor extends JFrame{
 		elementPanel.add(btnRefresh, "cell 0 1");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainFrame.getGefahrstoffeData();
+				MainFrame.getDangerSubstData();
 			}
 		});
 		
@@ -687,21 +687,21 @@ public class DataEditor extends JFrame{
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
 		tablePanel.setForeground(foregroundColor);
-		gefahrstoffeTab.add(tablePanel, "cell 0 1,grow");
+		dangerSubstTab.add(tablePanel, "cell 0 1,grow");
 		tablePanel.setLayout(new MigLayout("", "[grow]", "[grow]"));
 		
 		spTable = new JScrollPane();
 		tablePanel.add(spTable, "cell 0 0,grow");
 		
 		// cloned table for edit window
-		spTable.setViewportView(MainFrame.getGefahrstoffeEditorTable());
+		spTable.setViewportView(MainFrame.getDangerSubstEditorTable());
 	
 		
 		// Panel for the update button
 		textFieldPanel = new JPanel();
 		textFieldPanel.setBackground(backgroundColor);
 		textFieldPanel.setForeground(foregroundColor);
-		gefahrstoffeTab.add(textFieldPanel, "cell 0 2,grow");
+		dangerSubstTab.add(textFieldPanel, "cell 0 2,grow");
 		textFieldPanel.setLayout(new MigLayout("", "[right][220][right][220][120]", "[]10[]"));
 		
 		// name textfield
@@ -731,11 +731,11 @@ public class DataEditor extends JFrame{
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
-		MainFrame.getGefahrstoffeEditorTable().addMouseListener(new MouseAdapter() {
+		MainFrame.getDangerSubstEditorTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int i = MainFrame.getGefahrstoffeEditorTable().getSelectedRow();
-				name = MainFrame.getGefahrstoffeEditorTable().getValueAt(i, 0).toString();
+				int i = MainFrame.getDangerSubstEditorTable().getSelectedRow();
+				name = MainFrame.getDangerSubstEditorTable().getValueAt(i, 0).toString();
 
 				fillHazardousSubstancesData();
 			}
@@ -1187,7 +1187,7 @@ public class DataEditor extends JFrame{
 				}
 			} //End: first else
 		} //End: while (g < 0)
-		MainFrame.getGeraeteData();
+		MainFrame.getDeviceData();
 		if (confirmed == 1) {
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 		} else {
@@ -1302,7 +1302,7 @@ public class DataEditor extends JFrame{
 				}
 			} //End: first else
 		} //End: while (g < 0)
-		MainFrame.getRaeumeData();
+		MainFrame.getRoomData();
 		if (confirmed == 1) {
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 		} else {
@@ -1405,7 +1405,7 @@ public class DataEditor extends JFrame{
 				}
 			} //End: first else
 		} //End: while (g < 0)
-		MainFrame.getGefahrstoffeData();
+		MainFrame.getDangerSubstData();
 		if (confirmed == 1) {
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 		} else {
@@ -1471,7 +1471,7 @@ public class DataEditor extends JFrame{
 		    pstmt.close();
 		    con.close();
 
-			MainFrame.getGeraeteData();
+			MainFrame.getDeviceData();
 			
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
 			
@@ -1505,7 +1505,7 @@ public class DataEditor extends JFrame{
 		    pstmt.close();
 		    con.close();
 
-			MainFrame.getRaeumeData();
+			MainFrame.getRoomData();
 			
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
 			
@@ -1534,7 +1534,7 @@ public class DataEditor extends JFrame{
 		    pstmt.close();
 		    con.close();
 
-			MainFrame.getGefahrstoffeData();
+			MainFrame.getDangerSubstData();
 			
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
 
@@ -1584,10 +1584,10 @@ public class DataEditor extends JFrame{
 	
 	
 	public static void fillDeviceData() {
-		int selRow = MainFrame.getGeraeteEditorTable().getSelectedRow();
-		String fillDeviceName = (String) MainFrame.getGeraeteEditorTable().getValueAt(selRow, 1);
-		String fillDeviceDescription = (String) MainFrame.getGeraeteEditorTable().getValueAt(selRow, 2);
-		String fillDeviceRoom = (String) MainFrame.getGeraeteEditorTable().getValueAt(selRow, 3);
+		int selRow = MainFrame.getDeviceEditorTable().getSelectedRow();
+		String fillDeviceName = (String) MainFrame.getDeviceEditorTable().getValueAt(selRow, 1);
+		String fillDeviceDescription = (String) MainFrame.getDeviceEditorTable().getValueAt(selRow, 2);
+		String fillDeviceRoom = (String) MainFrame.getDeviceEditorTable().getValueAt(selRow, 3);
 		
 		tfDeviceName.setText(fillDeviceName);
 		tfDeviceDescription.setText(fillDeviceDescription);
@@ -1596,9 +1596,9 @@ public class DataEditor extends JFrame{
 	
 	
 	public static void fillRoomData() {
-		int selRow = MainFrame.getRaeumeEditorTable().getSelectedRow();
-		String fillRoomName = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 0);
-		String fillRoomDescription = (String) MainFrame.getRaeumeEditorTable().getValueAt(selRow, 1);
+		int selRow = MainFrame.getRoomsEditorTable().getSelectedRow();
+		String fillRoomName = (String) MainFrame.getRoomsEditorTable().getValueAt(selRow, 0);
+		String fillRoomDescription = (String) MainFrame.getRoomsEditorTable().getValueAt(selRow, 1);
 		
 		tfRoomName.setText(fillRoomName);
 		tfRoomDescription.setText(fillRoomDescription);
@@ -1606,8 +1606,8 @@ public class DataEditor extends JFrame{
 	
 	
 	public static void fillHazardousSubstancesData() {
-		int selRow = MainFrame.getGefahrstoffeEditorTable().getSelectedRow();
-		String fillHazardousSubstance = (String) MainFrame.getGefahrstoffeEditorTable().getValueAt(selRow, 0);
+		int selRow = MainFrame.getDangerSubstEditorTable().getSelectedRow();
+		String fillHazardousSubstance = (String) MainFrame.getDangerSubstEditorTable().getValueAt(selRow, 0);
 		
 		tfHazardousSubstance.setText(fillHazardousSubstance);
 	}
@@ -1836,7 +1836,7 @@ public class DataEditor extends JFrame{
 				con.close();
 				pstmt.close();
 						    
-				MainFrame.getGeraeteData();
+				MainFrame.getDeviceData();
 						    
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag geändert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 
@@ -1892,7 +1892,7 @@ public class DataEditor extends JFrame{
 				con.close();
 				pstmt.close();
 						    
-				MainFrame.getRaeumeData();
+				MainFrame.getRoomData();
 						    
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag geändert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 
@@ -1940,7 +1940,7 @@ public class DataEditor extends JFrame{
 				con.close();
 				pstmt.close();
 						    
-				MainFrame.getGefahrstoffeData();
+				MainFrame.getDangerSubstData();
 						    
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag geändert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 

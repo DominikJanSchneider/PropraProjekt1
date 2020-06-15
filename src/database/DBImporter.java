@@ -63,16 +63,16 @@ public class DBImporter {
 				getTable = con.prepareStatement(query);
 				rs = getTable.executeQuery();
 				
-				MainFrame.getGeraeteTableModel().setRowCount(0);
+				MainFrame.getDeviceTableModel().setRowCount(0);
 				while (rs.next()) {
 					int deviceID = rs.getInt("Ger\u00e4teID");
 					String deviceName = rs.getString("Name");
 					String deviceDescription = rs.getString("Beschreibung");
 					String deviceRoom = rs.getString("Raum");
 					
-					MainFrame.getGeraeteTableModel().addRow(new Object[] {deviceID,deviceName,deviceDescription,deviceRoom});
+					MainFrame.getDeviceTableModel().addRow(new Object[] {deviceID,deviceName,deviceDescription,deviceRoom});
 				}
-				MainFrame.getGeraeteTableModel().fireTableDataChanged();
+				MainFrame.getDeviceTableModel().fireTableDataChanged();
 				
 				
 				//###Raeume Table###
@@ -80,14 +80,14 @@ public class DBImporter {
 				getTable = con.prepareStatement(query);
 				rs = getTable.executeQuery();
 				
-				MainFrame.getRaeumeTableModel().setRowCount(0);
+				MainFrame.getRoomsTableModel().setRowCount(0);
 				while (rs.next()) {
 					String roomName = rs.getString("Name");
 					String roomDescription = rs.getString("Beschreibung");
 					
-					MainFrame.getRaeumeTableModel().addRow(new Object[] {roomName, roomDescription});
+					MainFrame.getRoomsTableModel().addRow(new Object[] {roomName, roomDescription});
 				}
-				MainFrame.getRaeumeTableModel().fireTableDataChanged();
+				MainFrame.getRoomsTableModel().fireTableDataChanged();
 				
 				
 				//###Gefahrstoffe Table###
@@ -95,13 +95,13 @@ public class DBImporter {
 				getTable = con.prepareStatement(query);
 				rs = getTable.executeQuery();
 				
-				MainFrame.getGefahrstoffeTableModel().setRowCount(0);
+				MainFrame.getDangerSubstTableModel().setRowCount(0);
 				while (rs.next()) {
 					String hazardousSubstance = rs.getString("Name");
 					
-					MainFrame.getGefahrstoffeTableModel().addRow(new Object[] {hazardousSubstance});
+					MainFrame.getDangerSubstTableModel().addRow(new Object[] {hazardousSubstance});
 				}
-				MainFrame.getGefahrstoffeTableModel().fireTableDataChanged();
+				MainFrame.getDangerSubstTableModel().fireTableDataChanged();
 				
 				con.close();
 				getTable.close();

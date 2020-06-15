@@ -30,10 +30,10 @@ public class Login extends JDialog {
 	
 	private JPanel contentPanel = new JPanel();
 	private JPanel buttonPanel;
-	private JLabel lblPasswort;
-	private JLabel lblBenutzername;
-	private static JTextField tfBenutzername;
-	private static JPasswordField pfPasswort;
+	private JLabel lblPassword;
+	private JLabel lblusername;
+	private static JTextField tfusername;
+	private static JPasswordField pfPassword;
 	private JButton btnLogin;
 	//private static boolean valid;
 	
@@ -42,8 +42,8 @@ public class Login extends JDialog {
 	private Color foregroundColor = new Color(255, 255, 255);
 	
 	public static Login getInstance() {
-		tfBenutzername.setText("");
-		pfPasswort.setText("");
+		tfusername.setText("");
+		pfPassword.setText("");
 		return login;
 	}
 
@@ -70,20 +70,20 @@ public class Login extends JDialog {
 		getContentPane().add(contentPanel);
 		contentPanel.setLayout(new MigLayout("", "[][grow]", "10[]10[]"));
 		
-		lblBenutzername = new JLabel("Benutzername:");
-		lblBenutzername.setForeground(foregroundColor);
-		contentPanel.add(lblBenutzername, "cell 0 0,alignx trailing");
+		lblusername = new JLabel("Benutzername:");
+		lblusername.setForeground(foregroundColor);
+		contentPanel.add(lblusername, "cell 0 0,alignx trailing");
 		
-		tfBenutzername = new JTextField();
-		contentPanel.add(tfBenutzername, "cell 1 0,growx");
-		tfBenutzername.setColumns(10);
+		tfusername = new JTextField();
+		contentPanel.add(tfusername, "cell 1 0,growx");
+		tfusername.setColumns(10);
 		
-		lblPasswort = new JLabel("Passwort:");
-		lblPasswort.setForeground(foregroundColor);
-		contentPanel.add(lblPasswort, "cell 0 1,alignx trailing");
+		lblPassword = new JLabel("Passwort:");
+		lblPassword.setForeground(foregroundColor);
+		contentPanel.add(lblPassword, "cell 0 1,alignx trailing");
 		
-		pfPasswort = new JPasswordField();
-		contentPanel.add(pfPasswort, "cell 1 1,growx");
+		pfPassword = new JPasswordField();
+		contentPanel.add(pfPassword, "cell 1 1,growx");
 		
 		// Configuration of the button panel
 		buttonPanel = new JPanel();
@@ -113,7 +113,7 @@ public class Login extends JDialog {
 	public boolean isLoginValid() {
 		try {
 			Connection con = DBConnection.connectLogin();
-			if (DBConnection.checkLogin(tfBenutzername.getText(), pfPasswort.getText())) {
+			if (DBConnection.checkLogin(tfusername.getText(), pfPassword.getText())) {
 				con.close();
 				return true;
 			} else {
@@ -130,7 +130,7 @@ public class Login extends JDialog {
 	public boolean checkAdmin() {
 		try {
 			Connection con = DBConnection.connectLogin();
-			if (DBConnection.checkAdmin(tfBenutzername.getText())) {
+			if (DBConnection.checkAdmin(tfusername.getText())) {
 				con.close();
 				return true;
 			} else {

@@ -49,7 +49,7 @@ public class UserEditor extends JFrame {
 	
 	private DefaultTableCellRenderer userCellRenderer;
 	
-	private JLabel lblBearbeitungselemente;
+	private JLabel lblEditingElements;
 	
 	private JTextField tfUserName;
 	private JTextField tfUserPassword;
@@ -87,10 +87,10 @@ public class UserEditor extends JFrame {
 		contentPane.add(elementPanel, "cell 0 0, grow");
 		elementPanel.setLayout(new MigLayout("", "[][]","[]10[]"));
 		
-		lblBearbeitungselemente = new JLabel("Bearbeitungselemente");
-		lblBearbeitungselemente.setFont(new Font("Dialog", Font.BOLD, 14));
-		lblBearbeitungselemente.setForeground(foregroundColor);
-		elementPanel.add(lblBearbeitungselemente, "cell 0 0");
+		lblEditingElements = new JLabel("Bearbeitungselemente");
+		lblEditingElements.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblEditingElements.setForeground(foregroundColor);
+		elementPanel.add(lblEditingElements, "cell 0 0");
 	
 		//Refresh button
 		btnRefresh = new JButton("Aktualisieren");
@@ -99,7 +99,7 @@ public class UserEditor extends JFrame {
 		btnRefresh.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getBenutzerData();
+				getUserData();
 			}
 		});
 		elementPanel.add(btnRefresh, "cell 0 1");
@@ -138,7 +138,7 @@ public class UserEditor extends JFrame {
 		userTablePanel.add(spUserTable, "cell 0 0, grow");
 		spUserTable.setViewportView(userTable);
 		
-		getBenutzerData(); //Loads the table
+		getUserData(); //Loads the table
 		
 		//Panel for the update data
 		updatePanel = new JPanel();
@@ -193,7 +193,7 @@ public class UserEditor extends JFrame {
 		setVisible(true);
 	}
 	
-	public void getBenutzerData() {
+	public void getUserData() {
 		userTableModel = new DefaultTableModel(new Object[][] {}, new String[] {"ID", "Benutzername", "Passwort"}) {
 			
 			@Override
@@ -343,7 +343,7 @@ public class UserEditor extends JFrame {
 			} //End: first else
 		} //End: while (g < 0)
 		
-		getBenutzerData();
+		getUserData();
 
 		/*if (confirmed == 1) {
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
@@ -375,7 +375,7 @@ public class UserEditor extends JFrame {
 			pstmt.close();
 			con.close();
 			
-			getBenutzerData();
+			getUserData();
 			JOptionPane.showMessageDialog(new JFrame(), "Benutzer gelöscht", "Dialog", JOptionPane.ERROR_MESSAGE);
 		
 		} catch (SQLException e) {
@@ -430,7 +430,7 @@ public class UserEditor extends JFrame {
 				pstmt.close();
 				con.close();
 				
-				getBenutzerData();
+				getUserData();
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag ge\u00e4ndert", "Dialog", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (SQLException e) {

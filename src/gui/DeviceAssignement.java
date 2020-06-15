@@ -43,14 +43,14 @@ public class DeviceAssignement extends JFrame{
 	private static DeviceAssignement deviceAssignement;
 	private JScrollPane spUnassigned;
 	private JScrollPane spAssigned;
-	private static int personenID;
+	private static int personID;
 	
 	private JButton btnAssign;
 	private JButton btnUnassign;
 	
 	private DeviceAssignement(int pPersonenID)
 	{
-		personenID = pPersonenID;
+		personID = pPersonenID;
 		frameColor = new Color(32, 32, 32);
 		backgroundColor = new Color(25, 25, 25);
 		foregroundColor = new Color(255, 255, 255);
@@ -74,7 +74,7 @@ public class DeviceAssignement extends JFrame{
 		unassignedLabel.setForeground(foregroundColor);
 		unassignedTable = new JTable();
 		unassignedTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		getUnassignedData(personenID);
+		getUnassignedData(personID);
 		spUnassigned = new JScrollPane(unassignedTable);
 		tablePanel.add(unassignedLabel, "cell 0 0, grow");
 		tablePanel.add(spUnassigned, "cell 0 1, grow");
@@ -85,7 +85,7 @@ public class DeviceAssignement extends JFrame{
 		assignedLabel.setForeground(foregroundColor);
 		assignedTable = new JTable();
 		assignedTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		getAssignedData(personenID);
+		getAssignedData(personID);
 		spAssigned = new JScrollPane(assignedTable);
 		tablePanel.add(assignedLabel, "cell 2 0, grow");
 		tablePanel.add(spAssigned, "cell 2 1, grow");
@@ -130,9 +130,9 @@ public class DeviceAssignement extends JFrame{
 		}
 		else
 		{
-			personenID = pPersonenID; 
-			getAssignedData(personenID);
-			getUnassignedData(personenID);
+			personID = pPersonenID; 
+			getAssignedData(personID);
+			getUnassignedData(personID);
 		}
 		return deviceAssignement;
 	}
@@ -181,7 +181,7 @@ public class DeviceAssignement extends JFrame{
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceAssignedData(personenID);
+		Object[][] data = DBConnection.getDeviceAssignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
 													data[i][0],
@@ -226,7 +226,7 @@ public class DeviceAssignement extends JFrame{
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceUnassignedData(personenID);
+		Object[][] data = DBConnection.getDeviceUnassignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
 													data[i][0],
@@ -251,9 +251,9 @@ public class DeviceAssignement extends JFrame{
 			return;
 		}
 		int dID = (int)MainFrame.getValueByColName(unassignedTable, row, "Ger\u00e4teID");
-		DBConnection.assignDevice(dID, personenID);
-		getAssignedData(personenID);
-		getUnassignedData(personenID);
+		DBConnection.assignDevice(dID, personID);
+		getAssignedData(personID);
+		getUnassignedData(personID);
 		tablePanel.updateUI();
 	}
 	
@@ -264,9 +264,9 @@ public class DeviceAssignement extends JFrame{
 			return;
 		}
 		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
-		DBConnection.unassignDevice(dID, personenID);
-		getAssignedData(personenID);
-		getUnassignedData(personenID);
+		DBConnection.unassignDevice(dID, personID);
+		getAssignedData(personID);
+		getUnassignedData(personID);
 		tablePanel.updateUI();
 	}
 	
@@ -274,6 +274,6 @@ public class DeviceAssignement extends JFrame{
 		int row = assignedTable.getSelectedRow();
 		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
 		double useTime = Double.parseDouble((String)MainFrame.getValueByColName(assignedTable, row, "Nutzungszeit (in Stunden)"));
-		DBConnection.setUseTime(dID, personenID, useTime);
+		DBConnection.setUseTime(dID, personID, useTime);
 	}
 }

@@ -38,13 +38,13 @@ public class DangerSubstAssignement extends JFrame {
 	private static DangerSubstAssignement dangerSubstAssignement;
 	private JScrollPane spUnassigned;
 	private JScrollPane spAssigned;
-	private static int personenID;
+	private static int personID;
 	
 	private JButton btnAssign;
 	private JButton btnUnassign;
 	
 	private DangerSubstAssignement(int pPersonenID) {
-		personenID = pPersonenID;
+		personID = pPersonenID;
 		frameColor = new Color(32, 32, 32);
 		backgroundColor = new Color(25, 25, 25);
 		foregroundColor = new Color(255, 255, 255);
@@ -68,7 +68,7 @@ public class DangerSubstAssignement extends JFrame {
 		unassignedLabel.setForeground(foregroundColor);
 		unassignedTable = new JTable();
 		unassignedTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		getUnassignedData(personenID);
+		getUnassignedData(personID);
 		spUnassigned = new JScrollPane(unassignedTable);
 		tablePanel.add(unassignedLabel, "cell 0 0, grow");
 		tablePanel.add(spUnassigned, "cell 0 1, grow");
@@ -79,7 +79,7 @@ public class DangerSubstAssignement extends JFrame {
 		assignedLabel.setForeground(foregroundColor);
 		assignedTable = new JTable();
 		assignedTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		getAssignedData(personenID);
+		getAssignedData(personID);
 		spAssigned = new JScrollPane(assignedTable);
 		tablePanel.add(assignedLabel, "cell 2 0, grow");
 		tablePanel.add(spAssigned, "cell 2 1, grow");
@@ -124,9 +124,9 @@ public class DangerSubstAssignement extends JFrame {
 		}
 		else
 		{
-			personenID = pPersonenID; 
-			getAssignedData(personenID);
-			getUnassignedData(personenID);
+			personID = pPersonenID; 
+			getAssignedData(personID);
+			getUnassignedData(personID);
 		}
 		return dangerSubstAssignement;
 	}
@@ -147,7 +147,7 @@ public class DangerSubstAssignement extends JFrame {
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getDangerSubstAssignedData(personenID);
+		Object[][] data = DBConnection.getDangerSubstAssignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -178,7 +178,7 @@ public class DangerSubstAssignement extends JFrame {
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getDangerSubstUnassignedData(personenID);
+		Object[][] data = DBConnection.getDangerSubstUnassignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -200,9 +200,9 @@ public class DangerSubstAssignement extends JFrame {
 			return;
 		}
 		String dangerSubst = (String)MainFrame.getValueByColName(unassignedTable, row, "Gefahrstoffe");
-		DBConnection.assignDangerSubst(dangerSubst, personenID);
-		getAssignedData(personenID);
-		getUnassignedData(personenID);
+		DBConnection.assignDangerSubst(dangerSubst, personID);
+		getAssignedData(personID);
+		getUnassignedData(personID);
 		tablePanel.updateUI();
 	}
 	
@@ -213,9 +213,9 @@ public class DangerSubstAssignement extends JFrame {
 			return;
 		}
 		String dangerSubst = (String)MainFrame.getValueByColName(assignedTable, row, "Gefahrstoffe");
-		DBConnection.unassignDangerSubst(dangerSubst, personenID);
-		getAssignedData(personenID);
-		getUnassignedData(personenID);
+		DBConnection.unassignDangerSubst(dangerSubst, personID);
+		getAssignedData(personID);
+		getUnassignedData(personID);
 		tablePanel.updateUI();
 	}
 }
