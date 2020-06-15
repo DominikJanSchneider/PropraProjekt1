@@ -82,6 +82,7 @@ public class DataEditor extends JFrame{
 	private int confirmed = 0;
 	private static DeviceAssignement deviceAssignement;
 	private static DangerSubstAssignement dangerSubstAssignement;
+	private static RoomAssignement roomAssignement;
 	
 	private static Connection con = null;
 	static PreparedStatement pstmt = null;
@@ -472,6 +473,17 @@ public class DataEditor extends JFrame{
 		textFieldPanel.add(tfDeviceRoom, "width 30%, cell 1 1");
 		
 		
+		//edit rooms button
+		JButton btnEditRooms = new JButton("R\u00e4ume bearbeiten");
+		btnEditDevices.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnEditRoomsPressed();
+				roomAssignement.setVisible(true);
+			}
+		});
+		textFieldPanel.add(btnEditRooms, "width 25%, gapleft 50, cell 4 1");
+		
+		
 		// savebutton
 		twoLines = "Änderungen \n Speichern";
 		btnSave = new JButton("<html>" + twoLines.replaceAll("\\n", "<br>") + "</html>");
@@ -487,7 +499,7 @@ public class DataEditor extends JFrame{
 				}
 			}
 		});
-		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 1");
+		textFieldPanel.add(btnSave, "width 25%, gapleft 50, cell 4 2");
 		
 		
 		// Mouselistener adds clicked row from table in Textfields and saves ID of clicked row for Deletion
@@ -1775,6 +1787,16 @@ public class DataEditor extends JFrame{
 		}
 		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
 		dangerSubstAssignement = DangerSubstAssignement.getInstance(pID);
+	}
+	
+	private void btnEditRoomsPressed() {
+		int row = MainFrame.getGeraeteEditorTable().getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int dID = (int)MainFrame.getValueByColName(MainFrame.getGeraeteEditorTable(), row, "Ger\u00e4teID");
+		roomAssignement = RoomAssignement.getInstance(dID);
 	}
 	
 	public static void saveDeviceData() {

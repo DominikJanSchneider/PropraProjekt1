@@ -244,9 +244,9 @@ public class UserEditor extends JFrame {
 			
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 			pane.createDialog(null, "Neuen Nutzer anlegen").setVisible(true);
-			/*if (pane.getValue() != null) {
+			if (pane.getValue() != null) {
 				confirmed = 1;
-			}*/
+			}
 			if (pane.getValue() == null) {
 				g++;
 			} else {
@@ -345,12 +345,12 @@ public class UserEditor extends JFrame {
 		} //End: while (g < 0)
 		
 		getBenutzerData();
-		/*if (confirmed == 1) {
+		if (confirmed == 1) {
 			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 		} else {
 			JOptionPane.showMessageDialog(new JFrame(), "Bearbeitung abgebrochen");
 		}
-		confirmed = 0;*/
+		confirmed = 0;
 		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
 	}
 	

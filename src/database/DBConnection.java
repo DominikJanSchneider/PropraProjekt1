@@ -929,6 +929,79 @@ public class DBConnection {
 			}
 		}
 		
+		public static Object[][] getRoomUnassignedData(int dID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4te";
+				String tableName2 = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Name IN ("
+																	+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Raum FROM "+tableName1+" WHERE Ger\u00e4teID='"+dID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT Name FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Name IN ("
+								+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Raum FROM "+tableName1+" WHERE Ger\u00e4teID='"+dID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Name");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRoomAssignedData(int dID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4te";
+				String tableName2 = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName1+" WHERE Ger\u00e4teID='"+ dID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Raum FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Raum = "+tableName2+".Name WHERE Ger\u00e4teID='"+ dID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Raum");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
 		public static void assignDevice(int dID, int pID){
 			try {
 				con = DriverManager.getConnection(url);
@@ -956,6 +1029,41 @@ public class DBConnection {
 				PreparedStatement pstmt = con.prepareStatement(stmt);
 				con.setAutoCommit(false);
 				pstmt.execute();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void assignRoom(int dID, String room){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "UPDATE Ger\u00e4te SET (Raum='"+room+"') WHERE Ger\u00e4teID='"+dID+"' ;";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				//pstmt.setInt(1, dID);
+				//pstmt.setInt(2, pID);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignRoom(int dID, String room) {
+			try {
+				String stmt="UPDATE Ger\u00e4te SET (Raum='') WHERE Ger\u00e4teID='"+dID+"' AND Raum='"+room+"' ;";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.executeUpdate();
 				con.commit();
 			    pstmt.close();
 			    con.close();
