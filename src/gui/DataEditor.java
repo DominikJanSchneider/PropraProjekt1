@@ -475,7 +475,7 @@ public class DataEditor extends JFrame{
 		
 		//edit rooms button
 		JButton btnEditRooms = new JButton("R\u00e4ume bearbeiten");
-		btnEditDevices.addActionListener(new ActionListener() {
+		btnEditRooms.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditRoomsPressed();
 				roomAssignement.setVisible(true);
