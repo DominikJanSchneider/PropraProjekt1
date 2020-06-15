@@ -1042,10 +1042,8 @@ public class DBConnection {
 			try {
 				con = DriverManager.getConnection(url);
 				con.setAutoCommit(false);
-				String stmt = "UPDATE Ger\u00e4te SET Raum='"+room+"' WHERE Ger\u00e4teID='"+dID+"' ;";
+				String stmt = "UPDATE Ger\u00e4te SET Raum='"+room+"' WHERE Ger\u00e4teID="+dID+" ;";
 				PreparedStatement pstmt = con.prepareStatement(stmt);
-				//pstmt.setInt(1, dID);
-				//pstmt.setInt(2, pID);
 				pstmt.executeUpdate();
 				con.commit();
 				pstmt.close();
@@ -1056,9 +1054,9 @@ public class DBConnection {
 			}
 		}
 		
-		public static void unassignRoom(int dID, String room) {
+		public static void unassignRoom(int dID) {
 			try {
-				String stmt="UPDATE Ger\u00e4te SET Raum='' WHERE Ger\u00e4teID="+dID+" AND Raum='"+room+"' ;";
+				String stmt="UPDATE Ger\u00e4te SET Raum='' WHERE Ger\u00e4teID="+dID+";";
 				
 				con = DBConnection.connect();
 				PreparedStatement pstmt = con.prepareStatement(stmt);

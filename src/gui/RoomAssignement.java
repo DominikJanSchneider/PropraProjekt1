@@ -212,8 +212,8 @@ public class RoomAssignement extends JFrame {
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
 			return;
 		}
-		String room = (String)MainFrame.getValueByColName(assignedTable, row, "Raum");
-		DBConnection.unassignRoom(geraeteID, room);
+		//String room = (String)MainFrame.getValueByColName(assignedTable, row, "Raum");
+		DBConnection.unassignRoom(geraeteID/*, room*/);
 		getAssignedData(geraeteID);
 		getUnassignedData(geraeteID);
 		tablePanel.updateUI();
