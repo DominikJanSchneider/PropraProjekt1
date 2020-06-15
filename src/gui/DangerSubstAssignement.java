@@ -5,8 +5,6 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,17 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
 
-public class DeviceAssignement extends JFrame{
+public class DangerSubstAssignement extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Color frameColor;
 	private Color backgroundColor;
@@ -40,7 +35,7 @@ public class DeviceAssignement extends JFrame{
 	private JPanel assignButtons;
 	private static DefaultTableCellRenderer TableCellRenderer;
 	private Container contentPane;
-	private static DeviceAssignement deviceAssignement;
+	private static DangerSubstAssignement dangerSubstAssignement;
 	private JScrollPane spUnassigned;
 	private JScrollPane spAssigned;
 	private static int personenID;
@@ -48,15 +43,14 @@ public class DeviceAssignement extends JFrame{
 	private JButton btnAssign;
 	private JButton btnUnassign;
 	
-	private DeviceAssignement(int pPersonenID)
-	{
+	private DangerSubstAssignement(int pPersonenID) {
 		personenID = pPersonenID;
 		frameColor = new Color(32, 32, 32);
 		backgroundColor = new Color(25, 25, 25);
 		foregroundColor = new Color(255, 255, 255);
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("Gerätezuordnung");
+		setTitle("Gefahrstoffzuordnung");
 		setBackground(frameColor);
 		setForeground(foregroundColor);
 		setBounds(100, 100, 1200, 750);
@@ -122,11 +116,11 @@ public class DeviceAssignement extends JFrame{
 		
 	}
 	
-	public static DeviceAssignement getInstance(int pPersonenID)
+	public static DangerSubstAssignement getInstance(int pPersonenID)
 	{
-		if(deviceAssignement == null)
+		if(dangerSubstAssignement == null)
 		{
-			deviceAssignement = new DeviceAssignement(pPersonenID);
+			dangerSubstAssignement = new DangerSubstAssignement(pPersonenID);
 		}
 		else
 		{
@@ -134,65 +128,30 @@ public class DeviceAssignement extends JFrame{
 			getAssignedData(personenID);
 			getUnassignedData(personenID);
 		}
-		return deviceAssignement;
+		return dangerSubstAssignement;
 	}
 	
 	public static void getAssignedData(int pPersonID) {
-		assignedTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Ger\u00e4teID", "Name", "Beschreibung", "Raum", "Nutzungszeit (in Stunden)"}) {
+		assignedTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Gefahrstoffe"}) {
 			private static final long serialVersionUID = 3L;
 			
 			public boolean isCellEditable(int row, int column) {
-				String name = assignedTableModel.getColumnName(column);
-				switch(name)
-				{
-					case "Nutzungszeit (in Stunden)":
-						return true;
-					default:
-						return false;
-				}
+					return false;
 			}
 		
 			public Class getColumnClass(int column) {
-				String name = assignedTableModel.getColumnName(column);
-				switch(name)
-				{
-					case "Ger\u00e4teID":
-						return Integer.class;
-					case "Nutzungszeit":
-						return Double.class;
-					default:
-						return String.class;
-				}
+					return String.class;
 			}
 		};
-		
-		CellEditorListener listener = new CellEditorListener() {
-			@Override
-			public void editingStopped(ChangeEvent e) {
-				assignedTableEditingStopped();
-			}
-			@Override
-			public void editingCanceled(ChangeEvent e) {}
-		};
-		
-		
-		
-		
+
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceAssignedData(personenID);
+		Object[][] data = DBConnection.getDangerSubstAssignedData(personenID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
-													data[i][0],
-													data[i][1],
-													data[i][2],
-													data[i][3],
-													data[i][4]
+													data[i][0]
 			});
-			int col = MainFrame.getColBayColName(assignedTable, "Nutzungszeit (in Stunden)");
-			TableCellEditor cellEditor = assignedTable.getCellEditor(i, col);
-			cellEditor.addCellEditorListener(listener);
 		}
 		assignedTableModel.fireTableDataChanged();
 		
@@ -204,7 +163,7 @@ public class DeviceAssignement extends JFrame{
 	}
 	
 	public static void getUnassignedData(int pPersonID) {
-		unassignedTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Ger\u00e4teID", "Name", "Beschreibung", "Raum"}) {
+		unassignedTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Gefahrstoffe"}) {
 			private static final long serialVersionUID = 3L;
 			
 			public boolean isCellEditable(int row, int column) {
@@ -212,27 +171,17 @@ public class DeviceAssignement extends JFrame{
 			}
 		
 			public Class getColumnClass(int column) {
-				String name = unassignedTableModel.getColumnName(column);
-				switch(name)
-				{
-					case "Ger\u00e4teID":
-						return Integer.class;
-					default:
-						return String.class;
-				}
+				return String.class;
 			}
 		};
 		
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceUnassignedData(personenID);
+		Object[][] data = DBConnection.getDangerSubstUnassignedData(personenID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
-													data[i][0],
-													data[i][1],
-													data[i][2],
-													data[i][3]
+													data[i][0]
 			});
 		}
 		unassignedTableModel.fireTableDataChanged();
@@ -250,8 +199,8 @@ public class DeviceAssignement extends JFrame{
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
 			return;
 		}
-		int dID = (int)MainFrame.getValueByColName(unassignedTable, row, "Ger\u00e4teID");
-		DBConnection.assignDevice(dID, personenID);
+		String dangerSubst = (String)MainFrame.getValueByColName(unassignedTable, row, "Gefahrstoffe");
+		DBConnection.assignDangerSubst(dangerSubst, personenID);
 		getAssignedData(personenID);
 		getUnassignedData(personenID);
 		tablePanel.updateUI();
@@ -263,17 +212,10 @@ public class DeviceAssignement extends JFrame{
 			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
 			return;
 		}
-		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
-		DBConnection.unassignDevice(dID, personenID);
+		String dangerSubst = (String)MainFrame.getValueByColName(assignedTable, row, "Gefahrstoffe");
+		DBConnection.unassignDangerSubst(dangerSubst, personenID);
 		getAssignedData(personenID);
 		getUnassignedData(personenID);
 		tablePanel.updateUI();
-	}
-	
-	private static void assignedTableEditingStopped() {
-		int row = assignedTable.getSelectedRow();
-		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
-		double useTime = Double.parseDouble((String)MainFrame.getValueByColName(assignedTable, row, "Nutzungszeit (in Stunden)"));
-		DBConnection.setUseTime(dID, personenID, useTime);
 	}
 }

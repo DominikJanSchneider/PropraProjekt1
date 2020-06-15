@@ -771,14 +771,14 @@ public class DBConnection {
 				String tableName2 = "Ger\u00e4te";
 				con = DriverManager.getConnection(url);
 				 
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(GeräteID) FROM Geräte WHERE "
-																+ "(Geräte.GeräteID IN ("
-																	+"SELECT Geräte.GeräteID FROM Geräte EXCEPT SELECT Gerätezuordnung.GeräteID FROM Gerätezuordnung WHERE PersonenID='"+pID+"'))");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Ger\u00e4teID IN ("
+																	+"SELECT "+tableName2+".Ger\u00e4teID FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Ger\u00e4teID FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT GeräteID, Name, Beschreibung, Raum FROM Geräte WHERE "
-							+ "(Geräte.GeräteID IN ("
-								+"SELECT Geräte.GeräteID FROM Geräte EXCEPT SELECT Gerätezuordnung.GeräteID FROM Gerätezuordnung WHERE PersonenID='"+pID+"'))");
+				pstmt = con.prepareStatement("SELECT Ger\u00e4teID, Name, Beschreibung, Raum FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Ger\u00e4teID IN ("
+								+"SELECT "+tableName2+".Ger\u00e4teID FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Ger\u00e4teID FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
 				rs = pstmt.executeQuery();
 				
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -856,6 +856,79 @@ public class DBConnection {
 			}
 		}
 		
+		public static Object[][] getDangerSubstUnassignedData(int pID) {
+			try {
+				
+				String tableName1 = "Gefahrstoffzuordnung";
+				String tableName2 = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Name IN ("
+																	+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT Name FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Name IN ("
+								+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Name");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDangerSubstAssignedData(int pID) {
+			try {
+				
+				String tableName1 = "Gefahrstoffzuordnung";
+				String tableName2 = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(PersonenID) FROM "+tableName1+" WHERE PersonenID='"+ pID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Gefahrstoff = "+tableName2+".Name WHERE PersonenID='"+ pID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Gefahrstoff");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
 		public static void assignDevice(int dID, int pID){
 			try {
 				con = DriverManager.getConnection(url);
@@ -878,6 +951,42 @@ public class DBConnection {
 		public static void unassignDevice(int dID, int pID) {
 			try {
 				String stmt="delete from Ger\u00e4tezuordnung where Ger\u00e4teID='"+dID+"' AND PersonenID='"+pID+"'";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.execute();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void assignDangerSubst(String dangerSubst, int pID){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "INSERT INTO Gefahrstoffzuordnung (Gefahrstoff, PersonenID) "
+						+ "VALUES (?, ?)";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.setString(1, dangerSubst);
+				pstmt.setInt(2, pID);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignDangerSubst(String dangerSubst, int pID) {
+			try {
+				String stmt="delete from Gefahrstoffzuordnung where Gefahrstoff='"+dangerSubst+"' AND PersonenID='"+pID+"'";
 				
 				con = DBConnection.connect();
 				PreparedStatement pstmt = con.prepareStatement(stmt);

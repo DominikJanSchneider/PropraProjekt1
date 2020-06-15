@@ -67,6 +67,7 @@ public class DataEditor extends JFrame{
 	private JScrollPane spHazard;
 	private static int ID = 0;
 	private static DeviceAssignement deviceAssignement;
+	private static DangerSubstAssignement dangerSubstAssignement;
 	
 	private static Connection con = null;
 	static PreparedStatement pstmt = null;
@@ -271,7 +272,15 @@ public class DataEditor extends JFrame{
 		});
 		textFieldPanel.add(btnEditDevices, "width 25%, gapleft 50, cell 4 2");
 		
-		
+		//edit dangerous substances button
+		JButton btnEditDangerSubst = new JButton("Gefahrstoffe bearbeiten");
+		btnEditDangerSubst.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnEditDangerSubstPressed();
+				dangerSubstAssignement.setVisible(true);
+			}
+		});
+		textFieldPanel.add(btnEditDangerSubst, "cell 4 1,width 25%,gapx 50");
 		
 		
 		textAreaPanel = new JPanel();
@@ -895,6 +904,17 @@ public class DataEditor extends JFrame{
 		}
 		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
 		deviceAssignement = DeviceAssignement.getInstance(pID);
+	}
+	
+	private void btnEditDangerSubstPressed()
+	{
+		int row = MainFrame.getEditorTable().getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), row, "ID");
+		dangerSubstAssignement = DangerSubstAssignement.getInstance(pID);
 	}
 	
 }
