@@ -481,6 +481,11 @@ public class DataEditor extends JFrame{
 		tfDeviceDescription = new JTextField();
 		textFieldPanel.add(tfDeviceDescription, "width 30%, cell 3 0");
 		
+		// room textfield TODO Einen Weg finden. Den Editor ohne laufen zu lassen
+		tfDeviceRoom = new JTextField();
+		tfDeviceRoom.setVisible(false);
+		textFieldPanel.add(tfDeviceRoom, "width 30%, cell 1 1");
+		
 		//edit rooms button
 		JButton btnEditRooms = new JButton("R\u00e4ume bearbeiten");
 		btnEditRooms.addActionListener(new ActionListener() {
@@ -1609,7 +1614,7 @@ public class DataEditor extends JFrame{
 		
 		tfDeviceName.setText(fillDeviceName);
 		tfDeviceDescription.setText(fillDeviceDescription);
-		tfDeviceRoom.setText(fillDeviceRoom);
+		tfDeviceRoom.setText(fillDeviceRoom); //TODO
 	}
 	
 	
@@ -1857,7 +1862,7 @@ public class DataEditor extends JFrame{
 					g = 0;
 				}
 				try {
-					deviceRoomVar = tfDeviceRoom.getText();
+					deviceRoomVar = tfDeviceRoom.getText(); //TODO
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Raum'", "Dialog", JOptionPane.ERROR_MESSAGE);
 					g = 0;
@@ -1867,7 +1872,7 @@ public class DataEditor extends JFrame{
 			// execute Database update if there are no wrong entrys
 			while (g == 1) {
 				g = 0;
-				String query="UPDATE Ger\u00e4te SET Name='" + tfDeviceName.getText() + "' ,Beschreibung='" + tfDeviceDescription.getText() + "'  ,Raum='" + tfDeviceRoom.getText() + 
+				String query="UPDATE Ger\u00e4te SET Name='" + tfDeviceName.getText() + "' ,Beschreibung='" + tfDeviceDescription.getText() + "'  ,Raum='" + tfDeviceRoom.getText() + //TODO
 							  "' ,Ger\u00e4teID='" + ID + "' WHERE Ger\u00e4teID='"+ID+"' ";
 							
 				con = DBConnection.connect();
