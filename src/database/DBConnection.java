@@ -5,10 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import gui.MainFrame;
 
