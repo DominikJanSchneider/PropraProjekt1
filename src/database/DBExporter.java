@@ -48,7 +48,9 @@ public class DBExporter {
 						    +"'"+attributes[11]+"'"+" "+attributeTypes[11]+","
 						    +"'"+attributes[12]+"'"+" "+attributeTypes[12]+","
 						    +attributes[13]+" "+attributeTypes[13]+","
-							+attributes[14]+" "+attributeTypes[14]
+							+attributes[14]+" "+attributeTypes[14]+","
+							+attributes[15]+" "+attributeTypes[15]+","
+							+attributes[16]+" "+attributeTypes[16]
 						    +");";
 				PreparedStatement createTable = conOut.prepareStatement(sqlCreateTable);
 				createTable.execute();
@@ -58,10 +60,11 @@ public class DBExporter {
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO Personen ("+attributes[0]+","+attributes[1]+","+attributes[2]+","+attributes[3]+","+attributes[4]+","+attributes[5]+","
 															 +attributes[6]+","+attributes[7]+","+attributes[8]+","+attributes[9]+","+attributes[10]+",'"+attributes[11]+"','"
-															 +attributes[12]+"',"+attributes[13]+","+attributes[14]+") "+
+															 +attributes[12]+"',"+attributes[13]+","+attributes[14]+","+attributes[15]+","+attributes[16]+") "+
 									 "VALUES ("+rs.getString("ID")+",'"+rs.getString("Name")+"','"+rs.getString("Vorname")+"','"+rs.getString("Datum")+"','"+rs.getString("Ifwt")+"','"+rs.getString("MNaF")+"','"
 									 		   +rs.getString("Intern")+"','"+rs.getString("Beschaeftigungsverhaeltnis")+"','"+rs.getString("Beginn")+"','"+rs.getString("Ende")+"','"+rs.getString("Extern")+"','"
-									 		   +rs.getString("E-Mail Adresse")+"','"+rs.getString("Allgemeine Unterweisung")+"','"+rs.getString("Laboreinrichtungen")+"','"+rs.getString("Gefahrstoffe")+"');");	
+									 		   +rs.getString("E-Mail Adresse")+"','"+rs.getString("Allgemeine Unterweisung")+"','"+rs.getString("Laboreinrichtungen")+"','"+rs.getString("Gefahrstoffe")+"','"
+									 		   +rs.getString("LabKommentar")+"','"+rs.getString("GefKommentar")+"');");	
 					Statement update = conOut.createStatement();
 					
 					if (rs.getString("Beschaeftigungsverhaeltnis") == null) {
@@ -90,6 +93,12 @@ public class DBExporter {
 					}
 					if (rs.getString("Gefahrstoffe") == null) {
 						update.execute("UPDATE Personen SET Gefahrstoffe=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("LabKommentar") == null) {
+						update.execute("UPDATE Personen SET LabKommentar=NULL WHERE ID="+rs.getString("ID")+";");
+					}
+					if (rs.getString("GefKommentar") == null) {
+						update.execute("UPDATE Personen SET GefKommentar=NULL WHERE ID="+rs.getString("ID")+";");
 					}
 				}
 				
@@ -155,7 +164,7 @@ public class DBExporter {
 					Statement update = conOut.createStatement();
 					
 					if (rs.getString("Beschreibung") == null) {
-						update.execute("UPDATE R\u00e4ume SET Beschreibung=NULL WHERE Name="+rs.getString("Name")+";");
+						update.execute("UPDATE R\u00e4ume SET Beschreibung=NULL WHERE Name='"+rs.getString("Name")+"';");
 					}
 				}
 				
@@ -211,13 +220,38 @@ public class DBExporter {
 				createTable = conOut.prepareStatement(sqlCreateTable);
 				createTable.execute();
 				
-				//Filling the copied table with data from the default data base table geraetezuordnung
+				//Filling the copied table with data from the default data base table Gefahrstoffe
 				fillTable = conOut.createStatement();
 				while (rs.next()) {
 					fillTable.execute("INSERT INTO Gefahrstoffe ("+attributes[0]+") "+
 									 "VALUES ('"+rs.getString("Name")+"');");							
 				}
 				
+				
+				//###Table Gefahrstoffzuordnung###
+				//Getting table data
+				getTable = con.prepareStatement("SELECT * FROM Gefahrstoffzuordnung;");
+				rs = getTable.executeQuery();
+				attributes = new String[rs.getMetaData().getColumnCount()];
+				attributeTypes = new String[rs.getMetaData().getColumnCount()];
+				for (int col = 0; col < rs.getMetaData().getColumnCount(); col++) {
+					attributes[col] = rs.getMetaData().getColumnName(col+1);
+					attributeTypes[col] = rs.getMetaData().getColumnName(col+1);
+				}
+
+				//Creating a copy of the default database table Gefahrstoffzuordnung
+				sqlCreateTable = "CREATE TABLE IF NOT EXISTS Gefahrstoffzuordnung" +
+								 "("+attributes[0]+" "+attributeTypes[0]+
+								 ","+attributes[1]+" "+attributeTypes[1]+");";
+				createTable = conOut.prepareStatement(sqlCreateTable);
+				createTable.execute();
+				
+				//Filling the copied table with data from the default data base table Gefahrstoffzuordnung
+				fillTable = conOut.createStatement();
+				while (rs.next()) {
+					fillTable.execute("INSERT INTO Gefahrstoffzuordnung ("+attributes[0]+","+attributes[1]+") "+
+									 "VALUES ('"+rs.getString("Gefahrstoff")+"','"+rs.getString("PersonenID")+"');");							
+				}
 				
 				createTable.close();
 				fillTable.close();
