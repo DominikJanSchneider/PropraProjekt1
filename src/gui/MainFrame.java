@@ -989,7 +989,9 @@ public class MainFrame extends JFrame{
 		}
 		int gID = (int)getValueByColName(geraeteTable, row, "Ger\u00e4teID");
 		deviceStats = DeviceStatistics.getInstance(gID);
-		deviceStats.setVisible(true);
+		if(deviceStats != null) {
+			deviceStats.setVisible(true);
+		}
 	}
 	
 	public static Object getValueByColName(JTable table, int row, String colName) {

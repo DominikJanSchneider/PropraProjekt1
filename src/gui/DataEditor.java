@@ -268,7 +268,9 @@ public class DataEditor extends JFrame{
 		btnEditDevices.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditDevicesPressed();
-				deviceAssignement.setVisible(true);
+				if(deviceAssignement != null) {
+					deviceAssignement.setVisible(true);
+				}
 			}
 		});
 		textFieldPanel.add(btnEditDevices, "width 25%, gapleft 50, cell 4 2");
@@ -278,7 +280,9 @@ public class DataEditor extends JFrame{
 		btnEditDangerSubst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditDangerSubstPressed();
-				dangerSubstAssignement.setVisible(true);
+				if(dangerSubstAssignement != null) {
+					dangerSubstAssignement.setVisible(true);
+				}
 			}
 		});
 		textFieldPanel.add(btnEditDangerSubst, "cell 4 1,width 25%,gapx 50");
