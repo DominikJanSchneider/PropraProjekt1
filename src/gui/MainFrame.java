@@ -36,6 +36,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
@@ -74,6 +75,8 @@ public class MainFrame extends JFrame{
 	private static JPanel geraeteTablePanel;
 	private JPanel raeumeTab;
 	private static JPanel raeumeTablePanel;
+	private JPanel gefahrstoffeTab;
+	private static JPanel gefahrstoffeTablePanel;
 	
 	private static JScrollPane spTable;
 	private JScrollPane spAllgemeineUnterweisungen;
@@ -81,6 +84,7 @@ public class MainFrame extends JFrame{
 	private JScrollPane spGefahrstoffe;
 	private JScrollPane spGeraete;
 	private JScrollPane spRaeume;
+	private JScrollPane spGefahrstoffeTab;
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -109,17 +113,24 @@ public class MainFrame extends JFrame{
 	
 	private static JTable table = new JTable();
 	private static JTable editorTable = new JTable();
+	private static JTable geraeteEditorTable = new JTable();
 	private static JTable geraeteTable = new JTable();
+	private static JTable raeumeEditorTable = new JTable();
 	private static JTable raeumeTable = new JTable();
+	private static JTable gefahrstoffeEditorTable = new JTable();
+	private static JTable gefahrstoffeTable = new JTable();
+	
 	
 	private static DefaultTableModel dtm;
 	private static DefaultTableModel geraeteTableModel;
 	private static DefaultTableModel raeumeTableModel;
+	private static DefaultTableModel gefahrstoffeTableModel;
 	
 	private static DefaultTableCellRenderer cellRenderer;
 	private static DefaultTableCellRenderer cellRendererColor;
 	private static DefaultTableCellRenderer geraeteCellRenderer;
 	private static DefaultTableCellRenderer raeumeCellRenderer;
+	private static DefaultTableCellRenderer gefahrstoffeCellRenderer;
 	
 	private JLabel lblAllgemeineUnterweisung;
 	private JLabel lblLaboreinrichtungen;
@@ -132,34 +143,32 @@ public class MainFrame extends JFrame{
 	private static Login login;
 	private static DataEditor dataEditor;
 	private static UserEditor userEditor;
+	private static DeviceStatistics deviceStats;
 	private FormDocPrinter fPrinter;
 	
 	private static Connection conn = null;
-	private JPanel filterPanel;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
-	private JButton btnNewButton_2;
-	private JButton btnNewButton_3;
-	private JPanel filterPanel2;
-	private static JTextField tfRaumID;
-	private static JTextField tfRaumname;
-	private static JTextField txtBeschreibungEingeben;
-	private JButton btnNewButton_4;
-	private JButton btnNewButton_5;
-	private JButton btnNewButton_6;
-	private static JTextField txtGeraeteID;
-	private static JTextField txtGeraeteName;
-	private static JTextField txtGeraeteBeschreibung;
-	private static JTextField txtGeraeteraum;
-	private JButton btnNewButton_7;
-	private JButton btnNewButton_8;
-
-	
-
-	
+	private JPanel filterPanelGeraeteTab;
+	private JPanel filterPanelRaeumeTab;
+	private JPanel filterPanelGefahrstoffeTab;
+	private JButton btnSearchGeraeteID;
+	private JButton btnSearchGeraeteName;
+	private JButton btnSearchGeraeteDescript;
+	private JButton btnSearchGeraeteraum;
+	private static JTextField tfRaumName;
+	private static JTextField tfRaumDescript;
+	private JButton btnSearchRaumName;
+	private JButton btnSearchRaumDescript;
+	private static JTextField tfGeraeteID;
+	private static JTextField tfGeraeteName;
+	private static JTextField tfGeraeteDescript;
+	private static JTextField tfGeraeteraum;
+	private JButton btnAllGeraete;
+	private JButton btnAllRaeume;
+	private JButton btnDeviceStats;
+	private static JTextField tfGefahrstoffName;
+	private JButton searchButtonGefahrstoffName;
 	
 	
-
 	public static void main(String[] args) {
 		login = Login.getInstance();
 	}
@@ -308,129 +317,31 @@ public class MainFrame extends JFrame{
 		contentPane.add(tabbedPane, "cell 0 0,grow");
 		
 		//###Tab Personen###
-				personenTab = new JPanel();
-				personenTab.setBackground(backgroundColor);
-				personenTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
+		personenTab = new JPanel();
+		personenTab.setBackground(backgroundColor);
+		personenTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][300.0,grow][150.0,grow]"));
 				
-				tabbedPane.addTab("Personen", personenTab);
-		
-
-		//###Tab Geraete###
-		geraeteTab = new JPanel();
-		geraeteTab.setBackground(backgroundColor);
-		geraeteTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow][]"));
-		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
-		
-		
-		filterPanel = new JPanel();
-		filterPanel.setBackground(backgroundColor);
-		filterPanel.setForeground(foregroundColor);
-		geraeteTab.add(filterPanel, "cell 0 0,grow");
-		filterPanel.setLayout(new MigLayout("", "[300,grow][300,grow][300,grow][300,grow]", "[][grow][][grow]"));
-		
-		txtGeraeteID = new JTextField();
-		txtGeraeteID.setText("Bitte Geräte-ID eingeben");
-		filterPanel.add(txtGeraeteID, "cell 0 0,growx");
-		txtGeraeteID.setColumns(10);
-		
-		txtGeraeteName = new JTextField();
-		txtGeraeteName.setText("Bitte Gerätenamen eingeben");
-		filterPanel.add(txtGeraeteName, "cell 1 0,growx");
-		txtGeraeteName.setColumns(10);
-		
-		txtGeraeteBeschreibung = new JTextField();
-		txtGeraeteBeschreibung.setText("Bitte Gerätebeschreibung eingeben");
-		filterPanel.add(txtGeraeteBeschreibung, "cell 2 0,growx");
-		txtGeraeteBeschreibung.setColumns(10);
-		
-		txtGeraeteraum = new JTextField();
-		txtGeraeteraum.setText("Bitte Geräteraum eingeben");
-		filterPanel.add(txtGeraeteraum, "cell 3 0,growx");
-		txtGeraeteraum.setColumns(10);
-		
-		
-		
-		btnNewButton = new JButton("Geräte-ID suchen");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterGeraete(DBConnection.getGeraeteID());
-			}
-		});
-		
-		filterPanel.add(btnNewButton, "cell 0 2,alignx left");
-		
-		
-		btnNewButton_1 = new JButton("Gerätenamen suchen");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterGeraete(DBConnection.getGeraeteName());
-			}
-		});
-		filterPanel.add(btnNewButton_1, "cell 1 2,alignx left");
-		
-		btnNewButton_2 = new JButton("Beschreibung suchen");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterGeraete(DBConnection.getGeraeteBesch());
-			}
-		});
-		filterPanel.add(btnNewButton_2, "cell 2 2");
-		
-		
-		
-		btnNewButton_3 = new JButton("Raum suchen");
-		btnNewButton_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterGeraete(DBConnection.getGeraeteRaum());
-			}
-		});
-		filterPanel.add(btnNewButton_3, "cell 3 2");
-		
-
-		
-		
-	
-		
-		
-		geraeteTablePanel = new JPanel();
-		geraeteTablePanel.setBackground(backgroundColor);
-		geraeteTab.add(geraeteTablePanel, "cell 0 1, grow");
-		geraeteTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][grow][][][]"));
-		
-		spGeraete = new JScrollPane();
-		geraeteTablePanel.add(spGeraete, "cell 0 0,grow");
-		spGeraete.setViewportView(geraeteTable);
-		
-		btnNewButton_7 = new JButton("Alle Geräte anzeigen");
-		btnNewButton_7.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterGeraete(DBConnection.getGeraeteData());
-			}
-		});
-		geraeteTablePanel.add(btnNewButton_7, "cell 0 3");
-		
-		
-		
+		tabbedPane.addTab("Personen", personenTab);
 		// Building the panel for all elements like buttons
 		configPanel = new JPanel();
 		configPanel.setBackground(backgroundColor);
 		configPanel.setForeground(foregroundColor);
 		personenTab.add(configPanel, "cell 0 0,grow");
 		configPanel.setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
-		
+				
 		// Label for the config panel title
 		lblConfigPanel = new JLabel("Sicherheitsunterweisung am Institut f\u00fcr Werkstofftechnik und Ger\u00e4tezentrum MNaF");
 		lblConfigPanel.setFont(new Font("Dialog", Font.BOLD, 18));
 		lblConfigPanel.setForeground(foregroundColor);
 		configPanel.add(lblConfigPanel, "cell 0 0");
-		
+				
 		// Panel that holds the elements form configPanel
 		configElementsPanel = new JPanel();
 		configElementsPanel.setBackground(backgroundColor);
 		configElementsPanel.setForeground(foregroundColor);
 		configPanel.add(configElementsPanel, "cell 0 1,grow");
 		configElementsPanel.setLayout(new MigLayout("", "[grow]25[grow]25[grow]25[grow]25[grow]", "[grow]8[grow]"));
-		
+				
 		tfSearch = new JTextField();
 		tfSearch.addFocusListener(new FocusAdapter() {
 			@Override
@@ -446,29 +357,29 @@ public class MainFrame extends JFrame{
 		tfSearch.setText("Bitte Namen eingeben");
 		configElementsPanel.add(tfSearch, "cell 0 0,growx");
 		tfSearch.setColumns(10);
-		
+				
 
 		lblInstitut = new JLabel("Institut f\u00fcr Werkstoffstechnik (Ifwt)");
 
 		lblInstitut.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblInstitut.setForeground(foregroundColor);
 		configElementsPanel.add(lblInstitut, "cell 1 0");
-		
+				
 		lblGeraetezentrum = new JLabel("Ger\u00e4tezentrum (MNaF)");
 		lblGeraetezentrum.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblGeraetezentrum.setForeground(foregroundColor);
 		configElementsPanel.add(lblGeraetezentrum, "cell 2 0");
-		
+				
 		lblIntern = new JLabel("Intern");
 		lblIntern.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblIntern.setForeground(foregroundColor);
 		configElementsPanel.add(lblIntern, "cell 3 0");
-		
+				
 		lblExtern = new JLabel("Extern");
 		lblExtern.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblExtern.setForeground(foregroundColor);
 		configElementsPanel.add(lblExtern, "cell 4 0");
-		
+				
 		btnStartSearch = new JButton("Suche Starten");
 		btnStartSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -476,7 +387,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnStartSearch, "cell 0 1,aligny top");
-		
+				
 		btnIfwt = new JButton("Ifwt");
 		btnIfwt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -484,7 +395,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnIfwt, "flowx,cell 1 1,aligny top");
-		
+				
 		btnLmn = new JButton("LMN");
 		btnLmn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -492,7 +403,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnLmn, "cell 1 1,aligny top");
-		
+				
 		btnLmw = new JButton("LMW");
 		btnLmw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -500,7 +411,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnLmw, "cell 1 1,aligny top");
-		
+				
 		btnLot = new JButton("LOT");
 		btnLot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -508,7 +419,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnLot, "cell 1 1,aligny top");
-		
+				
 		btnLwf = new JButton("LWF");
 		btnLwf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -516,7 +427,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnLwf, "cell 1 1,aligny top");
-		
+				
 		btnMnaf = new JButton("MNaF");
 		btnMnaf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -524,7 +435,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnMnaf, "cell 2 1,aligny top");
-		
+				
 		btnIntern = new JButton("Intern");
 		btnIntern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -540,7 +451,7 @@ public class MainFrame extends JFrame{
 			}
 		});
 		configElementsPanel.add(btnExtern, "cell 4 1,aligny top");
-		
+				
 		// Building the panel for the table
 		tablePanel = new JPanel();
 		tablePanel.setBackground(backgroundColor);
@@ -552,7 +463,7 @@ public class MainFrame extends JFrame{
 		tablePanel.add(spTable, "cell 0 0,grow");
 		spTable.setViewportView(table);
 		
-		getData();
+		getPersonData();
 		
 		// Fill JTextAreas (Allgemeine Unterweisung, Laboreinrichtungen, Gefahrstoffe)  with data from selected row
 		table.addMouseListener(new MouseAdapter() {
@@ -566,73 +477,223 @@ public class MainFrame extends JFrame{
 				taGefahrstoffe.setText(fillHazard);
 			}
 		});
-		
+				
 		// Building the panel for the informations that will be displayed
 		infoPanel = new JPanel();
 		infoPanel.setBackground(backgroundColor);
 		infoPanel.setForeground(foregroundColor);
 		personenTab.add(infoPanel, "cell 0 2,grow");
 		infoPanel.setLayout(new MigLayout("", "[grow]25[grow]25[grow]", "[][grow]"));
-		
+				
 		// Building the (Allgemeine Unterweisung) information text area with title
 		lblAllgemeineUnterweisung = new JLabel("Allgemeine Unterweisung (Datum s.o.)");
 		lblAllgemeineUnterweisung.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblAllgemeineUnterweisung.setForeground(foregroundColor);
 		infoPanel.add(lblAllgemeineUnterweisung, "cell 0 0");
-		
+				
 		spAllgemeineUnterweisungen = new JScrollPane(
-	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			          JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		infoPanel.add(spAllgemeineUnterweisungen, "width 25%, cell 0 1,grow");
-		
+				
 		taAllgemeineUnterweisung = new JTextArea();
 		taAllgemeineUnterweisung.setLineWrap(true);
 		taAllgemeineUnterweisung.setWrapStyleWord(true);
 		taAllgemeineUnterweisung.setEditable(false);
 		//taAllgemeineUnterweisung.setBackground(redColor);
 		spAllgemeineUnterweisungen.setViewportView(taAllgemeineUnterweisung);
-		
+				
 		// Building the (Laboreinrichtungen) informationen text area with title
 		lblLaboreinrichtungen = new JLabel("Laboreinrichtungen");
 		lblLaboreinrichtungen.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblLaboreinrichtungen.setForeground(foregroundColor);
 		infoPanel.add(lblLaboreinrichtungen, "cell 1 0");
-		
+				
 		spLaboreinrichtungen = new JScrollPane(
-	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			          JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		infoPanel.add(spLaboreinrichtungen, "width 25%, cell 1 1,grow");
-		
+				
 		taLaboreinrichtungen = new JTextArea();
 		taLaboreinrichtungen.setLineWrap(true);
 		taLaboreinrichtungen.setWrapStyleWord(true);
 		taLaboreinrichtungen.setEditable(false);
 		spLaboreinrichtungen.setViewportView(taLaboreinrichtungen);
-		
+				
 		// Building the (Gefahrstoffe) information text area with title
 		lblGefahrstoffe = new JLabel("Gefahrstoffe");
 		lblGefahrstoffe.setFont(new Font("Dialog", Font.BOLD, 13));
 		lblGefahrstoffe.setForeground(foregroundColor);
 		infoPanel.add(lblGefahrstoffe, "cell 2 0");
-		
+				
 		spGefahrstoffe = new JScrollPane(
-	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		infoPanel.add(spGefahrstoffe, "width 25%, cell 2 1,grow");
-		
+				
 		taGefahrstoffe = new JTextArea();
 		taGefahrstoffe.setLineWrap(true);
 		taGefahrstoffe.setWrapStyleWord(true);
 		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
-		
-		
+				
 		taGefahrstoffe.setLineWrap(true);
 		taGefahrstoffe.setWrapStyleWord(true);
 		taGefahrstoffe.setEditable(false);
 		spGefahrstoffe.setViewportView(taGefahrstoffe);
-		
+				
 		getGeraeteData();
+	
+		//###Tab Geraete###
+		geraeteTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		geraeteTab = new JPanel();
+		geraeteTab.setBackground(backgroundColor);
+		geraeteTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow][]"));
+		tabbedPane.addTab("Ger\u00e4te", geraeteTab);
+		
+		
+		filterPanelGeraeteTab = new JPanel();
+		filterPanelGeraeteTab.setBackground(backgroundColor);
+		filterPanelGeraeteTab.setForeground(foregroundColor);
+		geraeteTab.add(filterPanelGeraeteTab, "cell 0 0,grow");
+		filterPanelGeraeteTab.setLayout(new MigLayout("", "[300,grow][300,grow][300,grow][300,grow]", "[][grow][][grow]"));
+		
+		tfGeraeteID = new JTextField();
+		tfGeraeteID.setText("Bitte Geräte-ID eingeben");
+		filterPanelGeraeteTab.add(tfGeraeteID, "cell 0 0,growx");
+		tfGeraeteID.setColumns(10);
+		tfGeraeteID.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfGeraeteID.selectAll();
+			}
+		});
+		tfGeraeteID.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerGeraeteIDSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		
+		tfGeraeteName = new JTextField();
+		tfGeraeteName.setText("Bitte Gerätenamen eingeben");
+		filterPanelGeraeteTab.add(tfGeraeteName, "cell 1 0,growx");
+		tfGeraeteName.setColumns(10);
+		tfGeraeteName.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfGeraeteName.selectAll();
+			}
+		});
+		tfGeraeteName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerGeraeteNameSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		
+		tfGeraeteDescript = new JTextField();
+		tfGeraeteDescript.setText("Bitte Gerätebeschreibung eingeben");
+		filterPanelGeraeteTab.add(tfGeraeteDescript, "cell 2 0,growx");
+		tfGeraeteDescript.setColumns(10);
+		tfGeraeteDescript.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfGeraeteDescript.selectAll();
+			}
+		});
+		tfGeraeteDescript.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerGeraeteDescriptSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		
+		tfGeraeteraum = new JTextField();
+		tfGeraeteraum.setText("Bitte Geräteraum eingeben");
+		filterPanelGeraeteTab.add(tfGeraeteraum, "cell 3 0,growx");
+		tfGeraeteraum.setColumns(10);
+		tfGeraeteraum.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfGeraeteraum.selectAll();
+			}
+		});
+		tfGeraeteraum.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerGeraeteraumSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		
+		btnSearchGeraeteID = new JButton("Geräte-ID suchen");
+		btnSearchGeraeteID.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				triggerGeraeteIDSearch();
+			}
+		});
+		
+		filterPanelGeraeteTab.add(btnSearchGeraeteID, "cell 0 2,alignx left");
+		
+		btnSearchGeraeteName = new JButton("Gerätenamen suchen");
+		btnSearchGeraeteName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				triggerGeraeteNameSearch();
+			}
+		});
+		filterPanelGeraeteTab.add(btnSearchGeraeteName, "cell 1 2,alignx left");
+		
+		btnSearchGeraeteDescript = new JButton("Beschreibung suchen");
+		btnSearchGeraeteDescript.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				triggerGeraeteDescriptSearch();
+			}
+		});
+		filterPanelGeraeteTab.add(btnSearchGeraeteDescript, "cell 2 2");
+		
+		
+		
+		btnSearchGeraeteraum = new JButton("Raum suchen");
+		btnSearchGeraeteraum.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				triggerGeraeteraumSearch();
+			}
+		});
+		filterPanelGeraeteTab.add(btnSearchGeraeteraum, "cell 3 2");
+		
+		geraeteTablePanel = new JPanel();
+		geraeteTablePanel.setBackground(backgroundColor);
+		geraeteTab.add(geraeteTablePanel, "cell 0 1, grow");
+		geraeteTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][grow][][][]"));
+		
+		spGeraete = new JScrollPane();
+		geraeteTablePanel.add(spGeraete, "cell 0 0,grow");
+		spGeraete.setViewportView(geraeteTable);
+		
+		btnAllGeraete = new JButton("Alle Geräte anzeigen");
+		btnAllGeraete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadFilterGeraete(DBConnection.getGeraeteData());
+			}
+		});
+		geraeteTablePanel.add(btnAllGeraete, "cell 0 3");
+		
+		btnDeviceStats = new JButton("Gerätestatistik");
+		btnDeviceStats.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deviceStatsButtonPressed();
+			}
+		});
+		geraeteTablePanel.add(btnDeviceStats, "cell 0 3");
+		
 		
 		
 		//###Tab Raeume###
@@ -641,50 +702,65 @@ public class MainFrame extends JFrame{
 		raeumeTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow]"));
 		tabbedPane.addTab("R\u00e4ume", raeumeTab);
 		
-		filterPanel2 = new JPanel();
-		filterPanel2.setBackground(backgroundColor);
-		filterPanel2.setForeground(foregroundColor);
-		filterPanel2.setLayout(new MigLayout("", "[400,grow][400,grow][400,grow]", "[grow][][][grow]"));
-		raeumeTab.add(filterPanel2, "cell 0 0,grow");
+		filterPanelRaeumeTab = new JPanel();
+		filterPanelRaeumeTab.setBackground(backgroundColor);
+		filterPanelRaeumeTab.setForeground(foregroundColor);
+		filterPanelRaeumeTab.setLayout(new MigLayout("", "[400,grow][400,grow][400,grow]", "[grow][][][grow]"));
+		raeumeTab.add(filterPanelRaeumeTab, "cell 0 0,grow");
 		
-		tfRaumID = new JTextField();
-		tfRaumID.setText("Bitte Raum-ID eingeben");
-		filterPanel2.add(tfRaumID, "cell 0 1,growx");
-		tfRaumID.setColumns(10);
-		
-		tfRaumname = new JTextField();
-		tfRaumname.setText("Bitte Raumnamen eingeben");
-		filterPanel2.add(tfRaumname, "cell 1 1,growx");
-		tfRaumname.setColumns(10);
-		
-		txtBeschreibungEingeben = new JTextField();
-		txtBeschreibungEingeben.setText("Bitte Beschreibung eingeben");
-		filterPanel2.add(txtBeschreibungEingeben, "cell 2 1,growx");
-		txtBeschreibungEingeben.setColumns(10);
-		
-		btnNewButton_4 = new JButton("Raum-ID suchen");
-		btnNewButton_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterRaum(DBConnection.getRaeumeID());
+		tfRaumName = new JTextField();
+		tfRaumName.setText("Bitte Raumnamen eingeben");
+		filterPanelRaeumeTab.add(tfRaumName, "cell 0 1,growx");
+		tfRaumName.setColumns(10);
+		tfRaumName.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfRaumName.selectAll();
 			}
 		});
-		filterPanel2.add(btnNewButton_4, "cell 0 2");
+		tfRaumName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerRaumNameSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
 		
-		btnNewButton_5 = new JButton("Raumnamen suchen");
-		btnNewButton_5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadFilterRaum(DBConnection.getRaumName());
+		tfRaumDescript = new JTextField();
+		tfRaumDescript.setText("Bitte Beschreibung eingeben");
+		filterPanelRaeumeTab.add(tfRaumDescript, "cell 1 1,growx");
+		tfRaumDescript.setColumns(10);
+		tfRaumDescript.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfRaumDescript.selectAll();
 			}
 		});
-		filterPanel2.add(btnNewButton_5, "cell 1 2");
+		tfRaumDescript.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					 triggerRaumDescriptSearch();
+				 }
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
 		
-		btnNewButton_6 = new JButton("Beschreibung suchen");
-		btnNewButton_6.addActionListener(new ActionListener() {
+		btnSearchRaumName = new JButton("Raumnamen suchen");
+		btnSearchRaumName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFilterRaum(DBConnection.getRaumBesch());
+				triggerRaumNameSearch();
 			}
 		});
-		filterPanel2.add(btnNewButton_6, "cell 2 2");
+		filterPanelRaeumeTab.add(btnSearchRaumName, "cell 0 2");
+		
+		btnSearchRaumDescript = new JButton("Beschreibung suchen");
+		btnSearchRaumDescript.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				triggerRaumDescriptSearch();
+			}
+		});
+		filterPanelRaeumeTab.add(btnSearchRaumDescript, "cell 1 2");
 		
 		raeumeTablePanel = new JPanel();
 		raeumeTablePanel.setBackground(backgroundColor);
@@ -695,18 +771,67 @@ public class MainFrame extends JFrame{
 		raeumeTablePanel.add(spRaeume, "cell 0 1, grow");
 		spRaeume.setViewportView(raeumeTable);
 		
-		btnNewButton_8 = new JButton("Alle Räume anzeigen");
-		btnNewButton_8.addActionListener(new ActionListener() {
+		btnAllRaeume = new JButton("Alle Räume anzeigen");
+		btnAllRaeume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFilterRaum(DBConnection.getRaeumeData());
+				loadFilterRaeume(DBConnection.getRaeumeData());
 			}
 		});
-		raeumeTablePanel.add(btnNewButton_8, "cell 0 2");
+		raeumeTablePanel.add(btnAllRaeume, "cell 0 2");
 		
 		getRaeumeData();
 		
+		//###Tab Gefahrstoffe###
+		gefahrstoffeTab = new JPanel();
+		gefahrstoffeTab.setBackground(backgroundColor);
+		gefahrstoffeTab.setLayout(new MigLayout("", "[1200,grow]", "[150.0,grow][450.0,grow][]"));
+		tabbedPane.addTab("Gefahrstoffe", gefahrstoffeTab);
+				
+		filterPanelGefahrstoffeTab = new JPanel();
+		filterPanelGefahrstoffeTab.setBackground(backgroundColor);
+		filterPanelGefahrstoffeTab.setForeground(foregroundColor);
+		filterPanelGefahrstoffeTab.setLayout(new MigLayout("", "[400,grow][400,grow][400,grow]", "[grow][][][grow]"));
+		gefahrstoffeTab.add(filterPanelGefahrstoffeTab, "cell 0 0,grow");
 
-		//Creating a formulaPrinter
+		tfGefahrstoffName = new JTextField();
+		tfGefahrstoffName.setText("Bitte Gefahrstoffnamen eingeben");
+		tfGefahrstoffName.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent evt) {
+				tfGefahrstoffName.selectAll();
+			}
+		});
+		tfGefahrstoffName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+					triggerGefahrstoffNameSearch();
+					}
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		filterPanelGefahrstoffeTab.add(tfGefahrstoffName, "cell 0 0,growx");
+		tfGefahrstoffName.setColumns(10);
+	
+		searchButtonGefahrstoffName = new JButton("Gefahrstoffenamen suchen");
+		searchButtonGefahrstoffName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+						triggerGefahrstoffNameSearch();
+			}
+		});
+		filterPanelGefahrstoffeTab.add(searchButtonGefahrstoffName, "cell 0 2,alignx left");
+				
+		gefahrstoffeTablePanel = new JPanel();
+		gefahrstoffeTablePanel.setBackground(backgroundColor);
+		gefahrstoffeTab.add(gefahrstoffeTablePanel, "cell 0 1, grow");
+		gefahrstoffeTablePanel.setLayout(new MigLayout("", "[1200,grow]", "[grow][grow][][][]"));
+				
+		spGefahrstoffeTab = new JScrollPane();
+		gefahrstoffeTablePanel.add(spGefahrstoffeTab, "cell 0 0,grow");
+		spGefahrstoffeTab.setViewportView(gefahrstoffeTable);
+				
+		getGefahrstoffeData();
+
+		//Creating a formPrinter
 		fPrinter = new FormDocPrinter();
 
 	}
@@ -738,31 +863,37 @@ public class MainFrame extends JFrame{
 	public void loadFilterGeraete(Object[][] filteredTable) {
 		geraeteTableModel.setRowCount(0);
 		
-for (int i = 0; i < filteredTable.length; i++) {
+		for (int i = 0; i < filteredTable.length; i++) {
 			
-			geraeteTableModel.addRow(new Object[] {filteredTable[i][0],
-									 filteredTable[i][1],
-									 filteredTable[i][2],
-									 filteredTable[i][3]
-									  });
-									 
+			geraeteTableModel.addRow(new Object[] {
+									filteredTable[i][0],
+									filteredTable[i][1],
+									filteredTable[i][2],
+									filteredTable[i][3]});	 
 		}
 		
 	}
 	
-	public void loadFilterRaum(Object[][] filteredTable) {
+	public void loadFilterRaeume(Object[][] filteredTable) {
 		raeumeTableModel.setRowCount(0);
 		
-for (int i = 0; i < filteredTable.length; i++) {
+		for (int i = 0; i < filteredTable.length; i++) {
 			
-	raeumeTableModel.addRow(new Object[] {filteredTable[i][0],
-									 filteredTable[i][1],
-									 filteredTable[i][2],
-									 
-									  });
-									 
+			raeumeTableModel.addRow(new Object[] {
+									filteredTable[i][0],
+									filteredTable[i][1]});			 
 		}
 		
+	}
+	
+	public void loadFilterGefahrstoffe(Object[][] filteredTable) {
+		gefahrstoffeTableModel.setRowCount(0);
+		
+		for (int i = 0; i < filteredTable.length; i++) {
+			
+			gefahrstoffeTableModel.addRow(new Object[] {
+									filteredTable[i][0]});			 
+		}
 	}
 	
 	public static JTable getEditorTable() {
@@ -771,6 +902,30 @@ for (int i = 0; i < filteredTable.length; i++) {
 	
 	public static DefaultTableModel getDefaultTableModel() {
 		return dtm;
+	}
+	
+	public static JTable getGeraeteEditorTable() {
+		return geraeteEditorTable;
+	}
+	
+	public static DefaultTableModel getGeraeteTableModel() {
+		return geraeteTableModel;
+	}
+	
+	public static JTable getRaeumeEditorTable() {
+		return raeumeEditorTable;
+	}
+	
+	public static DefaultTableModel getRaeumeTableModel() {
+		return raeumeTableModel;
+	}
+	
+	public static JTable getGefahrstoffeEditorTable() {
+		return gefahrstoffeEditorTable;
+	}
+	
+	public static DefaultTableModel getGefahrstoffeTableModel() {
+		return gefahrstoffeTableModel;
 	}
 	
 	private void printPressed() {
@@ -814,7 +969,62 @@ for (int i = 0; i < filteredTable.length; i++) {
 		}
 	}
 	
-	private Object getValueByColName(JTable table, int row, String colName) {
+	private void triggerGeraeteIDSearch()
+	{
+		String id = getGeraeteIDFilterTxt();
+		loadFilterGeraete(DBConnection.getGeraeteByID(id));
+	}
+	
+	private void triggerGeraeteNameSearch()
+	{
+		String name = getGeraeteNameFilterTxt();
+		loadFilterGeraete(DBConnection.getGeraeteByName(name));
+	}
+	
+	private void triggerGeraeteDescriptSearch()
+	{
+		String descript = getGeraeteDescriptFilterTxt();
+		loadFilterRaeume(DBConnection.getGeraeteByDescript(descript));
+	}
+	
+	private void triggerGeraeteraumSearch()
+	{
+		String raum = getGeraeteraumFilterTxt();
+		loadFilterGeraete(DBConnection.getGeraeteByRaum(raum));
+	}
+	
+	private void triggerRaumNameSearch()
+	{
+		String name = getRaumNameFilterTxt();
+		loadFilterRaeume(DBConnection.getRaeumeByName(name));
+	}
+	
+	private void triggerRaumDescriptSearch()
+	{
+		String descript = getRaumDescriptFilterTxt();
+		loadFilterRaeume(DBConnection.getRaeumeByDescript(descript));
+	}
+	
+	private void triggerGefahrstoffNameSearch()
+	{
+		String name = getGefahrstoffNameFilterTxt();
+		loadFilterGefahrstoffe(DBConnection.getGefahrstoffByName(name));
+	}
+	
+	private void deviceStatsButtonPressed() {
+		int row = geraeteTable.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Kein Eintrag ausgew\u00e4hlt!");
+			return;
+		}
+		int gID = (int)getValueByColName(geraeteTable, row, "Ger\u00e4teID");
+		deviceStats = DeviceStatistics.getInstance(gID);
+		if(deviceStats != null) {
+			deviceStats.setVisible(true);
+		}
+	}
+	
+	public static Object getValueByColName(JTable table, int row, String colName) {
 		int colCount = table.getColumnCount();
 		Object res = null;
 		for(int i = 0; i < colCount; i++) {
@@ -825,8 +1035,20 @@ for (int i = 0; i < filteredTable.length; i++) {
 		return res;
 	}
 	
+	public static int getColByColName(JTable table, String colName)
+	{
+		int colCount = table.getColumnCount();
+		int res = 0;
+		for(int i = 0; i < colCount; i++) {
+			if(table.getColumnName(i) == colName) {
+				res = i;
+			}
+		}
+		return res;
+	}
+	
 	// method to fill JTable with Data from Database
-	public static void getData() {
+	public static void getPersonData() {
 
 
 		dtm = new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Name", "Vorname", "Datum", "Ifwt", "MNaF",
@@ -846,10 +1068,13 @@ for (int i = 0; i < filteredTable.length; i++) {
 
 			@Override
 			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
-				if (column == 0) {
-					return Integer.class;
-				} else {
-					return String.class;
+				String name = dtm.getColumnName(column);
+				switch(name)
+				{
+					case "ID":
+						return Integer.class;
+					default:
+						return String.class;
 				}
 			}
 		};
@@ -976,10 +1201,6 @@ for (int i = 0; i < filteredTable.length; i++) {
 		}
 
 	}
-
-
-
-	
 	
 	public static void getGeraeteData() {
 		geraeteTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Ger\u00e4teID", "Name", "Beschreibung", "Raum"}) {
@@ -992,10 +1213,13 @@ for (int i = 0; i < filteredTable.length; i++) {
 			
 			@Override
 			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
-				if (column == 0) {
-					return Integer.class;
-				} else {
-					return String.class;
+				String name = geraeteTableModel.getColumnName(column);
+				switch(name)
+				{
+					case "Ger\u00e4teID":
+						return Integer.class;
+					default:
+						return String.class;
 				}
 			}
 		};
@@ -1003,11 +1227,22 @@ for (int i = 0; i < filteredTable.length; i++) {
 		geraeteTable.setModel(geraeteTableModel);
 		geraeteTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
 		
+		geraeteEditorTable.setModel(geraeteTableModel);
+		geraeteEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(geraeteTableModel));
+		
+		/*
 		for (int i=0; i < DBConnection.getGeraeteData().length; i++) {
 			geraeteTableModel.addRow(new Object[] {DBConnection.getGeraeteData()[i][0],
 												   DBConnection.getGeraeteData()[i][1],
 												   DBConnection.getGeraeteData()[i][2],
-												   DBConnection.getGeraeteData()[i][3]
+												   DBConnection.getGeraeteData()[i][3]*/
+		Object[][] data = DBConnection.getGeraeteData();
+		for (int i=0; i < data.length; i++) {
+			geraeteTableModel.addRow(new Object[] {
+													data[i][0],
+													data[i][1],
+													data[i][2],
+													data[i][3]
 			});
 		}
 		geraeteTableModel.fireTableDataChanged();
@@ -1017,10 +1252,13 @@ for (int i = 0; i < filteredTable.length; i++) {
 		
 		geraeteTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
 		geraeteTable.setRowHeight(20);
+		
+		geraeteEditorTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		geraeteEditorTable.setRowHeight(20);
 	}
 	
 	public static void getRaeumeData() {
-		raeumeTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "RaumID", "Name", "Beschreibung"}) {
+		raeumeTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Name", "Beschreibung"}) {
 			private static final long serialVersionUID = 3L;
 			
 			@Override
@@ -1030,21 +1268,20 @@ for (int i = 0; i < filteredTable.length; i++) {
 			
 			@Override
 			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
-				if (column == 0) {
-					return Integer.class;
-				} else {
-					return String.class;
-				}
+				return String.class;
 			}
 		};
 		
 		raeumeTable.setModel(raeumeTableModel);
 		raeumeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(raeumeTableModel));
+		raeumeEditorTable.setModel(raeumeTableModel);
+		raeumeEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(raeumeTableModel));
 		
-		for (int i = 0; i < DBConnection.getRaeumeData().length; i++) {
-			raeumeTableModel.addRow(new Object[] {DBConnection.getRaeumeData()[i][0],
-												  DBConnection.getRaeumeData()[i][1],
-												  DBConnection.getRaeumeData()[i][2]
+		Object[][] data = DBConnection.getRaeumeData();
+		for (int i = 0; i < data.length; i++) {
+			raeumeTableModel.addRow(new Object[] {
+													data[i][0],
+													data[i][1]
 			});
 		}
 		raeumeTableModel.fireTableDataChanged();
@@ -1052,8 +1289,41 @@ for (int i = 0; i < filteredTable.length; i++) {
 		raeumeCellRenderer = new DefaultTableCellRenderer();
 		raeumeCellRenderer.setHorizontalAlignment(JLabel.CENTER);
 		
-		raeumeTable.getColumnModel().getColumn(0).setCellRenderer(geraeteCellRenderer);
+		raeumeTable.getColumnModel().getColumn(0).setCellRenderer(raeumeCellRenderer);
 		raeumeTable.setRowHeight(20);
+		
+	}
+	
+	public static void getGefahrstoffeData() {
+		gefahrstoffeTableModel = new DefaultTableModel(new Object[][] {}, new String[] {"Gefahrstoffe"}) {
+			private static final long serialVersionUID = 3L;
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		
+			public Class getColumnClass(int column) {
+				return String.class;
+			}
+		};
+		
+		gefahrstoffeTable.setModel(gefahrstoffeTableModel);
+		gefahrstoffeTable.setRowSorter(new TableRowSorter<DefaultTableModel>(gefahrstoffeTableModel));
+		gefahrstoffeEditorTable.setModel(gefahrstoffeTableModel);
+		gefahrstoffeEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(gefahrstoffeTableModel));
+		
+		Object[][] data = DBConnection.getGefahrstoffeData();
+		for (int i = 0; i < data.length; i++) {
+			gefahrstoffeTableModel.addRow(new Object[] {
+													data[i][0]
+			});
+		}
+		gefahrstoffeTableModel.fireTableDataChanged();
+		
+		gefahrstoffeCellRenderer = new DefaultTableCellRenderer();
+		gefahrstoffeCellRenderer.setHorizontalAlignment(JLabel.LEFT);
+		
+		gefahrstoffeTable.getColumnModel().getColumn(0).setCellRenderer(gefahrstoffeCellRenderer);
+		gefahrstoffeTable.setRowHeight(20);
 		
 	}
 	
@@ -1074,64 +1344,57 @@ for (int i = 0; i < filteredTable.length; i++) {
 		return tfSearch;
 	}
 	
-	public static JTextField getTxtGeraeteID() {
-		return txtGeraeteID;
+	public static String getGeraeteIDFilterTxt() {
+		return tfGeraeteID.getText();
 	}
 
-	public static void setTxtGeraeteID(JTextField txtGeraeteID) {
-		MainFrame.txtGeraeteID = txtGeraeteID;
+	public static void setTxtGeraeteID(JTextField tfGeraeteID) {
+		MainFrame.tfGeraeteID = tfGeraeteID;
 	}
 
-	public static JTextField getTxtGeraeteName() {
-		return txtGeraeteName;
+	public static String getGeraeteNameFilterTxt() {
+		return tfGeraeteName.getText();
 	}
 
-	public static void setTxtGeraeteName(JTextField txtGeraeteName) {
-		MainFrame.txtGeraeteName = txtGeraeteName;
+	public static void setTxtGeraeteName(JTextField tfGeraeteName) {
+		MainFrame.tfGeraeteName = tfGeraeteName;
 	}
 
-	public static JTextField getTxtGeraeteBeschreibung() {
-		return txtGeraeteBeschreibung;
+	public static String getGeraeteDescriptFilterTxt() {
+		return tfGeraeteDescript.getText();
 	}
 
-	public static void setTxtGeraeteBeschreibung(JTextField txtGeraeteBeschreibung) {
-		MainFrame.txtGeraeteBeschreibung = txtGeraeteBeschreibung;
+	public static void setTxtGeraeteDescript(JTextField tfGeraeteDescript) {
+		MainFrame.tfGeraeteDescript = tfGeraeteDescript;
 	}
 
-	public static JTextField getTxtGeraeteraum() {
-		return txtGeraeteraum;
+	public static String getGeraeteraumFilterTxt() {
+		return tfGeraeteraum.getText();
 	}
 
-	public static void setTxtGeraeteraum(JTextField txtGeraeteraum) {
-		MainFrame.txtGeraeteraum = txtGeraeteraum;
+	public static void setTxtGeraeteraum(JTextField tfGeraeteraum) {
+		MainFrame.tfGeraeteraum = tfGeraeteraum;
 	}
 
-	public static JTextField getTfRaumID() {
-		return tfRaumID;
+	public static String getRaumNameFilterTxt() {
+		return tfRaumName.getText();
 	}
 
-	public static void setTfRaumID(JTextField tfRaumID) {
-		MainFrame.tfRaumID = tfRaumID;
+	public static void setTfRaumName(JTextField tfRaumName) {
+		MainFrame.tfRaumName = tfRaumName;
 	}
 
-	public static JTextField getTfRaumname() {
-		return tfRaumname;
+	public static String getRaumDescriptFilterTxt() {
+		return tfRaumDescript.getText();
 	}
 
-	public static void setTfRaumname(JTextField tfRaumname) {
-		MainFrame.tfRaumname = tfRaumname;
+	public static void setTfRaumDescript(JTextField tfRaumDescript) {
+		MainFrame.tfRaumDescript = tfRaumDescript;
 	}
-
-	public static JTextField getTxtBeschreibungEingeben() {
-		return txtBeschreibungEingeben;
-	}
-
-	public static void setTxtBeschreibungEingeben(JTextField txtBeschreibungEingeben) {
-		MainFrame.txtBeschreibungEingeben = txtBeschreibungEingeben;
-	}
-
 	
-	
+	public static String getGefahrstoffNameFilterTxt() {
+		return tfGefahrstoffName.getText();
+	}
 }
 
 

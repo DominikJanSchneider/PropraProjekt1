@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import gui.MainFrame;
 
@@ -61,7 +60,7 @@ public class DBConnection {
 	public static Object[][] getRaeumeData() {
 		try {
 			con = DriverManager.getConnection(url);
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (RaumID) FROM R\u00e4ume;");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (Name) FROM R\u00e4ume;");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
 			pstmt = con.prepareStatement("SELECT * FROM R\u00e4ume;");
@@ -71,10 +70,8 @@ public class DBConnection {
 			int i = 0;
 			
 			while (rs.next()) {
-				tableData[i][0] = rs.getInt("RaumID");
-				tableData[i][1] = rs.getString("Name");
-				tableData[i][2] = rs.getString("Beschreibung");
-				
+				tableData[i][0] = rs.getString("Name");
+				tableData[i][1] = rs.getString("Beschreibung");
 				i++;
 			}
 			pstmt.close();
@@ -85,6 +82,35 @@ public class DBConnection {
 			return null;
 		}
 	}
+	
+	public static Object[][] getGefahrstoffeData() {
+		try {
+			con = DriverManager.getConnection(url);
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (Name) FROM Gefahrstoffe;");
+			ResultSet rs = pstmt.executeQuery();
+			int rowCount = rs.getInt(1);
+			pstmt = con.prepareStatement("SELECT * FROM Gefahrstoffe;");
+			rs = pstmt.executeQuery();
+			int columnCount = rs.getMetaData().getColumnCount();
+			Object[][] tableData = new Object[rowCount][columnCount];
+			int i = 0;
+			
+			while (rs.next()) {
+				tableData[i][0] = rs.getString("Name");
+				i++;
+			}
+			pstmt.close();
+			con.close();
+			return tableData;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	
 	
 	public static Object[][] getName() {
 		try {
@@ -135,10 +161,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE NOT Ifwt IS NULL");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT Ifwt IS NULL");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE Ifwt!='' AND NOT Ifwt IS NULL");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT Ifwt IS NULL");
+			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE Ifwt!='' AND Ifwt IS NOT NULL");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
 			Object[][] filteredTable = new Object[rowCount][columnCount];
@@ -355,10 +381,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE NOT MNaF IS NULL");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT MNaF IS NULL");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE MNaF!='' AND NOT MNaF IS NULL");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT MNaF IS NULL");
+			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE MNaF!='' AND NOT MNaF IS NULL");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
 			Object[][] filteredTable = new Object[rowCount][columnCount];
@@ -399,10 +425,10 @@ public class DBConnection {
 			con = DriverManager.getConnection(url);
 			//Statement stmt = con.createStatement();
 			//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE Intern='Ja'");
-			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT Intern IS NULL");
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE Intern!='' AND NOT Intern IS NULL");
 			ResultSet rs = pstmt.executeQuery();
 			int rowCount = rs.getInt(1);
-			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT Intern IS NULL");
+			pstmt = con.prepareStatement("SELECT * FROM Personen WHERE Intern!='' AND NOT Intern IS NULL");
 			rs = pstmt.executeQuery();
 			int columnCount = rs.getMetaData().getColumnCount();
 			Object[][] filteredTable = new Object[rowCount][columnCount];
@@ -443,10 +469,10 @@ public class DBConnection {
 				con = DriverManager.getConnection(url);
 				//Statement stmt = con.createStatement();
 				//ResultSet rs = stmt.executeQuery("SELECT COUNT (ID) FROM Personen WHERE Extern='Ja'");
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE NOT Extern IS NULL");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (ID) FROM Personen WHERE Extern!='' AND NOT Extern IS NULL");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM Personen WHERE NOT Extern IS NULL"	);
+				pstmt = con.prepareStatement("SELECT * FROM Personen WHERE Extern!='' AND NOT Extern IS NULL");
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
 				Object[][] filteredTable = new Object[rowCount][columnCount];
@@ -482,17 +508,15 @@ public class DBConnection {
 		}
 		
 		//User data base connection
-		public static Object[][] getGeraeteID() {
+		public static Object[][] getGeraeteByID(String id) {
 			try {
 				
 				tableName = "Ger\u00e4te";
 				con = DriverManager.getConnection(url);
-				
-				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Ger\u00e4teID='"+ MainFrame.getTxtGeraeteID().getText()+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Ger\u00e4teID LIKE '%"+id+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Ger\u00e4teID='"+MainFrame.getTxtGeraeteID().getText()+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Ger\u00e4teID LIKE '%"+id+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -521,17 +545,54 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteName() {
+		public static Object[][] getGeraeteByName(String name) {
 			try {
 				
 				tableName = "Ger\u00e4te";
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Name='"+ MainFrame.getTxtGeraeteName().getText()+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+MainFrame.getTxtGeraeteName().getText()+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					filteredTable[i][3] = rs.getString("Raum");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getGeraeteByDescript(String descript) {
+			try {
+				
+				tableName = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -560,17 +621,17 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteBesch() {
+		public static Object[][] getGeraeteByRaum(String geraeteRaum) {
 			try {
 				
 				tableName = "Ger\u00e4te";
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Beschreibung='"+ MainFrame.getTxtGeraeteBeschreibung().getText()+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Raum LIKE '%"+geraeteRaum+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung='"+MainFrame.getTxtGeraeteBeschreibung().getText()+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Raum LIKE '%"+geraeteRaum+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -599,86 +660,17 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getGeraeteRaum() {
-			try {
-				
-				tableName = "Ger\u00e4te";
-				con = DriverManager.getConnection(url);
-				
-				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName+" WHERE Raum='"+ MainFrame.getTxtGeraeteraum().getText()+"'");
-				ResultSet rs = pstmt.executeQuery();
-				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Raum='"+MainFrame.getTxtGeraeteraum().getText()+"'");
-				
-				rs = pstmt.executeQuery();
-				int columnCount = rs.getMetaData().getColumnCount();
-				Object[][] filteredTable = new Object[rowCount][columnCount];
-				int i = 0;
-				
-				while (rs.next()) {
-					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
-					filteredTable[i][1] = rs.getString("Name");
-					filteredTable[i][2] = rs.getString("Beschreibung");
-					filteredTable[i][3] = rs.getString("Raum");
-					
-					
-					i++;
-				}
-				
-				tableName = "Personen";
-				pstmt.close();
-				
-				con.close();
-				
-				return filteredTable;
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-		
-		public static Object[][] getRaeumeID() {
-			try {
-				tableName = "R\u00e4ume";
-				con = DriverManager.getConnection(url);
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT (RaumID) FROM "+tableName+ " WHERE RaumID= '" + Integer.parseInt(MainFrame.getTfRaumID().getText())+"'");
-				ResultSet rs = pstmt.executeQuery();
-				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+ " WHERE RaumID= '" + Integer.parseInt(MainFrame.getTfRaumID().getText())+"'");
-				rs = pstmt.executeQuery();
-				int columnCount = rs.getMetaData().getColumnCount();
-				Object[][] filteredTable = new Object[rowCount][columnCount];
-				int i = 0;
-				
-				while (rs.next()) {
-					filteredTable[i][0] = rs.getInt("RaumID");
-					filteredTable[i][1] = rs.getString("Name");
-					filteredTable[i][2] = rs.getString("Beschreibung");
-					
-					i++;
-				}
-				tableName= "Personen";
-				pstmt.close();
-				con.close();
-				return filteredTable;
-			} catch(SQLException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-		
-		public static Object[][] getRaumName() {
+		public static Object[][] getRaeumeByName(String name) {
 			try {
 				
 				tableName = "R\u00e4ume";
 				con = DriverManager.getConnection(url);
 				
 				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(RaumID) FROM "+tableName+" WHERE Name='"+ MainFrame.getTfRaumname().getText()+"'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name='"+MainFrame.getTfRaumname().getText()+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -686,12 +678,8 @@ public class DBConnection {
 				int i = 0;
 				
 				while (rs.next()) {
-					filteredTable[i][0] = rs.getInt("RaumID");
-					filteredTable[i][1] = rs.getString("Name");
-					filteredTable[i][2] = rs.getString("Beschreibung");
-					
-					
-					
+					filteredTable[i][0] = rs.getString("Name");
+					filteredTable[i][1] = rs.getString("Beschreibung");
 					i++;
 				}
 				
@@ -707,17 +695,15 @@ public class DBConnection {
 			}
 		}
 		
-		public static Object[][] getRaumBesch() {
+		public static Object[][] getRaeumeByDescript(String descript) {
 			try {
 				
 				tableName = "R\u00e4ume";
 				con = DriverManager.getConnection(url);
-				
-				
-				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(RaumID) FROM "+tableName+" WHERE Beschreibung= '"+ MainFrame.getTxtBeschreibungEingeben().getText()+ "'");
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				ResultSet rs = pstmt.executeQuery();
 				int rowCount = rs.getInt(1);
-				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung= '"+MainFrame.getTxtBeschreibungEingeben().getText()+"'");
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Beschreibung LIKE '%"+descript+"%';");
 				
 				rs = pstmt.executeQuery();
 				int columnCount = rs.getMetaData().getColumnCount();
@@ -725,12 +711,8 @@ public class DBConnection {
 				int i = 0;
 				
 				while (rs.next()) {
-					filteredTable[i][0] = rs.getInt("RaumID");
-					filteredTable[i][1] = rs.getString("Name");
-					filteredTable[i][2] = rs.getString("Beschreibung");
-					
-					
-					
+					filteredTable[i][0] = rs.getString("Name");
+					filteredTable[i][1] = rs.getString("Beschreibung");
 					i++;
 				}
 				
@@ -745,6 +727,435 @@ public class DBConnection {
 				return null;
 			}
 		}
+		
+		public static Object[][] getGefahrstoffByName(String name) {
+			try {
+				
+				tableName = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT * FROM "+tableName+" WHERE Name LIKE '%"+name+"%';");
+				
+				rs = pstmt.executeQuery();
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Name");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDeviceUnassignedData(int pID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Ger\u00e4teID IN ("
+																	+"SELECT "+tableName2+".Ger\u00e4teID FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Ger\u00e4teID FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT Ger\u00e4teID, Name, Beschreibung, Raum FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Ger\u00e4teID IN ("
+								+"SELECT "+tableName2+".Ger\u00e4teID FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Ger\u00e4teID FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					if(filteredTable[i][1] == null)
+						filteredTable[i][1] = "";
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					if(filteredTable[i][2] == null)
+						filteredTable[i][2] = "";
+					filteredTable[i][3] = rs.getString("Raum");
+					if(filteredTable[i][3] == null)
+						filteredTable[i][3] = "";
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDeviceAssignedData(int pID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Ger\u00e4te";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(PersonenID) FROM "+tableName1+" WHERE PersonenID='"+ pID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Ger\u00e4teID, Name, Beschreibung, Raum, Nutzungszeit FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Ger\u00e4teID = "+tableName2+".Ger\u00e4teID WHERE PersonenID='"+ pID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("Ger\u00e4teID");
+					filteredTable[i][1] = rs.getString("Name");
+					if(filteredTable[i][1] == null)
+						filteredTable[i][1] = "";
+					filteredTable[i][2] = rs.getString("Beschreibung");
+					if(filteredTable[i][2] == null)
+						filteredTable[i][2] = "";
+					filteredTable[i][3] = rs.getString("Raum");
+					if(filteredTable[i][3] == null)
+						filteredTable[i][3] = "";
+					filteredTable[i][4] = rs.getInt("Nutzungszeit");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDangerSubstUnassignedData(int pID) {
+			try {
+				
+				String tableName1 = "Gefahrstoffzuordnung";
+				String tableName2 = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Name IN ("
+																	+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT Name FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Name IN ("
+								+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" WHERE PersonenID='"+pID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Name");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDangerSubstAssignedData(int pID) {
+			try {
+				
+				String tableName1 = "Gefahrstoffzuordnung";
+				String tableName2 = "Gefahrstoffe";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(PersonenID) FROM "+tableName1+" WHERE PersonenID='"+ pID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Gefahrstoff FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Gefahrstoff = "+tableName2+".Name WHERE PersonenID='"+ pID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Gefahrstoff");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRoomUnassignedData(int dID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4te";
+				String tableName2 = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				 
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Name) FROM "+tableName2+" WHERE "
+																+ "("+tableName2+".Name IN ("
+																	+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Raum FROM "+tableName1+" WHERE Ger\u00e4teID='"+dID+"'))");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT Name FROM "+tableName2+" WHERE "
+							+ "("+tableName2+".Name IN ("
+								+"SELECT "+tableName2+".Name FROM "+tableName2+" EXCEPT SELECT "+tableName1+".Raum FROM "+tableName1+" WHERE Ger\u00e4teID='"+dID+"'))");
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Name");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getRoomAssignedData(int dID) {
+			try {
+				
+				String tableName1 = "Ger\u00e4te";
+				String tableName2 = "R\u00e4ume";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName1+" WHERE Ger\u00e4teID='"+ dID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT "+tableName1+".Raum FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".Raum = "+tableName2+".Name WHERE Ger\u00e4teID='"+ dID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getString("Raum");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static String getLabComment(int pID)
+		{
+			try
+			{
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT LabKommentar FROM "+tableName+" WHERE ID='"+pID+"'");
+				ResultSet rs = pstmt.executeQuery();
+				String res = rs.getString("LabKommentar");
+				pstmt.close();
+				con.close();
+				return res;
+			} 
+			catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static String getDangerSubstComment(int pID)
+		{
+			try
+			{
+				con = DriverManager.getConnection(url);
+				PreparedStatement pstmt = con.prepareStatement("SELECT GefKommentar FROM "+tableName+" WHERE ID='"+pID+"'");
+				ResultSet rs = pstmt.executeQuery();
+				String res = rs.getString("GefKommentar");
+				pstmt.close();
+				con.close();
+				return res;
+			} 
+			catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static void assignDevice(int dID, int pID){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "INSERT INTO Ger\u00e4tezuordnung (Ger\u00e4teID, PersonenID) "
+						+ "VALUES (?, ?)";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.setInt(1, dID);
+				pstmt.setInt(2, pID);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignDevice(int dID, int pID) {
+			try {
+				String stmt="delete from Ger\u00e4tezuordnung where Ger\u00e4teID='"+dID+"' AND PersonenID='"+pID+"'";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.execute();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void assignRoom(int dID, String room){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "UPDATE Ger\u00e4te SET Raum='"+room+"' WHERE Ger\u00e4teID="+dID+" ;";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.execute();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignRoom(int dID) {
+			try {
+				String stmt="UPDATE Ger\u00e4te SET Raum='' WHERE Ger\u00e4teID="+dID+";";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.executeUpdate();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void assignDangerSubst(String dangerSubst, int pID){
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "INSERT INTO Gefahrstoffzuordnung (Gefahrstoff, PersonenID) "
+						+ "VALUES (?, ?)";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.setString(1, dangerSubst);
+				pstmt.setInt(2, pID);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void unassignDangerSubst(String dangerSubst, int pID) {
+			try {
+				String stmt="delete from Gefahrstoffzuordnung where Gefahrstoff='"+dangerSubst+"' AND PersonenID='"+pID+"'";
+				
+				con = DBConnection.connect();
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				con.setAutoCommit(false);
+				pstmt.execute();
+				con.commit();
+			    pstmt.close();
+			    con.close();
+			}
+		    catch (SQLException e) {
+		    	e.printStackTrace();
+			}
+		}
+		
+		public static void setUseTime(int dID, int pID, double useTime)
+		{
+			try {
+				con = DriverManager.getConnection(url);
+				con.setAutoCommit(false);
+				String stmt = "UPDATE Ger\u00e4tezuordnung SET Nutzungszeit="+useTime+" WHERE Ger\u00e4teID='"+dID+"' AND PersonenID='"+pID+"'";
+				PreparedStatement pstmt = con.prepareStatement(stmt);
+				pstmt.executeUpdate();
+				con.commit();
+				pstmt.close();
+				con.close();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 		//User data base methods
 		public static Connection connectLogin() {
@@ -800,6 +1211,8 @@ public class DBConnection {
 				//System.out.println("usrname: " + benutzername);
 				//System.out.println("passwort: " + passwort);
 				if (name.equals(benutzername) && pswrt.equals(passwort)) {
+					pstmt.close();
+					con.close();
 					return true;
 				}
 				pstmt.close();
@@ -808,6 +1221,84 @@ public class DBConnection {
 			} catch(SQLException e) {
 				//e.printStackTrace();
 				return false;
+			}
+		}
+		
+		public static Object[][] getDeviceStatsData(int gID)
+		{
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Personen";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName1+" WHERE Ger\u00e4teID='"+ gID +"'");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT ID, Name, Vorname, Nutzungszeit FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".PersonenID = "+tableName2+".ID WHERE Ger\u00e4teID='"+ gID +"'");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("ID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Vorname");
+					filteredTable[i][3] = rs.getInt("Nutzungszeit");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Object[][] getDeviceStatsFilteredData(int gID, String name)
+		{
+			try {
+				
+				String tableName1 = "Ger\u00e4tezuordnung";
+				String tableName2 = "Personen";
+				con = DriverManager.getConnection(url);
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Ger\u00e4teID) FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".PersonenID = "+tableName2+".ID WHERE Ger\u00e4teID='"+ gID +"' AND Name LIKE '%"+name+"%';");
+				ResultSet rs = pstmt.executeQuery();
+				int rowCount = rs.getInt(1);
+				pstmt = con.prepareStatement("SELECT ID, Name, Vorname, Nutzungszeit FROM "+tableName1+" INNER JOIN "+tableName2+" ON "+tableName1+".PersonenID = "+tableName2+".ID WHERE Ger\u00e4teID='"+ gID +"' AND Name LIKE '%"+name+"%';");
+				
+				rs = pstmt.executeQuery();
+				
+				int columnCount = rs.getMetaData().getColumnCount();
+				Object[][] filteredTable = new Object[rowCount][columnCount];
+				int i = 0;
+				
+				while (rs.next()) {
+					filteredTable[i][0] = rs.getInt("ID");
+					filteredTable[i][1] = rs.getString("Name");
+					filteredTable[i][2] = rs.getString("Vorname");
+					filteredTable[i][3] = rs.getInt("Nutzungszeit");
+					i++;
+				}
+				
+				tableName = "Personen";
+				pstmt.close();
+				
+				con.close();
+				
+				return filteredTable;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
 			}
 		}
 		
