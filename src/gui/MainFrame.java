@@ -1017,7 +1017,9 @@ public class MainFrame extends JFrame{
 		}
 		int gID = (int)getValueByColName(geraeteTable, row, "Ger\u00e4teID");
 		deviceStats = DeviceStatistics.getInstance(gID);
-		deviceStats.setVisible(true);
+		if(deviceStats != null) {
+			deviceStats.setVisible(true);
+		}
 	}
 	
 	public static Object getValueByColName(JTable table, int row, String colName) {
@@ -1031,7 +1033,7 @@ public class MainFrame extends JFrame{
 		return res;
 	}
 	
-	public static int getColBayColName(JTable table, String colName)
+	public static int getColByColName(JTable table, String colName)
 	{
 		int colCount = table.getColumnCount();
 		int res = 0;

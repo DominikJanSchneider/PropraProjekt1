@@ -190,7 +190,7 @@ public class DeviceAssignement extends JFrame{
 													data[i][3],
 													data[i][4]
 			});
-			int col = MainFrame.getColBayColName(assignedTable, "Nutzungszeit (in Stunden)");
+			int col = MainFrame.getColByColName(assignedTable, "Nutzungszeit (in Stunden)");
 			TableCellEditor cellEditor = assignedTable.getCellEditor(i, col);
 			cellEditor.addCellEditorListener(listener);
 		}
