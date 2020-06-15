@@ -484,7 +484,10 @@ public class DataEditor extends JFrame{
 		btnEditRooms.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnEditRoomsPressed();
-				roomAssignement.setVisible(true);
+				if(roomAssignement != null)
+				{
+					roomAssignement.setVisible(true);
+				}
 			}
 		});
 		textFieldPanel.add(btnEditRooms, "width 25%, gapleft 50, cell 4 1");
