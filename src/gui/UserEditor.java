@@ -59,6 +59,8 @@ public class UserEditor extends JFrame {
 	private JButton btnDeleteUser;
 	private JButton btnSave;
 	
+	private int confirmed = 0;
+	
 	
 	//Method for getting the frame, because of singelton scheme
 	public static UserEditor getInstance() {
@@ -212,10 +214,11 @@ public class UserEditor extends JFrame {
 		userTable.setModel(userTableModel);
 		userTable.setRowSorter(new TableRowSorter<DefaultTableModel>(userTableModel));
 		
-		for (int i = 0; i < DBConnection.getUserData().length; i++) {
-			userTableModel.addRow(new Object[] {DBConnection.getUserData()[i][0],
-												DBConnection.getUserData()[i][1],
-												DBConnection.getUserData()[i][2]
+		Object[][] userData = DBConnection.getUserData();
+		for (int i = 0; i < userData.length; i++) {
+			userTableModel.addRow(new Object[] {userData[i][0],
+												userData[i][1],
+												userData[i][2]
 					
 			});
 		}
@@ -241,6 +244,7 @@ public class UserEditor extends JFrame {
 			
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 			pane.createDialog(null, "Neuen Nutzer anlegen").setVisible(true);
+			
 			
 			if (pane.getValue() == null) {
 				g++;
@@ -311,8 +315,8 @@ public class UserEditor extends JFrame {
 													   "Benutzername: " + userNameVar +
 													   "Passwort: " + userPasswordVar);
 									*/
-									con.close();
 									pstmt.close();
+									con.close();
 									g++;
 								} catch (SQLException e) {
 									//System.out.println(e.getMessage());
@@ -340,8 +344,15 @@ public class UserEditor extends JFrame {
 		} //End: while (g < 0)
 		
 		getBenutzerData();
-		
-		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt", "Dialog", JOptionPane.INFORMATION_MESSAGE);
+
+		/*if (confirmed == 1) {
+			JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
+		} else {
+			JOptionPane.showMessageDialog(new JFrame(), "Bearbeitung abgebrochen");
+		}
+		confirmed = 0;*/
+		JOptionPane.showMessageDialog(new JFrame(), "Eintrag erstellt");
+
 	}
 	
 	//Method to delete user entry from database
@@ -358,7 +369,7 @@ public class UserEditor extends JFrame {
 			con.commit();
 			pstmt = con.prepareStatement("UPDATE sqlite_sequence SET seq='"+(id-1)+"' WHERE name='Benutzer';");
 			con.setAutoCommit(false);
-			pstmt.execute();
+			pstmt.executeUpdate();
 			con.commit();
 			
 			pstmt.close();
@@ -407,7 +418,7 @@ public class UserEditor extends JFrame {
 			//Execute database update if there are no wrong entries
 			while (g == 1) {
 				g = 0;
-				String query = "UPDATE Benutzer SET Benutzername='"+tfUserName.getText()+"', Passwort='"+tfUserPassword.getText()+", ID='"+id+"' WHERE ID='"+id+"';";
+				String query = "UPDATE Benutzer SET Benutzername='"+tfUserName.getText()+"', Passwort='"+tfUserPassword.getText()+"', ID='"+id+"' WHERE ID='"+id+"';";
 				
 				Connection con = DBConnection.connectLogin();
 				PreparedStatement pstmt = con.prepareStatement(query);
@@ -416,8 +427,8 @@ public class UserEditor extends JFrame {
 				pstmt.execute();
 				con.commit();
 				
-				con.close();
 				pstmt.close();
+				con.close();
 				
 				getBenutzerData();
 				JOptionPane.showMessageDialog(new JFrame(), "Eintrag ge\u00e4ndert", "Dialog", JOptionPane.INFORMATION_MESSAGE);

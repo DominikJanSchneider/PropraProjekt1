@@ -56,6 +56,53 @@ public class DBImporter {
 								email,unterw,labeinr,gefahrst });
 				}
 				MainFrame.getDefaultTableModel().fireTableDataChanged();
+				
+				
+				//###Geraete Table###
+				query = "SELECT * FROM Ger\u00e4te;";
+				getTable = con.prepareStatement(query);
+				rs = getTable.executeQuery();
+				
+				MainFrame.getGeraeteTableModel().setRowCount(0);
+				while (rs.next()) {
+					int deviceID = rs.getInt("Ger\u00e4teID");
+					String deviceName = rs.getString("Name");
+					String deviceDescription = rs.getString("Beschreibung");
+					String deviceRoom = rs.getString("Raum");
+					
+					MainFrame.getGeraeteTableModel().addRow(new Object[] {deviceID,deviceName,deviceDescription,deviceRoom});
+				}
+				MainFrame.getGeraeteTableModel().fireTableDataChanged();
+				
+				
+				//###Raeume Table###
+				query = "SELECT * FROM R\u00e4ume;";
+				getTable = con.prepareStatement(query);
+				rs = getTable.executeQuery();
+				
+				MainFrame.getRaeumeTableModel().setRowCount(0);
+				while (rs.next()) {
+					String roomName = rs.getString("Name");
+					String roomDescription = rs.getString("Beschreibung");
+					
+					MainFrame.getRaeumeTableModel().addRow(new Object[] {roomName, roomDescription});
+				}
+				MainFrame.getRaeumeTableModel().fireTableDataChanged();
+				
+				
+				//###Gefahrstoffe Table###
+				query = "SELECT * FROM Gefahrstoffe;";
+				getTable = con.prepareStatement(query);
+				rs = getTable.executeQuery();
+				
+				MainFrame.getGefahrstoffeTableModel().setRowCount(0);
+				while (rs.next()) {
+					String hazardousSubstance = rs.getString("Name");
+					
+					MainFrame.getGefahrstoffeTableModel().addRow(new Object[] {hazardousSubstance});
+				}
+				MainFrame.getGefahrstoffeTableModel().fireTableDataChanged();
+				
 				con.close();
 				getTable.close();
 			} catch (SQLException e) {
