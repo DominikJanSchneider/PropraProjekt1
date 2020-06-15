@@ -470,15 +470,6 @@ public class DataEditor extends JFrame{
 		tfDeviceDescription = new JTextField();
 		textFieldPanel.add(tfDeviceDescription, "width 30%, cell 3 0");
 		
-		// room textfield
-		lblRoom = new JLabel("Raum:");
-		lblRoom.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblRoom.setForeground(foregroundColor);
-		textFieldPanel.add(lblRoom, "cell 0 1");
-		tfDeviceRoom = new JTextField();
-		textFieldPanel.add(tfDeviceRoom, "width 30%, cell 1 1");
-		
-		
 		//edit rooms button
 		JButton btnEditRooms = new JButton("R\u00e4ume bearbeiten");
 		btnEditRooms.addActionListener(new ActionListener() {
