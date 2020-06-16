@@ -58,14 +58,15 @@ public class DataEditor extends JFrame{
 	private static JScrollPane spTable;
 	
 	private static JTextField tfName;
-	private static JTextField tfPname;
+	private static JTextField tfPName;
 	private static JTextField tfDate;
 	private static JTextField tfIfwt;
 	private static JTextField tfMNaF;
 	private static JTextField tfIntern;
-	private static JTextField tfBeschverh;
+	private static JTextField tfEmployment;
+	//private static JTextField tfBeschverh;TODO
 	private static JTextField tfStart;
-	private static JTextField tfEnde;
+	private static JTextField tfEnd;
 	private static JTextField tfExtern;
 	private static JTextField tfEmail;
 	private static JTextArea taInstructions;
@@ -212,8 +213,8 @@ public class DataEditor extends JFrame{
 		lblPname.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblPname.setForeground(foregroundColor);
 		textFieldPanel.add(lblPname, "cell 0 1");
-		tfPname = new JTextField();
-		textFieldPanel.add(tfPname, "width 30%, cell 1 1");
+		tfPName = new JTextField();
+		textFieldPanel.add(tfPName, "width 30%, cell 1 1");
 		
 		// date textfield
 		JLabel lblDate = new JLabel("Datum:");
@@ -252,8 +253,8 @@ public class DataEditor extends JFrame{
 		lblEmpl.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblEmpl.setForeground(foregroundColor);
 		textFieldPanel.add(lblEmpl, "cell 2 0");
-		tfBeschverh = new JTextField();
-		textFieldPanel.add(tfBeschverh, "width 30%, cell 3 0");
+		tfEmployment = new JTextField();
+		textFieldPanel.add(tfEmployment, "width 30%, cell 3 0");
 		
 		// beginning textfield
 		JLabel lblStart = new JLabel("   Beginn:");
@@ -268,8 +269,8 @@ public class DataEditor extends JFrame{
 		lblEnd.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblEnd.setForeground(foregroundColor);
 		textFieldPanel.add(lblEnd, "cell 2 2");
-		tfEnde = new JTextField();
-		textFieldPanel.add(tfEnde, "width 30%, cell 3 2");
+		tfEnd = new JTextField();
+		textFieldPanel.add(tfEnd, "width 30%, cell 3 2");
 		
 		// external textfield
 		JLabel lblExternal = new JLabel("   Extern:");
@@ -294,7 +295,7 @@ public class DataEditor extends JFrame{
 		btnSave.setIcon(saveIcon);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (tfName.getText().isEmpty() | tfPname.getText().isEmpty()) {
+				if (tfName.getText().isEmpty() | tfPName.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(new JFrame(), "Bitte Name und Vorname eintragen", "Dialog", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
@@ -1589,14 +1590,14 @@ public class DataEditor extends JFrame{
 		String fillHazard = DBConnection.getDangerSubstComment(pID);
 		
 		tfName.setText(fillName);
-		tfPname.setText(fillPname);
+		tfPName.setText(fillPname);
 		tfDate.setText(fillDate);
 		tfIfwt.setText(fillIfwt);
 		tfMNaF.setText(fillMNaF);
 		tfIntern.setText(fillIntern);
-		tfBeschverh.setText(fillEmpl);
+		tfEmployment.setText(fillEmpl);
 		tfStart.setText(fillStart);
-		tfEnde.setText(fillEnd);
+		tfEnd.setText(fillEnd);
 		tfExtern.setText(fillExternal);
 		tfEmail.setText(fillMail);
 		taInstructions.setText(fillInstr);
@@ -1672,7 +1673,7 @@ public class DataEditor extends JFrame{
 					g = 0;
 				}
 				try {
-					pnameVar = tfPname.getText();
+					pnameVar = tfPName.getText();
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Vorname'", "Dialog", JOptionPane.ERROR_MESSAGE);
 					g = 0;
@@ -1704,7 +1705,7 @@ public class DataEditor extends JFrame{
 					g = 0;
 				}
 				try {
-					EmplVar = tfBeschverh.getText();
+					EmplVar = tfEmployment.getText();
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Beschäftigungsverhältnis'", "Dialog", JOptionPane.ERROR_MESSAGE);
 					g = 0;
@@ -1716,7 +1717,7 @@ public class DataEditor extends JFrame{
 					g = 0;
 				}
 				try {
-					EndVar = tfEnde.getText();
+					EndVar = tfEnd.getText();
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(new JFrame(), "Fehlerhafter Eintrag im Feld 'Ende'", "Dialog", JOptionPane.ERROR_MESSAGE);
 					g = 0;
@@ -1764,11 +1765,12 @@ public class DataEditor extends JFrame{
 			while (g == 1) {
 				g = 0;
 				
-				String query="Update Personen set Name='" + tfName.getText() + "' ,Vorname='" + tfPname.getText() + "'  ,Datum='" + tfDate.getText() + 
+				String query="Update Personen set Name='" + tfName.getText() + "' ,Vorname='" + tfPName.getText() + "'  ,Datum='" + tfDate.getText() + 
 						"' ,Ifwt='" + tfIfwt.getText() + "' ,MNaF='" + tfMNaF.getText() + "' ,Intern='" + tfIntern.getText() + 
-						"' ,Beschaeftigungsverhaeltnis='" + tfBeschverh.getText() + "' ,Beginn='" + tfStart.getText() + "' ,Ende='" + tfEnde.getText() +
+						"' ,Beschaeftigungsverhaeltnis='" + tfEmployment.getText() + "' ,Beginn='" + tfStart.getText() + "' ,Ende='" + tfEnd.getText() +
 						"' ,Extern='" + tfExtern.getText() + "' ,'E-Mail Adresse'='" + tfEmail.getText() +  "' ,'Allgemeine Unterweisung'='" + taInstructions.getText() + 
-						"' ,'Laboreinrichtungen'='" + taLab.getText() +  "' ,'Gefahrstoffe'='" + taHazard.getText() +  "' ,ID='" + ID + "' where ID='"+ID+"' ";
+						"' ,LabKommentar='"+taLab.getText()+"' ,'Laboreinrichtungen'='"+getLabSetupTxt(ID)+"' , GefKommentar='"+taHazard.getText()+"' ,'Gefahrstoffe'='"+getDangerSubstTxt(ID) +  
+						"' ,ID='" + ID + "' where ID='"+ID+"' ";
 				
 				con = DBConnection.connect();
 				pstmt = con.prepareStatement(query);
