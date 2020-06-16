@@ -1,5 +1,6 @@
 package database;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import gui.MainFrame;
+import security.pwEncrypt;
 
 
 public class DBConnection {
@@ -1210,10 +1212,15 @@ public class DBConnection {
 				String passwort = rs.getString("Passwort");
 				//System.out.println("usrname: " + benutzername);
 				//System.out.println("passwort: " + passwort);
-				if (name.equals(benutzername) && pswrt.equals(passwort)) {
-					pstmt.close();
-					con.close();
-					return true;
+				try {
+					if (name.equals(benutzername) && pwEncrypt.toHexString(pwEncrypt.getSHA(pswrt)).equals(passwort)) {			// check if enrypted pw matches database entry
+						pstmt.close();
+						con.close();
+						return true;
+					}
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				pstmt.close();
 				con.close();

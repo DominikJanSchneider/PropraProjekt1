@@ -25,6 +25,7 @@ import javax.swing.table.TableRowSorter;
 
 import database.DBConnection;
 import net.miginfocom.swing.MigLayout;
+import security.pwEncrypt;
 
 public class UserEditor extends JFrame {
 
@@ -312,7 +313,7 @@ public class UserEditor extends JFrame {
 									
 									PreparedStatement pstmt = con.prepareStatement(insertUser);
 									pstmt.setString(1, userNameVar);
-									pstmt.setString(2, userPasswordVar);
+									pstmt.setString(2, pwEncrypt.toHexString(pwEncrypt.getSHA(userPasswordVar)));		// save pw with SHA-256 encryption
 									
 									pstmt.executeUpdate();
 									con.commit();
