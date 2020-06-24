@@ -20,7 +20,7 @@ public class DBExporter {
 			String selDir = fc.getSelectedFile().getAbsolutePath();
 			try {
 				//###Personen Table###
-				Connection con = DBConnection.connect();
+				Connection con = DBConnector.connectCore();
 				PreparedStatement getTable = con.prepareStatement("SELECT * FROM Personen;");
 				ResultSet rs = getTable.executeQuery();
 				String[] attributes = new String[rs.getMetaData().getColumnCount()];

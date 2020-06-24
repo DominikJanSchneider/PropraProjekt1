@@ -3,21 +3,19 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import javax.swing.*;
 import javax.swing.table.*;
-
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class DeviceStatistics extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private Color frameColor;
 	private Color backgroundColor;
 	private Color foregroundColor;
@@ -118,7 +116,7 @@ public class DeviceStatistics extends JFrame{
 				return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<?> getColumnClass(int column) {
 				String name = statTableModel.getColumnName(column);
 				switch(name)
 				{
@@ -135,7 +133,7 @@ public class DeviceStatistics extends JFrame{
 		statTable.setModel(statTableModel);
 		statTable.setRowSorter(new TableRowSorter<DefaultTableModel>(statTableModel));
 		
-		Object[][] statsData = DBConnection.getDeviceStatsData(gID);
+		Object[][] statsData = DBConnector.getDeviceStatsData(gID);
 		for (int i = 0; i < statsData.length; i++) {
 			statTableModel.addRow(new Object[] {
 													statsData[i][0],
@@ -170,7 +168,7 @@ public class DeviceStatistics extends JFrame{
 	private void triggerSearch()
 	{
 		String name = tfSearch.getText();
-		Object[][] filteredTable = DBConnection.getDeviceStatsFilteredData(gID, name);
+		Object[][] filteredTable = DBConnector.getDeviceStatsFilteredData(gID, name);
 		loadFilterStats(filteredTable);
 	}
 }

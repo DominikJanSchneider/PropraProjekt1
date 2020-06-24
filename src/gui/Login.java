@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class Login extends JDialog {
@@ -94,7 +94,6 @@ public class Login extends JDialog {
 		
 		btnLogin = new JButton("Anmelden");
 		btnLogin.addActionListener(new ActionListener() {
-			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent evt) {
 				if (isLoginValid()) {
 					login.setVisible(false);
@@ -112,8 +111,8 @@ public class Login extends JDialog {
 	
 	public boolean isLoginValid() {
 		try {
-			Connection con = DBConnection.connectLogin();
-			if (DBConnection.checkLogin(tfusername.getText(), pfPassword.getText())) {
+			Connection con = DBConnector.connectLogin();
+			if (DBConnector.checkLogin(tfusername.getText(), pfPassword.getText())) {
 				con.close();
 				return true;
 			} else {
@@ -129,8 +128,8 @@ public class Login extends JDialog {
 	
 	public boolean checkAdmin() {
 		try {
-			Connection con = DBConnection.connectLogin();
-			if (DBConnection.checkAdmin(tfusername.getText())) {
+			Connection con = DBConnector.connectLogin();
+			if (DBConnector.checkAdmin(tfusername.getText())) {
 				con.close();
 				return true;
 			} else {

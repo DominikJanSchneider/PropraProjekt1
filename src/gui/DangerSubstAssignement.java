@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class DangerSubstAssignement extends JFrame {
@@ -139,7 +139,7 @@ public class DangerSubstAssignement extends JFrame {
 					return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<String> getColumnClass(int column) {
 					return String.class;
 			}
 		};
@@ -147,7 +147,7 @@ public class DangerSubstAssignement extends JFrame {
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getDangerSubstAssignedData(personID);
+		Object[][] data = DBConnector.getDangerSubstAssignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -170,7 +170,7 @@ public class DangerSubstAssignement extends JFrame {
 				return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<String> getColumnClass(int column) {
 				return String.class;
 			}
 		};
@@ -178,7 +178,7 @@ public class DangerSubstAssignement extends JFrame {
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getDangerSubstUnassignedData(personID);
+		Object[][] data = DBConnector.getDangerSubstUnassignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -200,7 +200,7 @@ public class DangerSubstAssignement extends JFrame {
 			return;
 		}
 		String dangerSubst = (String)MainFrame.getValueByColName(unassignedTable, row, "Gefahrstoffe");
-		DBConnection.assignDangerSubst(dangerSubst, personID);
+		DBConnector.assignDangerSubst(dangerSubst, personID);
 		getAssignedData(personID);
 		getUnassignedData(personID);
 		tablePanel.updateUI();
@@ -213,7 +213,7 @@ public class DangerSubstAssignement extends JFrame {
 			return;
 		}
 		String dangerSubst = (String)MainFrame.getValueByColName(assignedTable, row, "Gefahrstoffe");
-		DBConnection.unassignDangerSubst(dangerSubst, personID);
+		DBConnector.unassignDangerSubst(dangerSubst, personID);
 		getAssignedData(personID);
 		getUnassignedData(personID);
 		tablePanel.updateUI();

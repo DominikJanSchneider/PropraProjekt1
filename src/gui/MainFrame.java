@@ -37,7 +37,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import database.DBConnection;
+import database.DBConnector;
 import database.DBExporter;
 import database.DBImporter;
 import database.DBtoCSVExporter;
@@ -340,7 +340,7 @@ public class MainFrame extends JFrame{
 		});
 		tfSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFilter(DBConnection.getName());
+				loadFilter(DBConnector.getName());
 			}
 		});
 		tfSearch.setText("Bitte Namen eingeben");
@@ -372,7 +372,7 @@ public class MainFrame extends JFrame{
 		btnStartSearch = new JButton("Suche Starten");
 		btnStartSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getName());
+				loadFilter(DBConnector.getName());
 			}
 		});
 		configElementsPanel.add(btnStartSearch, "cell 0 1,aligny top");
@@ -380,7 +380,7 @@ public class MainFrame extends JFrame{
 		btnIfwt = new JButton("Ifwt");
 		btnIfwt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getIfwt());
+				loadFilter(DBConnector.getIfwt());
 			}
 		});
 		configElementsPanel.add(btnIfwt, "flowx,cell 1 1,aligny top");
@@ -388,7 +388,7 @@ public class MainFrame extends JFrame{
 		btnLmn = new JButton("LMN");
 		btnLmn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getLMN());
+				loadFilter(DBConnector.getLMN());
 			}
 		});
 		configElementsPanel.add(btnLmn, "cell 1 1,aligny top");
@@ -396,7 +396,7 @@ public class MainFrame extends JFrame{
 		btnLmw = new JButton("LMW");
 		btnLmw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getLMW());
+				loadFilter(DBConnector.getLMW());
 			}
 		});
 		configElementsPanel.add(btnLmw, "cell 1 1,aligny top");
@@ -404,7 +404,7 @@ public class MainFrame extends JFrame{
 		btnLot = new JButton("LOT");
 		btnLot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getLOT());
+				loadFilter(DBConnector.getLOT());
 			}
 		});
 		configElementsPanel.add(btnLot, "cell 1 1,aligny top");
@@ -412,7 +412,7 @@ public class MainFrame extends JFrame{
 		btnLwf = new JButton("LWF");
 		btnLwf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getLWF());
+				loadFilter(DBConnector.getLWF());
 			}
 		});
 		configElementsPanel.add(btnLwf, "cell 1 1,aligny top");
@@ -420,7 +420,7 @@ public class MainFrame extends JFrame{
 		btnMnaf = new JButton("MNaF");
 		btnMnaf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getMNaF());
+				loadFilter(DBConnector.getMNaF());
 			}
 		});
 		configElementsPanel.add(btnMnaf, "cell 2 1,aligny top");
@@ -428,7 +428,7 @@ public class MainFrame extends JFrame{
 		btnIntern = new JButton("Intern");
 		btnIntern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getIntern());
+				loadFilter(DBConnector.getIntern());
 			}
 		});
 		configElementsPanel.add(btnIntern, "cell 3 1,aligny top");
@@ -436,7 +436,7 @@ public class MainFrame extends JFrame{
 		btnExtern = new JButton("Extern");
 		btnExtern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				loadFilter(DBConnection.getExtern());
+				loadFilter(DBConnector.getExtern());
 			}
 		});
 		configElementsPanel.add(btnExtern, "cell 4 1,aligny top");
@@ -670,7 +670,7 @@ public class MainFrame extends JFrame{
 		btnAllDevices = new JButton("Alle Geräte anzeigen");
 		btnAllDevices.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFilterDevices(DBConnection.getDeviceData());
+				loadFilterDevices(DBConnector.getDeviceData());
 			}
 		});
 		deviceTablePanel.add(btnAllDevices, "cell 0 3");
@@ -763,7 +763,7 @@ public class MainFrame extends JFrame{
 		btnAllRooms = new JButton("Alle Räume anzeigen");
 		btnAllRooms.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFilterRooms(DBConnection.getRoomsData());
+				loadFilterRooms(DBConnector.getRoomsData());
 			}
 		});
 		roomsTablePanel.add(btnAllRooms, "cell 0 2");
@@ -845,7 +845,6 @@ public class MainFrame extends JFrame{
 									 filteredTable[i][12],
 									 filteredTable[i][13],
 									 filteredTable[i][14]});
-									 
 		}
 	}
 	
@@ -961,43 +960,43 @@ public class MainFrame extends JFrame{
 	private void triggerDeviceIDSearch()
 	{
 		String id = getDeviceIDFilterTxt();
-		loadFilterDevices(DBConnection.getDeviceByID(id));
+		loadFilterDevices(DBConnector.getDeviceByID(id));
 	}
 	
 	private void triggerDeviceNameSearch()
 	{
 		String name = getDeviceNameFilterTxt();
-		loadFilterDevices(DBConnection.getDeviceByName(name));
+		loadFilterDevices(DBConnector.getDeviceByName(name));
 	}
 	
 	private void triggerDeviceDescriptSearch()
 	{
 		String descript = getDeviceDescriptFilterTxt();
-		loadFilterDevices(DBConnection.getDeviceByDescript(descript));
+		loadFilterDevices(DBConnector.getDeviceByDescript(descript));
 	}
 	
 	private void triggerDeviceRoomSearch()
 	{
 		String raum = getDeviceRoomFilterTxt();
-		loadFilterDevices(DBConnection.getDeviceByRoom(raum));
+		loadFilterDevices(DBConnector.getDeviceByRoom(raum));
 	}
 	
 	private void triggerRoomNameSearch()
 	{
 		String name = getRoomNameFilterTxt();
-		loadFilterRooms(DBConnection.getRoomByName(name));
+		loadFilterRooms(DBConnector.getRoomByName(name));
 	}
 	
 	private void triggerRoomDescriptSearch()
 	{
 		String descript = getRoomDescriptFilterTxt();
-		loadFilterRooms(DBConnection.getRoomByDescript(descript));
+		loadFilterRooms(DBConnector.getRoomByDescript(descript));
 	}
 	
 	private void triggerDangerSubstNameSearch()
 	{
 		String name = getDangerSubstNameFilterTxt();
-		loadFilterDangerSubst(DBConnection.getDangerSubstByName(name));
+		loadFilterDangerSubst(DBConnector.getDangerSubstByName(name));
 	}
 	
 	private void deviceStatsButtonPressed() {
@@ -1049,7 +1048,7 @@ public class MainFrame extends JFrame{
 			}
 			
 			@Override
-			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+			public Class<?> getColumnClass(int column) { //Modified that ID will be sorted correctly
 				String name = dtm.getColumnName(column);
 				switch(name)
 				{
@@ -1067,7 +1066,7 @@ public class MainFrame extends JFrame{
 		editorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(dtm));
 		
 		try {
-			conn = DBConnection.connect();
+			conn = DBConnector.connectCore();
 
 			String query = "SELECT * FROM Personen";
 			PreparedStatement pst = conn.prepareStatement(query);
@@ -1185,7 +1184,7 @@ public class MainFrame extends JFrame{
 			}
 			
 			@Override
-			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+			public Class<?> getColumnClass(int column) { //Modified that ID will be sorted correctly
 				String name = deviceTableModel.getColumnName(column);
 				switch(name)
 				{
@@ -1203,13 +1202,7 @@ public class MainFrame extends JFrame{
 		deviceEditorTable.setModel(deviceTableModel);
 		deviceEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(deviceTableModel));
 		
-		/*
-		for (int i=0; i < DBConnection.getGeraeteData().length; i++) {
-			geraeteTableModel.addRow(new Object[] {DBConnection.getGeraeteData()[i][0],
-												   DBConnection.getGeraeteData()[i][1],
-												   DBConnection.getGeraeteData()[i][2],
-												   DBConnection.getGeraeteData()[i][3]*/
-		Object[][] data = DBConnection.getDeviceData();
+		Object[][] data = DBConnector.getDeviceData();
 		for (int i=0; i < data.length; i++) {
 			deviceTableModel.addRow(new Object[] {
 													data[i][0],
@@ -1240,7 +1233,7 @@ public class MainFrame extends JFrame{
 			}
 			
 			@Override
-			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+			public Class<?> getColumnClass(int column) { //Modified that ID will be sorted correctly
 				return String.class;
 			}
 		};
@@ -1250,7 +1243,7 @@ public class MainFrame extends JFrame{
 		roomEditorTable.setModel(roomsTableModel);
 		roomEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(roomsTableModel));
 		
-		Object[][] data = DBConnection.getRoomsData();
+		Object[][] data = DBConnector.getRoomsData();
 		for (int i = 0; i < data.length; i++) {
 			roomsTableModel.addRow(new Object[] {
 													data[i][0],
@@ -1274,7 +1267,7 @@ public class MainFrame extends JFrame{
 				return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<?> getColumnClass(int column) {
 				return String.class;
 			}
 		};
@@ -1284,7 +1277,7 @@ public class MainFrame extends JFrame{
 		dangerSubstEditorTable.setModel(dangerSubstTableModel);
 		dangerSubstEditorTable.setRowSorter(new TableRowSorter<DefaultTableModel>(dangerSubstTableModel));
 		
-		Object[][] data = DBConnection.getGefahrstoffeData();
+		Object[][] data = DBConnector.getGefahrstoffeData();
 		for (int i = 0; i < data.length; i++) {
 			dangerSubstTableModel.addRow(new Object[] {
 													data[i][0]

@@ -19,7 +19,7 @@ public class DBtoCSVExporter {
 		int status = fc.showSaveDialog(null);
 		if (status == JFileChooser.APPROVE_OPTION) {
 			String selDir = fc.getSelectedFile().getAbsolutePath();
-			Connection con = DBConnection.connect();
+			Connection con = DBConnector.connectCore();
 			try {
 				PreparedStatement getTable = con.prepareStatement("SELECT * FROM Personen");
 				ResultSet rs = getTable.executeQuery();

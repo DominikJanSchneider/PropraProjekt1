@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class RoomAssignement extends JFrame {
@@ -38,7 +38,7 @@ public class RoomAssignement extends JFrame {
 	private static RoomAssignement roomAssignement;
 	private JScrollPane spUnassigned;
 	private JScrollPane spAssigned;
-	private static int geraeteID;
+	private static int geraeteID;//TODO übersetzung
 	
 	private JButton btnAssign;
 	private JButton btnUnassign;
@@ -139,7 +139,7 @@ public class RoomAssignement extends JFrame {
 					return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<String> getColumnClass(int column) {
 					return String.class;
 			}
 		};
@@ -147,7 +147,7 @@ public class RoomAssignement extends JFrame {
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getRoomAssignedData(geraeteID);
+		Object[][] data = DBConnector.getRoomAssignedData(geraeteID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -170,7 +170,7 @@ public class RoomAssignement extends JFrame {
 				return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<String> getColumnClass(int column) {
 				return String.class;
 			}
 		};
@@ -178,7 +178,7 @@ public class RoomAssignement extends JFrame {
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getRoomUnassignedData(geraeteID);
+		Object[][] data = DBConnector.getRoomUnassignedData(geraeteID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
 													data[i][0]
@@ -200,7 +200,7 @@ public class RoomAssignement extends JFrame {
 			return;
 		}
 		String room = (String)MainFrame.getValueByColName(unassignedTable, row, "Name");
-		DBConnection.assignRoom(geraeteID, room);
+		DBConnector.assignRoom(geraeteID, room);
 		getAssignedData(geraeteID);
 		getUnassignedData(geraeteID);
 		tablePanel.updateUI();
@@ -214,7 +214,7 @@ public class RoomAssignement extends JFrame {
 			return;
 		}
 		//String room = (String)MainFrame.getValueByColName(assignedTable, row, "Raum");
-		DBConnection.unassignRoom(geraeteID/*, room*/);
+		DBConnector.unassignRoom(geraeteID/*, room*/);
 		getAssignedData(geraeteID);
 		getUnassignedData(geraeteID);
 		tablePanel.updateUI();

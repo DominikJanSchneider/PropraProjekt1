@@ -27,7 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class DataEditor extends JFrame{
@@ -997,7 +997,7 @@ public class DataEditor extends JFrame{
 								
 								
 								
-								con = DBConnection.connect();
+								con = DBConnector.connectCore();
 
 								con.setAutoCommit(false);
 
@@ -1170,7 +1170,7 @@ public class DataEditor extends JFrame{
 									deviceDescriptionVar = deviceDescription.getText();
 									deviceRoomVar = deviceRoom.getText();
 									
-									con = DBConnection.connect();
+									con = DBConnector.connectCore();
 									con.setAutoCommit(false);
 									
 									PreparedStatement pstmt = con.prepareStatement(insertDevice);
@@ -1287,7 +1287,7 @@ public class DataEditor extends JFrame{
 									roomNameVar = roomName.getText();
 									roomDescriptionVar = roomDescription.getText();
 									
-									con = DBConnection.connect();
+									con = DBConnector.connectCore();
 									con.setAutoCommit(false);
 									
 									PreparedStatement pstmt = con.prepareStatement(insertDevice);
@@ -1392,7 +1392,7 @@ public class DataEditor extends JFrame{
 								try {
 									hazardousSubstanceVar = hazardousSubstance.getText();
 									
-									con = DBConnection.connect();
+									con = DBConnector.connectCore();
 									con.setAutoCommit(false);
 									
 									PreparedStatement pstmt = con.prepareStatement(insertDevice);
@@ -1443,7 +1443,7 @@ public class DataEditor extends JFrame{
 				// gets currently selected row's ID, compares the Database ID's and deletes matching entry
 				String query="delete from Personen where ID='"+ID+"' ";
 				
-				con = DBConnection.connect();
+				con = DBConnector.connectCore();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				//System.out.println("Lösche Eintrag...");
@@ -1478,7 +1478,7 @@ public class DataEditor extends JFrame{
 			// gets currently selected row's ID, compares the Database ID's and deletes matching entry
 			String query="DELETE FROM Ger\u00e4te WHERE Ger\u00e4teID='"+ID+"' ";
 			
-			con = DBConnection.connect();
+			con = DBConnector.connectCore();
 			pstmt = con.prepareStatement(query);
 			con.setAutoCommit(false);
 			//System.out.println("Lösche Eintrag...");
@@ -1512,7 +1512,7 @@ public class DataEditor extends JFrame{
 			// gets currently selected row's ID, compares the Database ID's and deletes matching entry
 			String query="DELETE FROM R\u00e4ume WHERE Name='"+name+"' ";
 			
-			con = DBConnection.connect();
+			con = DBConnector.connectCore();
 			pstmt = con.prepareStatement(query);
 			con.setAutoCommit(false);
 			//System.out.println("Lösche Eintrag...");
@@ -1545,7 +1545,7 @@ public class DataEditor extends JFrame{
 			// gets currently selected row's ID, compares the Database ID's and deletes matching entry
 			String query="DELETE FROM Gefahrstoffe WHERE Name='"+name+"' ";
 			
-			con = DBConnection.connect();
+			con = DBConnector.connectCore();
 			pstmt = con.prepareStatement(query);
 			con.setAutoCommit(false);
 			
@@ -1586,8 +1586,8 @@ public class DataEditor extends JFrame{
 		String fillInstr = (String) MainFrame.getEditorTable().getModel().getValueAt(a, 12);
 		
 		int pID = (int)MainFrame.getValueByColName(MainFrame.getEditorTable(), a, "ID");
-		String fillLab = DBConnection.getLabComment(pID);
-		String fillHazard = DBConnection.getDangerSubstComment(pID);
+		String fillLab = DBConnector.getLabComment(pID);
+		String fillHazard = DBConnector.getDangerSubstComment(pID);
 		
 		tfName.setText(fillName);
 		tfPName.setText(fillPname);
@@ -1772,7 +1772,7 @@ public class DataEditor extends JFrame{
 						"' ,LabKommentar='"+taLab.getText()+"' ,'Laboreinrichtungen'='"+getLabSetupTxt(ID)+"' , GefKommentar='"+taHazard.getText()+"' ,'Gefahrstoffe'='"+getDangerSubstTxt(ID) +  
 						"' ,ID='" + ID + "' where ID='"+ID+"' ";
 				
-				con = DBConnection.connect();
+				con = DBConnector.connectCore();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				//System.out.println("Speichert Eintrag...");
@@ -1877,7 +1877,7 @@ public class DataEditor extends JFrame{
 				String query="UPDATE Ger\u00e4te SET Name='" + tfDeviceName.getText() + "' ,Beschreibung='" + tfDeviceDescription.getText() + "'  ,Raum='" + tfDeviceRoom.getText() + //TODO
 							  "' ,Ger\u00e4teID='" + ID + "' WHERE Ger\u00e4teID='"+ID+"' ";
 							
-				con = DBConnection.connect();
+				con = DBConnector.connectCore();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				//System.out.println("Speichert Eintrag...");
@@ -1933,7 +1933,7 @@ public class DataEditor extends JFrame{
 				String query="UPDATE R\u00e4ume SET Name='" + tfRoomName.getText() + "' ,Beschreibung='" + tfRoomDescription.getText() + 
 							 "' WHERE Name='"+name+"' ";
 							
-				con = DBConnection.connect();
+				con = DBConnector.connectCore();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				//System.out.println("Speichert Eintrag...");
@@ -1982,7 +1982,7 @@ public class DataEditor extends JFrame{
 				String query="UPDATE Gefahrstoffe SET Name='" + tfHazardousSubstance.getText() + 
 							 "' WHERE Name='"+name+"' ";
 							
-				con = DBConnection.connect();
+				con = DBConnector.connectCore();
 				pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				pstmt.execute();
@@ -2008,7 +2008,7 @@ public class DataEditor extends JFrame{
 	{
 		String comment = taHazard.getText();
 		String res = comment;
-		Object[][] data = DBConnection.getDangerSubstAssignedData(pID);
+		Object[][] data = DBConnector.getDangerSubstAssignedData(pID);
 		if(!comment.isEmpty())
 		{
 			res = res.concat("\nGefahrstoffe mit denen gearbeitet wird:");
@@ -2028,7 +2028,7 @@ public class DataEditor extends JFrame{
 	{
 		String comment = taLab.getText();
 		String res = comment;
-		Object[][] data = DBConnection.getDeviceAssignedData(pID);
+		Object[][] data = DBConnector.getDeviceAssignedData(pID);
 		if(!comment.isEmpty())
 		{
 			res = res.concat("\nGer\u00e4te mit denen gearbeitet wird:");

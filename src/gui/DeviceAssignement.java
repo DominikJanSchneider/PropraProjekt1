@@ -5,9 +5,6 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,8 +19,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableRowSorter;
-
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 
 public class DeviceAssignement extends JFrame{
@@ -152,7 +148,7 @@ public class DeviceAssignement extends JFrame{
 				}
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<?> getColumnClass(int column) {
 				String name = assignedTableModel.getColumnName(column);
 				switch(name)
 				{
@@ -181,7 +177,7 @@ public class DeviceAssignement extends JFrame{
 		assignedTable.setModel(assignedTableModel);
 		assignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(assignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceAssignedData(personID);
+		Object[][] data = DBConnector.getDeviceAssignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			assignedTableModel.addRow(new Object[] {
 													data[i][0],
@@ -211,7 +207,7 @@ public class DeviceAssignement extends JFrame{
 				return false;
 			}
 		
-			public Class getColumnClass(int column) {
+			public Class<?> getColumnClass(int column) {
 				String name = unassignedTableModel.getColumnName(column);
 				switch(name)
 				{
@@ -226,7 +222,7 @@ public class DeviceAssignement extends JFrame{
 		unassignedTable.setModel(unassignedTableModel);
 		unassignedTable.setRowSorter(new TableRowSorter<DefaultTableModel>(unassignedTableModel));
 		
-		Object[][] data = DBConnection.getDeviceUnassignedData(personID);
+		Object[][] data = DBConnector.getDeviceUnassignedData(personID);
 		for (int i = 0; i < data.length; i++) {
 			unassignedTableModel.addRow(new Object[] {
 													data[i][0],
@@ -251,7 +247,7 @@ public class DeviceAssignement extends JFrame{
 			return;
 		}
 		int dID = (int)MainFrame.getValueByColName(unassignedTable, row, "Ger\u00e4teID");
-		DBConnection.assignDevice(dID, personID);
+		DBConnector.assignDevice(dID, personID);
 		getAssignedData(personID);
 		getUnassignedData(personID);
 		tablePanel.updateUI();
@@ -264,7 +260,7 @@ public class DeviceAssignement extends JFrame{
 			return;
 		}
 		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
-		DBConnection.unassignDevice(dID, personID);
+		DBConnector.unassignDevice(dID, personID);
 		getAssignedData(personID);
 		getUnassignedData(personID);
 		tablePanel.updateUI();
@@ -274,6 +270,6 @@ public class DeviceAssignement extends JFrame{
 		int row = assignedTable.getSelectedRow();
 		int dID = (int)MainFrame.getValueByColName(assignedTable, row, "Ger\u00e4teID");
 		double useTime = Double.parseDouble((String)MainFrame.getValueByColName(assignedTable, row, "Nutzungszeit (in Stunden)"));
-		DBConnection.setUseTime(dID, personID, useTime);
+		DBConnector.setUseTime(dID, personID, useTime);
 	}
 }

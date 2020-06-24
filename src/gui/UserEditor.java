@@ -23,11 +23,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import database.DBConnection;
+import database.DBConnector;
 import net.miginfocom.swing.MigLayout;
 import security.pwEncrypt;
 
 public class UserEditor extends JFrame {
+	private static final long serialVersionUID = 1L;
 
 	private static UserEditor userEditor = new UserEditor();
 	
@@ -196,14 +197,15 @@ public class UserEditor extends JFrame {
 	
 	public void getUserData() {
 		userTableModel = new DefaultTableModel(new Object[][] {}, new String[] {"ID", "Benutzername", "Passwort"}) {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 			
 			@Override
-			public Class getColumnClass(int column) { //Modified that ID will be sorted correctly
+			public Class<?> getColumnClass(int column) { //Modified that ID will be sorted correctly
 				if (column == 0) {
 					return Integer.class;
 				} else {
@@ -215,7 +217,7 @@ public class UserEditor extends JFrame {
 		userTable.setModel(userTableModel);
 		userTable.setRowSorter(new TableRowSorter<DefaultTableModel>(userTableModel));
 		
-		Object[][] userData = DBConnection.getUserData();
+		Object[][] userData = DBConnector.getUserData();
 		for (int i = 0; i < userData.length; i++) {
 			userTableModel.addRow(new Object[] {userData[i][0],
 												userData[i][1],
@@ -308,7 +310,7 @@ public class UserEditor extends JFrame {
 									userNameVar = userName.getText();
 									userPasswordVar = userPassword.getText();
 								
-									Connection con = DBConnection.connectLogin();
+									Connection con = DBConnector.connectLogin();
 									con.setAutoCommit(false);
 									
 									PreparedStatement pstmt = con.prepareStatement(insertUser);
@@ -371,7 +373,7 @@ public class UserEditor extends JFrame {
 			//Gets current selected row ID, compares the Database ID's and deletes matching entry
 			String query = "DELETE FROM Benutzer WHERE ID='"+id+"'";
 			
-			Connection con = DBConnection.connectLogin();
+			Connection con = DBConnector.connectLogin();
 			PreparedStatement pstmt = con.prepareStatement(query);
 			con.setAutoCommit(false);
 			//System.out.println("Lösche Eintrag...");
@@ -430,7 +432,7 @@ public class UserEditor extends JFrame {
 				g = 0;
 				String query = "UPDATE Benutzer SET Benutzername='"+tfUserName.getText()+"', Passwort='"+pwEncrypt.toHexString(pwEncrypt.getSHA(tfUserPassword.getText()))+"', ID='"+id+"' WHERE ID='"+id+"';";
 				
-				Connection con = DBConnection.connectLogin();
+				Connection con = DBConnector.connectLogin();
 				PreparedStatement pstmt = con.prepareStatement(query);
 				con.setAutoCommit(false);
 				//System.out.println("Speichert Eintrag...");

@@ -18,8 +18,8 @@ public class DBImporter {
 		int status = fc.showOpenDialog(null);
 		if (status == JFileChooser.APPROVE_OPTION) {
 			String selFile = fc.getSelectedFile().getAbsolutePath();
-			DBConnection.setURL("jdbc:sqlite:"+selFile);
-			Connection con = DBConnection.connect(); // Connecting to existing data base
+			DBConnector.setURLCore("jdbc:sqlite:"+selFile);
+			Connection con = DBConnector.connectCore(); // Connecting to existing data base
 			try {
 				
 				String query = "SELECT * FROM Personen;";
