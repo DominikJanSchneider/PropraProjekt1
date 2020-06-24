@@ -1464,14 +1464,10 @@ public class DBConnector {
 			con = connectLogin();
 			PreparedStatement pstmt = null;
 			try {
-				//Statement stmt = con.createStatement();
-				//ResultSet rs = stmt.executeQuery("SELECT Benutzername, Passwort FROM Benutzer WHERE Benutzername='"+name+"';");
 				pstmt = con.prepareStatement("SELECT Benutzername, Passwort FROM Benutzer WHERE Benutzername='"+name+"';");
 				ResultSet rs = pstmt.executeQuery();
 				String benutzername = rs.getString("Benutzername");
 				String passwort = rs.getString("Passwort");
-				//System.out.println("usrname: " + benutzername);
-				//System.out.println("passwort: " + passwort);
 				try {
 					if (name.equals(benutzername) && pwEncrypt.toHexString(pwEncrypt.getSHA(pswrt)).equals(passwort)) {			// check if enrypted pw matches database entry
 						return true;

@@ -7,12 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -110,37 +106,19 @@ public class Login extends JDialog {
 	}
 	
 	public boolean isLoginValid() {
-		try {
-			Connection con = DBConnector.connectLogin();
-			if (DBConnector.checkLogin(tfusername.getText(), pfPassword.getText())) {
-				con.close();
-				return true;
-			} else {
-				con.close();
-				return false;
-			}
-		} catch(SQLException e) {
-			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		if (DBConnector.checkLogin(tfusername.getText(), pfPassword.getText())) {
+			return true;
+		} else {
 			return false;
 		}
-		
 	}
 	
 	public boolean checkAdmin() {
-		try {
-			Connection con = DBConnector.connectLogin();
-			if (DBConnector.checkAdmin(tfusername.getText())) {
-				con.close();
-				return true;
-			} else {
-				con.close();
-				return false;
-			}
-		} catch(SQLException e) {
-			JOptionPane.showMessageDialog(new JFrame(), e, "Dialog", JOptionPane.ERROR_MESSAGE);
+		if (DBConnector.checkAdmin(tfusername.getText())) {
+			return true;
+		} else {
 			return false;
 		}
-		
 	}
 	
 	
