@@ -1466,6 +1466,10 @@ public class DBConnector {
 			try {
 				pstmt = con.prepareStatement("SELECT Benutzername, Passwort FROM Benutzer WHERE Benutzername='"+name+"';");
 				ResultSet rs = pstmt.executeQuery();
+				if(rs.isAfterLast())
+				{
+					return false;
+				}
 				String benutzername = rs.getString("Benutzername");
 				String passwort = rs.getString("Passwort");
 				try {
